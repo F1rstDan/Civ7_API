@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Civ7 Mod API',
   description: '文明7 Mod 开发 API 参考文档',
+  base: '/Civ7_API/',
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
