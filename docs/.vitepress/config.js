@@ -10,7 +10,10 @@ export default defineConfig({
       { text: 'API', link: '/api/game' },
       { text: '事件', link: '/api/events' },
       { text: '常量', link: '/api/constants' },
-   ],
+    ],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/F1rstDan/Civ7_API' },
+    ],
     sidebar: [
       {
         text: '核心引擎 API',
