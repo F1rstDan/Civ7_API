@@ -1,0 +1,16 @@
+{
+  "methods": [
+    "lookAt",
+    "lookAtPlot",
+    "zoom",
+    "rotate",
+    "pushCamera",
+    "popCamera",
+    "reset",
+    "setPreventMouseCameraMovement",
+    "pickPlot",
+    "getState",
+    "saveCameraZoom",
+    "restoreCameraZoom"
+  ]
+}

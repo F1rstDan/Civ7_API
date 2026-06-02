@@ -1,0 +1,13 @@
+{
+  "methods": [
+    "getEverAlive",
+    "getAlive",
+    "getAliveIds",
+    "getAliveMajorIds",
+    "getNumAliveHumans",
+    "get",
+    "isAlive",
+    "isHuman",
+    "isAI"
+  ]
+}

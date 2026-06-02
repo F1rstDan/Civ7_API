@@ -1,0 +1,33 @@
+{
+  "methods": [
+    "getMapSize",
+    "getGridWidth",
+    "getGridHeight",
+    "getPlotDistance",
+    "getIndexFromXY",
+    "getLocationFromIndex",
+    "isValidLocation",
+    "getAdjacentPlotLocation",
+    "getTerrainType",
+    "getBiomeType",
+    "getFeatureType",
+    "getResourceType",
+    "getContinentType",
+    "getElevation",
+    "getRainfall",
+    "getPlotLatitude",
+    "getAppeal",
+    "getOwner",
+    "getOwnerName",
+    "isWater",
+    "isMountain",
+    "isLake",
+    "isRiver",
+    "isCoastalLand",
+    "isFreshWater",
+    "isVolcano",
+    "isNaturalWonder",
+    "getYields",
+    "getPlotIndicesInRadius"
+  ]
+}

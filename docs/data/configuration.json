@@ -1,0 +1,13 @@
+{
+  "methods": [
+    "getGame",
+    "getGameValue",
+    "getMap",
+    "getMapValue",
+    "getPlayer",
+    "getUser",
+    "editGame",
+    "editMap",
+    "editPlayer"
+  ]
+}
