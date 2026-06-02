@@ -1,16 +1,251 @@
 {
+  "category": "Camera",
+  "description": "相机控制的全局对象。用于控制视角移动、缩放、旋转等。从不通过 import 引入。",
   "methods": [
-    "lookAt",
-    "lookAtPlot",
-    "zoom",
-    "rotate",
-    "pushCamera",
-    "popCamera",
-    "reset",
-    "setPreventMouseCameraMovement",
-    "pickPlot",
-    "getState",
-    "saveCameraZoom",
-    "restoreCameraZoom"
+    {
+      "name": "lookAt",
+      "type": "method",
+      "description": "将相机移动到指定世界坐标位置。",
+      "detailedNotes": "平滑移动相机到目标坐标。常用于 UI 点击跳转到某个地块或城市。",
+      "params": [
+        {
+          "name": "location",
+          "type": "object",
+          "description": "目标坐标 {x, y} 或 {x, y, z}",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.lookAtPlot",
+        "Camera.zoom"
+      ],
+      "sourceFiles": [],
+      "status": "inferred"
+    },
+    {
+      "name": "lookAtPlot",
+      "type": "method",
+      "description": "将相机移动到指定地块坐标。",
+      "detailedNotes": "接受地块的 iX, iY 坐标，比 lookAt 更方便。",
+      "params": [
+        {
+          "name": "iX",
+          "type": "int",
+          "description": "地块 X 坐标",
+          "required": true
+        },
+        {
+          "name": "iY",
+          "type": "int",
+          "description": "地块 Y 坐标",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.lookAt"
+      ],
+      "sourceFiles": [],
+      "status": "inferred"
+    },
+    {
+      "name": "zoom",
+      "type": "method",
+      "description": "调整相机缩放级别。",
+      "params": [
+        {
+          "name": "delta",
+          "type": "float",
+          "description": "缩放增量（正值放大，负值缩小）",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.saveCameraZoom",
+        "Camera.restoreCameraZoom"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "rotate",
+      "type": "method",
+      "description": "旋转相机视角。",
+      "params": [
+        {
+          "name": "angle",
+          "type": "float",
+          "description": "旋转角度",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "pushCamera",
+      "type": "method",
+      "description": "将当前相机状态压入栈。用于临时移动相机后恢复。",
+      "detailedNotes": "与 popCamera 配对使用，实现相机状态的保存和恢复。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.popCamera"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "popCamera",
+      "type": "method",
+      "description": "从栈中恢复相机状态。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.pushCamera"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "reset",
+      "type": "method",
+      "description": "重置相机到默认状态。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "setPreventMouseCameraMovement",
+      "type": "method",
+      "description": "设置是否禁止鼠标控制相机移动。",
+      "detailedNotes": "在 UI 弹窗或对话框打开时，通常需要禁止鼠标相机移动以避免误操作。",
+      "params": [
+        {
+          "name": "prevent",
+          "type": "bool",
+          "description": "true=禁止，false=恢复",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [],
+      "sourceFiles": [],
+      "status": "inferred"
+    },
+    {
+      "name": "pickPlot",
+      "type": "method",
+      "description": "从屏幕坐标拾取对应的地块坐标。",
+      "detailedNotes": "用于将鼠标/触屏位置转换为游戏地图上的地块坐标。",
+      "params": [
+        {
+          "name": "x",
+          "type": "float",
+          "description": "屏幕 X 坐标",
+          "required": true
+        },
+        {
+          "name": "y",
+          "type": "float",
+          "description": "屏幕 Y 坐标",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "地块坐标 {x, y} 或 undefined"
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.pickPlotFromPoint"
+      ],
+      "sourceFiles": [],
+      "status": "inferred"
+    },
+    {
+      "name": "getState",
+      "type": "method",
+      "description": "获取当前相机状态。",
+      "returns": {
+        "type": "object",
+        "description": "相机状态对象"
+      },
+      "params": [],
+      "examples": [],
+      "relatedAPIs": [],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "saveCameraZoom",
+      "type": "method",
+      "description": "保存当前相机缩放级别。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.restoreCameraZoom"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "restoreCameraZoom",
+      "type": "method",
+      "description": "恢复之前保存的相机缩放级别。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Camera.saveCameraZoom"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    }
   ]
 }

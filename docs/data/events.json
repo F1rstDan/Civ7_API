@@ -1,54 +1,434 @@
 {
+  "category": "Events",
+  "description": "文明7引擎事件列表。通过 engine.on() 监听，通过 engine.trigger() 触发。",
   "events": [
-    "GameStarted",
-    "LocalPlayerChanged",
-    "TurnBegin",
-    "TurnEnd",
-    "CityAddedToMap",
-    "CityRemovedFromMap",
-    "CityInitialized",
-    "CityPopulationChanged",
-    "CityProductionChanged",
-    "CityProductionCompleted",
-    "CityYieldChanged",
-    "CitySelectionChanged",
-    "UnitAddedToMap",
-    "UnitRemovedFromMap",
-    "UnitMoved",
-    "UnitMoveComplete",
-    "UnitSelectionChanged",
-    "UnitDamageChanged",
-    "UnitPromoted",
-    "UnitKilledInCombat",
-    "PlotChanged",
-    "PlotOwnershipChanged",
-    "PlotVisibilityChanged",
-    "PlotYieldChanged",
-    "DistrictAddedToMap",
-    "DistrictRemovedFromMap",
-    "ConstructibleAddedToMap",
-    "ConstructibleRemovedFromMap",
-    "ResourceAssigned",
-    "ResourceUnassigned",
-    "DiplomacyEventStarted",
-    "DiplomacyEventEnded",
-    "DiplomacyDeclareWar",
-    "DiplomacyMakePeace",
-    "DiplomacyMeet",
-    "DiplomacyRelationshipChanged",
-    "TechNodeCompleted",
-    "CultureNodeCompleted",
-    "FoodQueueChanged",
-    "TreasuryChanged",
-    "PlayerDefeat",
-    "PlayerTurnActivated",
-    "WonderCompleted",
-    "ReligionFounded",
-    "Combat",
-    "NotificationAdded",
-    "GameAgeEnded",
-    "CameraChanged",
-    "InputAction",
-    "UpdateFrame"
+    {
+      "name": "GameStarted",
+      "description": "游戏开始时触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "LocalPlayerChanged",
+      "description": "本地玩家切换时触发（如热座模式）。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "TurnBegin",
+      "description": "回合开始时触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "LocalPlayerTurnBegin",
+      "description": "本地玩家回合开始。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "LocalPlayerTurnEnd",
+      "description": "本地玩家回合结束。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "TurnEnd",
+      "description": "回合结束时触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "BeforeUnload",
+      "description": "游戏退出/卸载前触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "GameAgeEnded",
+      "description": "时代结束时触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "CityAddedToMap",
+      "description": "城市添加到地图时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityRemovedFromMap",
+      "description": "城市从地图移除时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityInitialized",
+      "description": "城市初始化完成时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityPopulationChanged",
+      "description": "城市人口变化时触发。",
+      "dataFields": [
+        "cityID",
+        "population"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityProductionChanged",
+      "description": "城市生产项目变化时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityProductionCompleted",
+      "description": "城市生产完成时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CityYieldChanged",
+      "description": "城市产出变化时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "CitySelectionChanged",
+      "description": "城市选中状态变化时触发。",
+      "dataFields": [
+        "cityID"
+      ],
+      "category": "city"
+    },
+    {
+      "name": "UnitAddedToMap",
+      "description": "单位添加到地图时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitRemovedFromMap",
+      "description": "单位从地图移除时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitMoved",
+      "description": "单位移动时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitMoveComplete",
+      "description": "单位移动完成时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitSelectionChanged",
+      "description": "单位选中状态变化时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitDamageChanged",
+      "description": "单位受到伤害时触发。",
+      "dataFields": [
+        "unit",
+        "damage"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitPromoted",
+      "description": "单位升级时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitKilledInCombat",
+      "description": "单位在战斗中被击杀时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "UnitMovementPointsChanged",
+      "description": "单位移动力变化时触发。",
+      "dataFields": [
+        "unit"
+      ],
+      "category": "unit"
+    },
+    {
+      "name": "PlotChanged",
+      "description": "地块数据变化时触发。",
+      "dataFields": [
+        "x",
+        "y"
+      ],
+      "category": "map"
+    },
+    {
+      "name": "PlotOwnershipChanged",
+      "description": "地块所有权变化时触发。",
+      "dataFields": [
+        "x",
+        "y"
+      ],
+      "category": "map"
+    },
+    {
+      "name": "PlotVisibilityChanged",
+      "description": "地块可见性变化时触发。",
+      "dataFields": [
+        "x",
+        "y"
+      ],
+      "category": "map"
+    },
+    {
+      "name": "PlotYieldChanged",
+      "description": "地块产出变化时触发。",
+      "dataFields": [
+        "x",
+        "y"
+      ],
+      "category": "map"
+    },
+    {
+      "name": "DistrictAddedToMap",
+      "description": "区域添加到地图时触发。",
+      "dataFields": [
+        "districtID"
+      ],
+      "category": "district"
+    },
+    {
+      "name": "DistrictRemovedFromMap",
+      "description": "区域从地图移除时触发。",
+      "dataFields": [
+        "districtID"
+      ],
+      "category": "district"
+    },
+    {
+      "name": "ConstructibleAddedToMap",
+      "description": "建筑/改良添加到地图时触发。",
+      "dataFields": [],
+      "category": "construct"
+    },
+    {
+      "name": "ConstructibleRemovedFromMap",
+      "description": "建筑/改良从地图移除时触发。",
+      "dataFields": [],
+      "category": "construct"
+    },
+    {
+      "name": "ResourceAssigned",
+      "description": "资源分配时触发。",
+      "dataFields": [],
+      "category": "resource"
+    },
+    {
+      "name": "ResourceUnassigned",
+      "description": "资源取消分配时触发。",
+      "dataFields": [],
+      "category": "resource"
+    },
+    {
+      "name": "DiplomacyEventStarted",
+      "description": "外交事件开始时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "DiplomacyEventEnded",
+      "description": "外交事件结束时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "DiplomacyDeclareWar",
+      "description": "宣战时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "DiplomacyMakePeace",
+      "description": "和平时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "DiplomacyMeet",
+      "description": "首次遇见文明时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "DiplomacyRelationshipChanged",
+      "description": "外交关系变化时触发。",
+      "dataFields": [],
+      "category": "diplomacy"
+    },
+    {
+      "name": "TechNodeCompleted",
+      "description": "科技节点完成时触发。",
+      "dataFields": [
+        "node"
+      ],
+      "category": "progress"
+    },
+    {
+      "name": "CultureNodeCompleted",
+      "description": "文化节点完成时触发。",
+      "dataFields": [
+        "node"
+      ],
+      "category": "progress"
+    },
+    {
+      "name": "FoodQueueChanged",
+      "description": "食物队列变化时触发。",
+      "dataFields": [],
+      "category": "economy"
+    },
+    {
+      "name": "TreasuryChanged",
+      "description": "国库变化时触发。",
+      "dataFields": [],
+      "category": "economy"
+    },
+    {
+      "name": "PlayerDefeat",
+      "description": "玩家被击败时触发。",
+      "dataFields": [
+        "player"
+      ],
+      "category": "game"
+    },
+    {
+      "name": "PlayerTurnActivated",
+      "description": "玩家回合激活时触发。",
+      "dataFields": [
+        "player"
+      ],
+      "category": "game"
+    },
+    {
+      "name": "WonderCompleted",
+      "description": "奇观建造完成时触发。",
+      "dataFields": [],
+      "category": "construct"
+    },
+    {
+      "name": "ReligionFounded",
+      "description": "宗教创立时触发。",
+      "dataFields": [],
+      "category": "religion"
+    },
+    {
+      "name": "Combat",
+      "description": "战斗发生时触发。",
+      "dataFields": [],
+      "category": "unit"
+    },
+    {
+      "name": "SimulateCombatResult",
+      "description": "战斗结果模拟时触发（预览）。",
+      "dataFields": [],
+      "category": "unit"
+    },
+    {
+      "name": "NotificationAdded",
+      "description": "通知添加时触发。",
+      "dataFields": [],
+      "category": "ui"
+    },
+    {
+      "name": "CameraChanged",
+      "description": "相机变化时触发。",
+      "dataFields": [],
+      "category": "ui"
+    },
+    {
+      "name": "InputAction",
+      "description": "输入动作发生时触发。",
+      "dataFields": [],
+      "category": "ui"
+    },
+    {
+      "name": "UpdateFrame",
+      "description": "每帧更新时触发。慎用。",
+      "dataFields": [],
+      "category": "ui"
+    },
+    {
+      "name": "RequestMapInitData",
+      "description": "引擎请求地图初始化数据时触发。",
+      "dataFields": [
+        "initParams"
+      ],
+      "category": "map"
+    },
+    {
+      "name": "GenerateMap",
+      "description": "引擎请求生成地图时触发。",
+      "dataFields": [],
+      "category": "map"
+    },
+    {
+      "name": "AutoplayStarted",
+      "description": "自动播放开始时触发。",
+      "dataFields": [],
+      "category": "game"
+    },
+    {
+      "name": "InputContextChanged",
+      "description": "输入上下文变化时触发。",
+      "dataFields": [],
+      "category": "ui"
+    },
+    {
+      "name": "TutorialBegin",
+      "description": "教程开始时触发。",
+      "dataFields": [],
+      "category": "tutorial"
+    },
+    {
+      "name": "TutorialCallout",
+      "description": "教程提示显示/隐藏时触发。",
+      "dataFields": [],
+      "category": "tutorial"
+    }
   ]
 }

@@ -1,13 +1,309 @@
 {
+  "category": "Configuration",
+  "description": "游戏配置访问的全局对象。分为三个子配置：Game（游戏规则设置）、User（用户偏好设置）、Player（玩家槽位配置）。从不通过 import 引入，引擎直接注入。",
   "methods": [
-    "getGame",
-    "getGameValue",
-    "getMap",
-    "getMapValue",
-    "getPlayer",
-    "getUser",
-    "editGame",
-    "editMap",
-    "editPlayer"
+    {
+      "name": "getGame",
+      "type": "method",
+      "description": "获取游戏配置对象。包含游戏规则、模式、时代等全局设置。",
+      "detailedNotes": "返回一个 GameConfiguration 对象，包含大量布尔和数值属性用于判断游戏模式。常用属性包括：isAnyMultiplayer、isHotseat、isNetworkMultiplayer、isNoTeams、isNoCivilizationUnlocks、previousAgeCount、campaignStartAgeType、skipStartButton 等。还支持 getValue(key) 方法读取自定义游戏设置。",
+      "params": [],
+      "returns": {
+        "type": "GameConfiguration",
+        "description": "游戏配置对象，包含 isAnyMultiplayer、previousAgeCount、getValue() 等属性和方法"
+      },
+      "edgeCases": "在非游戏界面（如主菜单）调用可能返回空对象或默认值。",
+      "examples": [
+        {
+          "title": "判断是否为多人游戏",
+          "code": "const gameConfig = Configuration.getGame();\nif (gameConfig.isAnyMultiplayer) {\n  console.log('多人游戏模式');\n}",
+          "sourceFile": "modules/base-standard/ui/tutorial/tutorial-manager.js",
+          "sourceLine": 24
+        },
+        {
+          "title": "读取自定义游戏设置",
+          "code": "const noCivUnlocks = Configuration.getGame().getValue('NoCivilizationUnlocks');\nif (noCivUnlocks === true) {\n  // 跳过文明解锁逻辑\n}",
+          "sourceFile": "modules/core/ui-next/screens/unlocks/civ-unlocks-model.js",
+          "sourceLine": 5
+        },
+        {
+          "title": "获取已游玩时代数",
+          "code": "const ageCount = Configuration.getGame().previousAgeCount;\nif (ageCount == 0) {\n  // 首次游戏\n}",
+          "sourceFile": "modules/age-exploration/ui/tutorial/tutorial-items-exploration.js",
+          "sourceLine": 88
+        }
+      ],
+      "relatedAPIs": [
+        "Configuration.getUser",
+        "Configuration.getPlayer",
+        "Game.age"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/tutorial/tutorial-manager.js",
+          "line": 24,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/core/ui-next/screens/unlocks/civ-unlocks-model.js",
+          "line": 5,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/age-exploration/ui/tutorial/tutorial-items-exploration.js",
+          "line": 88,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "getUser",
+      "type": "method",
+      "description": "获取用户偏好配置对象。包含 UI 设置、教程等级、相机偏好等玩家个人设置。",
+      "detailedNotes": "返回一个 UserConfiguration 对象。常用属性包括：tutorialLevel（教程等级枚举）、edgePan（边缘平移开关）、cameraPanningSpeed（平移速度）、isAutoUnitCycle（自动切换单位）、isProductionPanelStayOpen（生产面板保持打开）、plotTooltipDelay（地块提示延迟）、textToSpeechOnHover（TTS）、debugUILowLevelLogging 等。",
+      "params": [],
+      "returns": {
+        "type": "UserConfiguration",
+        "description": "用户配置对象，包含 tutorialLevel、edgePan、cameraPanningSpeed 等属性"
+      },
+      "examples": [
+        {
+          "title": "检查教程等级",
+          "code": "const tutorialLevel = Configuration.getUser().tutorialLevel;\nif (tutorialLevel == TutorialLevel.TutorialOn) {\n  // 启用教程逻辑\n}",
+          "sourceFile": "modules/base-standard/ui/tech-civic-complete/tech-civic-popup-manager.js",
+          "sourceLine": 84
+        },
+        {
+          "title": "读取相机平移速度",
+          "code": "const panSpeed = Configuration.getUser().cameraPanningSpeed * panModifier;",
+          "sourceFile": "modules/core/ui/camera/camera-controller.js",
+          "sourceLine": 123
+        }
+      ],
+      "relatedAPIs": [
+        "Configuration.getGame",
+        "Configuration.getPlayer"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/tech-civic-complete/tech-civic-popup-manager.js",
+          "line": 84,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/core/ui/camera/camera-controller.js",
+          "line": 123,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "getPlayer",
+      "type": "method",
+      "description": "获取指定玩家的槽位配置对象。包含领袖名称、槽位名称、平台图标等元数据。",
+      "detailedNotes": "返回一个 PlayerConfiguration 对象，包含 leaderName、slotName、hostIconStr 等属性。不同于 Players.get() 返回的游戏内玩家数据，这里是玩家加入游戏时的配置信息。",
+      "params": [
+        {
+          "name": "playerID",
+          "type": "int",
+          "description": "玩家 ID",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "PlayerConfiguration",
+        "description": "玩家配置对象，包含 leaderName、slotName、hostIconStr 等属性"
+      },
+      "examples": [
+        {
+          "title": "获取玩家领袖名称",
+          "code": "const playerConfig = Configuration.getPlayer(defeatedPlayer);\nif (playerConfig) {\n  const leaderName = playerConfig.leaderName ?? 'Unknown';\n}",
+          "sourceFile": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "sourceLine": 3786
+        },
+        {
+          "title": "获取本地玩家文明名称",
+          "code": "const playerConfig = Configuration.getPlayer(GameContext.localPlayerID);\nconst civName = Locale.compose(playerConfig.civilizationName);",
+          "sourceFile": "modules/base-standard/ui/unlocks/panel-player-rewards.js",
+          "sourceLine": 171
+        }
+      ],
+      "relatedAPIs": [
+        "Configuration.getGame",
+        "Players.get"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "line": 3786,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/ui/unlocks/panel-player-rewards.js",
+          "line": 171,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "getGameValue",
+      "type": "method",
+      "description": "获取游戏配置中的某个值（getGame().getValue 的便捷方法）。",
+      "detailedNotes": "等同于 Configuration.getGame().getValue(key)。",
+      "params": [
+        {
+          "name": "key",
+          "type": "string",
+          "description": "配置项的键名",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "description": "配置项的值"
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getGame"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "getMap",
+      "type": "method",
+      "description": "获取地图配置对象。包含地图类型、尺寸、种子等地图生成参数。",
+      "params": [],
+      "returns": {
+        "type": "MapConfiguration",
+        "description": "地图配置对象"
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getMapValue",
+        "GameplayMap.getMapSize"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "getMapValue",
+      "type": "method",
+      "description": "获取地图配置中的某个值。",
+      "params": [
+        {
+          "name": "key",
+          "type": "string",
+          "description": "配置项的键名",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "description": "配置项的值"
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getMap"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "editGame",
+      "type": "method",
+      "description": "编辑游戏配置。用于在游戏设置界面修改配置项。",
+      "params": [
+        {
+          "name": "key",
+          "type": "string",
+          "description": "配置项键名",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "any",
+          "description": "新值",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getGame"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "editMap",
+      "type": "method",
+      "description": "编辑地图配置。",
+      "params": [
+        {
+          "name": "key",
+          "type": "string",
+          "description": "配置项键名",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "any",
+          "description": "新值",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getMap"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "editPlayer",
+      "type": "method",
+      "description": "编辑玩家槽位配置。",
+      "params": [
+        {
+          "name": "playerID",
+          "type": "int",
+          "description": "玩家 ID",
+          "required": true
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "description": "配置项键名",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "any",
+          "description": "新值",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Configuration.getPlayer"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    }
   ]
 }

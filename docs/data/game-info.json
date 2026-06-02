@@ -1,0 +1,325 @@
+{
+  "category": "GameInfo",
+  "description": "游戏数据表访问的全局对象。包含 150+ 个数据表，存储游戏内所有定义数据（单位、建筑、文明、领袖、资源等）。从不通过 import 引入，引擎直接注入。",
+  "accessMethods": {
+    "lookup": {
+      "description": "通过哈希值或类型字符串查找单条记录。最常用的方法。",
+      "params": "hashOrType (int|string)",
+      "returns": "单条记录对象或 null"
+    },
+    "find": {
+      "description": "按条件查找单条记录。",
+      "params": "predicate (function)",
+      "returns": "单条记录对象或 undefined"
+    },
+    "filter": {
+      "description": "按条件过滤多条记录。",
+      "params": "predicate (function)",
+      "returns": "记录数组"
+    },
+    "forEach": {
+      "description": "遍历所有记录执行回调。",
+      "params": "callback (function)",
+      "returns": "void"
+    },
+    "count": {
+      "description": "返回记录总数。",
+      "params": "",
+      "returns": "int"
+    }
+  },
+  "tables": [
+    {
+      "name": "Constructibles",
+      "description": "所有可建造项目（建筑、奇观、改良设施）的定义表。",
+      "usageCount": 112,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "ConstructibleType",
+        "Name",
+        "Cost",
+        "ConstructibleClass",
+        "PrereqDistrict",
+        "Age"
+      ],
+      "examples": [
+        {
+          "title": "查找建筑定义",
+          "code": "const def = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');\nif (def) {\n  console.log(def.Name, def.Cost);\n}",
+          "sourceFile": "modules/age-modern/ui/tutorial/tutorial-items-modern.js",
+          "sourceLine": 90
+        }
+      ],
+      "relatedAPIs": [
+        "player.Constructibles",
+        "GameInfo.Units"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Units",
+      "description": "所有单位类型的定义表。包含军事、平民、海军等所有单位。",
+      "usageCount": 109,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "UnitType",
+        "Name",
+        "Cost",
+        "Combat",
+        "RangedCombat",
+        "Range",
+        "Moves",
+        "FoundCity",
+        "CoreClass"
+      ],
+      "examples": [
+        {
+          "title": "查找单位定义并检查属性",
+          "code": "const unitDef = GameInfo.Units.lookup(unit.type);\nif (unitDef) {\n  if (unitDef.FoundCity == true) {\n    // 这是开拓者单位\n  }\n}",
+          "sourceFile": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "sourceLine": 223
+        }
+      ],
+      "relatedAPIs": [
+        "player.Units",
+        "GameInfo.Constructibles"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Ages",
+      "description": "时代定义表。包含古典、探索、现代等时代信息。",
+      "usageCount": 81,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "AgeType",
+        "Name",
+        "Description"
+      ],
+      "examples": [
+        {
+          "title": "获取当前时代名称",
+          "code": "const ageDefinition = GameInfo.Ages.lookup(Game.age);\nif (ageDefinition != null) {\n  return [ageDefinition.Name];\n}",
+          "sourceFile": "modules/age-exploration/ui/tutorial/tutorial-items-exploration.js",
+          "sourceLine": 76
+        }
+      ],
+      "relatedAPIs": [
+        "Game.age",
+        "Configuration.getGame().campaignStartAgeType"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Yields",
+      "description": "产出类型定义表。包含食物、生产力、金币、科技、文化、信仰等。",
+      "usageCount": 75,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "YieldType",
+        "Name",
+        "Icon"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameplayMap.getYields"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Civilizations",
+      "description": "文明定义表。包含所有可选文明及其属性。",
+      "usageCount": 73,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "CivilizationType",
+        "Name",
+        "Adjective",
+        "Description"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "player.civilizationType",
+        "Configuration.getPlayer()"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Resources",
+      "description": "资源定义表。包含战略、奢侈、奖励资源。",
+      "usageCount": 72,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "ResourceType",
+        "Name",
+        "ResourceClassType",
+        "Frequency"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameplayMap.getResourceType"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Leaders",
+      "description": "领袖定义表。包含所有领袖及其能力。",
+      "usageCount": 55,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "LeaderType",
+        "Name",
+        "Description"
+      ],
+      "examples": [
+        {
+          "title": "获取领袖名称",
+          "code": "const leader = GameInfo.Leaders.lookup(leaderType);\nleaderName = leader == null ? 'LOC_LEADER_NONE_NAME' : leader.Name;",
+          "sourceFile": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "sourceLine": 262
+        }
+      ],
+      "relatedAPIs": [
+        "player.leaderType",
+        "Configuration.getPlayer()"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Features",
+      "description": "地物定义表。包含森林、沼泽、自然奇观等。",
+      "usageCount": 33,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "FeatureType",
+        "Name",
+        "MovementCost",
+        "SightThrough"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameplayMap.getFeatureType"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "ProgressionTreeNodes",
+      "description": "科技/文化树节点定义表。",
+      "usageCount": 33,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "ProgressionTreeNodeType",
+        "Name",
+        "ProgressionTree",
+        "Cost"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameInfo.ProgressionTreeNodeUnlocks"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Biomes",
+      "description": "生物群落定义表。包含草原、沙漠、冻土等。",
+      "usageCount": 24,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "BiomeType",
+        "Name"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameplayMap.getBiomeType"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Maps",
+      "description": "地图尺寸配置表。包含不同地图尺寸的玩家数量和大陆设置。",
+      "usageCount": 16,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "MapSizeType",
+        "Name",
+        "PlayersLandmass1",
+        "PlayersLandmass2",
+        "Width",
+        "Height"
+      ],
+      "examples": [
+        {
+          "title": "获取地图配置",
+          "code": "const uiMapSize = GameplayMap.getMapSize();\nconst mapInfo = GameInfo.Maps.lookup(uiMapSize);\nlet iPlayerCount = mapInfo.PlayersLandmass1 + mapInfo.PlayersLandmass2;",
+          "sourceFile": "modules/base-standard/maps/map-utilities.js",
+          "sourceLine": 5
+        }
+      ],
+      "relatedAPIs": [
+        "GameplayMap.getMapSize"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Terrains",
+      "description": "地形定义表。包含平原、丘陵、山脉、水域等。",
+      "usageCount": 14,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "TerrainType",
+        "Name",
+        "MovementCost",
+        "Water"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "GameplayMap.getTerrainType"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Governments",
+      "description": "政体定义表。",
+      "usageCount": 6,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "GovernmentType",
+        "Name"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "player.Government"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Religions",
+      "description": "宗教定义表。",
+      "usageCount": 12,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "ReligionType",
+        "Name"
+      ],
+      "examples": [],
+      "relatedAPIs": [
+        "player.Religion"
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "Victories",
+      "description": "胜利条件定义表。",
+      "usageCount": 10,
+      "topAccessMethod": "lookup",
+      "commonColumns": [
+        "VictoryType",
+        "Name",
+        "Description"
+      ],
+      "examples": [],
+      "relatedAPIs": [],
+      "status": "inferred"
+    }
+  ]
+}

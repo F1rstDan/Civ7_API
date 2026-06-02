@@ -46,3 +46,62 @@ Camera.setPreventMouseCameraMovement(true);
 | `restoreCameraZoom` | — | `void` | 恢复保存的缩放 |
 | `restoreDefaults` | — | `void` | 恢复默认设置 |
 | `findDynamicCameraSettings` | id | `object` | 查找动态镜头设置 |
+---
+title: Camera API
+---
+
+# Camera
+
+相机控制的全局对象。用于控制视角移动、缩放、旋转等。从不通过 import 引入。
+
+```javascript
+// 跳转到指定地块
+Camera.lookAtPlot(10, 20);
+
+// 缩放相机
+Camera.zoom(-1.0);
+
+// 保存/恢复相机状态
+Camera.pushCamera();
+// ... 临时移动相机 ...
+Camera.popCamera();
+```
+
+## 方法列表（共 12 个）
+
+| 方法 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `lookAt` | location | `void` | 将相机移动到指定世界坐标 {x, y} |
+| `lookAtPlot` | iX, iY | `void` | 将相机移动到指定地块坐标 |
+| `zoom` | delta | `void` | 调整缩放级别（正放大，负缩小） |
+| `rotate` | angle | `void` | 旋转相机视角 |
+| `pushCamera` | — | `void` | 将当前相机状态压入栈 |
+| `popCamera` | — | `void` | 从栈中恢复相机状态 |
+| `reset` | — | `void` | 重置相机到默认状态 |
+| `setPreventMouseCameraMovement` | prevent | `void` | 禁止/恢复鼠标控制相机 |
+| `pickPlot` | x, y | `object` | 从屏幕坐标拾取地块坐标 |
+| `getState` | — | `object` | 获取当前相机状态 |
+| `saveCameraZoom` | — | `void` | 保存当前缩放级别 |
+| `restoreCameraZoom` | — | `void` | 恢复之前保存的缩放级别 |
+
+## 详细说明
+
+### `lookAt(location)`
+
+平滑移动相机到目标坐标。常用于 UI 点击跳转到某个地块或城市。
+
+### `lookAtPlot(iX, iY)`
+
+接受地块的 iX, iY 坐标，比 `lookAt` 更方便。
+
+### `setPreventMouseCameraMovement(prevent)`
+
+在 UI 弹窗或对话框打开时，通常需要禁止鼠标相机移动以避免误操作。
+
+### `pickPlot(x, y)`
+
+用于将鼠标/触屏位置转换为游戏地图上的地块坐标。
+
+### `pushCamera()` / `popCamera()`
+
+配对使用，实现相机状态的保存和恢复。`pushCamera` 保存当前状态，`popCamera` 恢复。

@@ -1,0 +1,454 @@
+{
+  "category": "Engine",
+  "description": "引擎核心对象。提供事件系统、数据绑定、引擎就绪检测等功能。从不通过 import 引入，引擎直接注入。",
+  "methods": [
+    {
+      "name": "on",
+      "type": "method",
+      "description": "注册引擎事件监听器。这是 Mod 开发中最核心的 API 之一。",
+      "detailedNotes": "用于监听游戏引擎发出的各种事件。第三个参数 context 用于绑定 this 上下文，方便后续用 off 移除。",
+      "params": [
+        {
+          "name": "eventName",
+          "type": "string",
+          "description": "事件名称（如 'CityAddedToMap'）",
+          "required": true
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "事件回调函数，接收事件数据对象",
+          "required": true
+        },
+        {
+          "name": "context",
+          "type": "object",
+          "description": "可选的 this 上下文绑定",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [
+        {
+          "title": "监听城市添加事件",
+          "code": "engine.on('CityAddedToMap', (data) => {\n  console.log('城市添加到地图', data);\n}, this);",
+          "sourceFile": "modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js",
+          "sourceLine": 64
+        },
+        {
+          "title": "在引擎就绪后注册事件",
+          "code": "engine.whenReady.then(() => {\n  engine.on('UnitMovementPointsChanged', (data) => {\n    if (data.unit.owner == GameContext.localPlayerID) {\n      engine.trigger('LocalPlayerUnitMovementPointsChanged', data);\n    }\n  });\n});",
+          "sourceFile": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "sourceLine": 45
+        }
+      ],
+      "relatedAPIs": [
+        "engine.off",
+        "engine.trigger",
+        "engine.whenReady"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js",
+          "line": 64,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js",
+          "line": 45,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/maps/continents.js",
+          "line": 197,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "off",
+      "type": "method",
+      "description": "移除引擎事件监听器。必须传入与 on 相同的参数才能正确匹配移除。",
+      "detailedNotes": "通常在组件的 onDetach 或清理函数中调用，防止内存泄漏。",
+      "params": [
+        {
+          "name": "eventName",
+          "type": "string",
+          "description": "事件名称",
+          "required": true
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "之前注册的回调函数",
+          "required": true
+        },
+        {
+          "name": "context",
+          "type": "object",
+          "description": "可选的 this 上下文",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [
+        {
+          "title": "在组件卸载时移除监听器",
+          "code": "onDetach() {\n  engine.off('UnitSelectionChanged', this.onUnitSelectionChanged, this);\n  engine.off('UnitRemovedFromMap', this.onUnitRemovedFromMap, this);\n}",
+          "sourceFile": "modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js",
+          "sourceLine": 76
+        }
+      ],
+      "relatedAPIs": [
+        "engine.on"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js",
+          "line": 76,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "trigger",
+      "type": "method",
+      "description": "手动触发一个引擎事件。可用于自定义事件通信。",
+      "detailedNotes": "触发的事件会被所有通过 engine.on 注册的监听器接收。",
+      "params": [
+        {
+          "name": "eventName",
+          "type": "string",
+          "description": "要触发的事件名称",
+          "required": true
+        },
+        {
+          "name": "data",
+          "type": "any",
+          "description": "事件数据（可选）",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [
+        {
+          "title": "触发自定义事件",
+          "code": "engine.trigger('TutorialBegin');\nengine.trigger('open-civilopedia', searchTerm);",
+          "sourceFile": "modules/base-standard/ui/tutorial/tutorial-inspector.js",
+          "sourceLine": 24
+        }
+      ],
+      "relatedAPIs": [
+        "engine.on"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/tutorial/tutorial-inspector.js",
+          "line": 24,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/ui/tutorial/tutorial-callout.js",
+          "line": 412,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "call",
+      "type": "method",
+      "description": "调用引擎注册的方法。用于 JS 与原生引擎之间的通信。",
+      "detailedNotes": "主要在地图生成脚本中使用，如 engine.call('SetMapInitData', initParams)。",
+      "params": [
+        {
+          "name": "method",
+          "type": "string",
+          "description": "要调用的引擎方法名",
+          "required": true
+        },
+        {
+          "name": "args",
+          "type": "any",
+          "description": "方法参数",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "any",
+        "description": "引擎方法的返回值"
+      },
+      "examples": [
+        {
+          "title": "向引擎传递地图初始化数据",
+          "code": "engine.call('SetMapInitData', initParams);",
+          "sourceFile": "modules/base-standard/maps/continents.js",
+          "sourceLine": 23
+        }
+      ],
+      "relatedAPIs": [
+        "engine.on"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/maps/continents.js",
+          "line": 23,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/maps/archipelago.js",
+          "line": 23,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "whenReady",
+      "type": "method",
+      "description": "返回一个 Promise，在引擎完全就绪后 resolve。",
+      "detailedNotes": "几乎所有需要与引擎交互的初始化代码都应该在 whenReady 回调中执行。",
+      "params": [],
+      "returns": {
+        "type": "Promise",
+        "description": "引擎就绪后 resolve 的 Promise"
+      },
+      "examples": [
+        {
+          "title": "等待引擎就绪后初始化",
+          "code": "engine.whenReady.then(() => {\n  engine.createJSModel('g_UnitPromotion', UnitPromotion);\n  engine.updateWholeModel(UnitPromotion);\n});",
+          "sourceFile": "modules/base-standard/ui/unit-promotion/model-unit-promotion.js",
+          "sourceLine": 373
+        }
+      ],
+      "relatedAPIs": [
+        "engine.on",
+        "engine.createJSModel"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/unit-promotion/model-unit-promotion.js",
+          "line": 373,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/ui/tutorial/tutorial-manager.js",
+          "line": 138,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "createJSModel",
+      "type": "method",
+      "description": "创建一个 JS 数据绑定模型，供 UI 模板系统使用。",
+      "detailedNotes": "将一个 JS 对象注册为命名模型。通常在 whenReady 回调中调用。",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "模型名称（如 'g_UnitPromotion'）",
+          "required": true
+        },
+        {
+          "name": "model",
+          "type": "object",
+          "description": "模型数据对象",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [
+        {
+          "title": "注册数据绑定模型",
+          "code": "engine.whenReady.then(() => {\n  engine.createJSModel('g_TutorialInspector', TutorialData);\n  TutorialData.updateCallback = () => engine.updateWholeModel(TutorialData);\n});",
+          "sourceFile": "modules/base-standard/ui/tutorial/model-tutorial-inspector.js",
+          "sourceLine": 60
+        }
+      ],
+      "relatedAPIs": [
+        "engine.updateWholeModel",
+        "engine.synchronizeModels"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/tutorial/model-tutorial-inspector.js",
+          "line": 64,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/ui/unit-promotion/model-unit-promotion.js",
+          "line": 377,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "updateWholeModel",
+      "type": "method",
+      "description": "更新整个数据绑定模型，通知 UI 重新渲染。",
+      "params": [
+        {
+          "name": "model",
+          "type": "object",
+          "description": "之前通过 createJSModel 注册的模型对象",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [
+        {
+          "title": "更新模型触发 UI 刷新",
+          "code": "const updateModel = () => engine.updateWholeModel(UnitPromotion);\nUnitPromotion.updateCallback = updateModel;",
+          "sourceFile": "modules/base-standard/ui/unit-promotion/model-unit-promotion.js",
+          "sourceLine": 375
+        }
+      ],
+      "relatedAPIs": [
+        "engine.createJSModel",
+        "engine.synchronizeModels"
+      ],
+      "sourceFiles": [
+        {
+          "file": "modules/base-standard/ui/unit-promotion/model-unit-promotion.js",
+          "line": 375,
+          "role": "usage_example"
+        },
+        {
+          "file": "modules/base-standard/ui/tutorial/model-tutorial-inspector.js",
+          "line": 62,
+          "role": "usage_example"
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "name": "synchronizeModels",
+      "type": "method",
+      "description": "同步所有数据绑定模型。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "engine.createJSModel",
+        "engine.updateWholeModel"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "reloadLocalization",
+      "type": "method",
+      "description": "重新加载本地化文本。用于语言切换后刷新 UI 文本。",
+      "params": [],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "Locale.compose"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "BindingsReady",
+      "type": "property",
+      "description": "数据绑定系统是否就绪。",
+      "params": [],
+      "returns": {
+        "type": "bool",
+        "description": "数据绑定是否就绪"
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "engine.whenReady"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "AddOnHandler",
+      "type": "method",
+      "description": "engine.on 的别名方法。",
+      "params": [
+        {
+          "name": "event",
+          "type": "string",
+          "required": true,
+          "description": "事件名"
+        },
+        {
+          "name": "handler",
+          "type": "function",
+          "required": true,
+          "description": "处理器函数"
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "engine.on",
+        "engine.RemoveOnHandler"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    },
+    {
+      "name": "RemoveOnHandler",
+      "type": "method",
+      "description": "engine.off 的别名方法。",
+      "params": [
+        {
+          "name": "event",
+          "type": "string",
+          "required": true,
+          "description": "事件名"
+        },
+        {
+          "name": "handler",
+          "type": "function",
+          "required": true,
+          "description": "处理器函数"
+        }
+      ],
+      "returns": {
+        "type": "void",
+        "description": ""
+      },
+      "examples": [],
+      "relatedAPIs": [
+        "engine.off",
+        "engine.AddOnHandler"
+      ],
+      "sourceFiles": [],
+      "status": "unverified"
+    }
+  ]
+}

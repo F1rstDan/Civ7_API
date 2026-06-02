@@ -1,0 +1,431 @@
+{
+  "category": "Utilities",
+  "description": "全局工具函数和辅助对象。包括 Locale（本地化）、Database（数据库查询）、GameContext（游戏上下文）、InterfaceMode（界面模式）、Game（游戏状态）、ComponentID（组件ID工具）等。从不通过 import 引入，引擎直接注入。",
+  "groups": [
+    {
+      "name": "Locale",
+      "description": "本地化工具对象。用于文本翻译、格式化、样式处理。是代码中使用最频繁的全局对象（~2000+ 调用）。",
+      "methods": [
+        {
+          "name": "compose",
+          "description": "将本地化键翻译为显示文本。支持参数替换。最常用的 Locale 方法（1581 次调用）。",
+          "params": "locKey (string), ...args",
+          "returns": "string",
+          "usageCount": 1581
+        },
+        {
+          "name": "Stylize",
+          "description": "对文本应用样式标记。用于 UI 中的高亮、颜色等（392 次调用）。",
+          "params": "style (string), ...args",
+          "returns": "string",
+          "usageCount": 392
+        },
+        {
+          "name": "compare",
+          "description": "比较两个本地化文本的排序顺序。",
+          "params": "a (string), b (string)",
+          "returns": "int",
+          "usageCount": 27
+        },
+        {
+          "name": "toNumber",
+          "description": "将数字格式化为本地化字符串。",
+          "params": "num (number), ...options",
+          "returns": "string",
+          "usageCount": 26
+        },
+        {
+          "name": "keyExists",
+          "description": "检查本地化键是否存在。",
+          "params": "key (string)",
+          "returns": "bool",
+          "usageCount": 19
+        },
+        {
+          "name": "plainText",
+          "description": "获取纯文本（去除样式标记）。",
+          "params": "key (string), ...args",
+          "returns": "string",
+          "usageCount": 18
+        }
+      ],
+      "examples": [
+        {
+          "title": "翻译本地化键",
+          "code": "const name = Locale.compose('LOC_UNIT_WARRIOR_NAME');\nconst desc = Locale.compose('LOC_UNIT_WARRIOR_DESCRIPTION');",
+          "sourceFile": "modules/base-standard/ui/production-chooser/panel-production-chooser.js",
+          "sourceLine": 1
+        },
+        {
+          "title": "带参数的本地化",
+          "code": "const text = Locale.compose('LOC_TUTORIAL_BODY', arg1, arg2);",
+          "sourceFile": "modules/age-exploration/ui/tutorial/tutorial-items-exploration.js",
+          "sourceLine": 76
+        }
+      ]
+    },
+    {
+      "name": "GameContext",
+      "description": "游戏上下文对象。包含当前游戏的运行时状态信息。",
+      "methods": [
+        {
+          "name": "localPlayerID",
+          "description": "本地玩家的 ID。第二常用的全局属性（1054 次调用）。在热座模式下会随玩家切换而变化。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 1054,
+          "type": "property"
+        },
+        {
+          "name": "localObserverID",
+          "description": "本地观察者的 ID。用于观察者模式。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 97,
+          "type": "property"
+        }
+      ],
+      "examples": [
+        {
+          "title": "获取本地玩家",
+          "code": "const player = Players.get(GameContext.localPlayerID);\nif (player) {\n  // 处理本地玩家逻辑\n}",
+          "sourceFile": "modules/base-standard/ui/unlocks/model-unlocks.js",
+          "sourceLine": 14
+        }
+      ]
+    },
+    {
+      "name": "Database",
+      "description": "数据库查询工具。用于哈希转换和 SQL 风格的数据查询。",
+      "methods": [
+        {
+          "name": "makeHash",
+          "description": "将字符串转换为哈希值。用于比较游戏内的类型标识符（118 次调用）。",
+          "params": "str (string)",
+          "returns": "int",
+          "usageCount": 118
+        },
+        {
+          "name": "query",
+          "description": "执行数据库查询。返回匹配的记录数组。",
+          "params": "queryType (string), ...args",
+          "returns": "array",
+          "usageCount": 57
+        }
+      ],
+      "examples": [
+        {
+          "title": "创建哈希并比较",
+          "code": "const CORE_CLASS_MILITARY_HASH = Database.makeHash('CORE_CLASS_MILITARY');\nif (unit.coreClass == CORE_CLASS_MILITARY_HASH) {\n  // 这是军事单位\n}",
+          "sourceFile": "modules/base-standard/scripts/age-transition-post-load.js",
+          "sourceLine": 363
+        }
+      ]
+    },
+    {
+      "name": "InterfaceMode",
+      "description": "界面模式管理。控制当前 UI 交互模式（如选择城市、放置建筑等）。",
+      "methods": [
+        {
+          "name": "isInInterfaceMode",
+          "description": "检查当前是否在指定界面模式中（109 次调用）。",
+          "params": "modeName (string)",
+          "returns": "bool",
+          "usageCount": 109
+        },
+        {
+          "name": "switchTo",
+          "description": "切换到指定界面模式（77 次调用）。",
+          "params": "modeName (string), ...args",
+          "returns": "void",
+          "usageCount": 77
+        },
+        {
+          "name": "getCurrent",
+          "description": "获取当前界面模式名称（44 次调用）。",
+          "params": "",
+          "returns": "string",
+          "usageCount": 44
+        },
+        {
+          "name": "addHandler",
+          "description": "为界面模式添加事件处理器。",
+          "params": "modeName (string), handler (object)",
+          "returns": "void",
+          "usageCount": 56
+        },
+        {
+          "name": "switchToDefault",
+          "description": "切换回默认界面模式（54 次调用）。",
+          "params": "",
+          "returns": "void",
+          "usageCount": 54
+        }
+      ],
+      "examples": [
+        {
+          "title": "检查当前模式",
+          "code": "if (InterfaceMode.getCurrent() == 'INTERFACEMODE_CITY_PRODUCTION') {\n  // 在城市生产界面\n}",
+          "sourceFile": "modules/age-modern/ui/tutorial/tutorial-items-modern.js",
+          "sourceLine": 86
+        }
+      ]
+    },
+    {
+      "name": "Game",
+      "description": "游戏状态访问对象。包含各种游戏子系统的访问入口。",
+      "methods": [
+        {
+          "name": "age",
+          "description": "当前时代类型哈希值（116 次调用）。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 116,
+          "type": "property"
+        },
+        {
+          "name": "turn",
+          "description": "当前回合数。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 51,
+          "type": "property"
+        },
+        {
+          "name": "PlayerOperations",
+          "description": "玩家操作接口（168 次调用）。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 168,
+          "type": "property"
+        },
+        {
+          "name": "Diplomacy",
+          "description": "外交子系统（136 次调用）。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 136,
+          "type": "property"
+        },
+        {
+          "name": "Notifications",
+          "description": "通知子系统（133 次调用）。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 133,
+          "type": "property"
+        },
+        {
+          "name": "AgeProgressManager",
+          "description": "时代进度管理器。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 81,
+          "type": "property"
+        },
+        {
+          "name": "CityOperations",
+          "description": "城市操作接口。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 53,
+          "type": "property"
+        },
+        {
+          "name": "UnitOperations",
+          "description": "单位操作接口。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 52,
+          "type": "property"
+        },
+        {
+          "name": "UnitCommands",
+          "description": "单位命令接口。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 42,
+          "type": "property"
+        },
+        {
+          "name": "ProgressionTrees",
+          "description": "科技/文化树子系统。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 34,
+          "type": "property"
+        },
+        {
+          "name": "IndependentPowers",
+          "description": "独立势力子系统。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 32,
+          "type": "property"
+        },
+        {
+          "name": "getHash",
+          "description": "获取哈希值。",
+          "params": "str (string)",
+          "returns": "int",
+          "usageCount": 32
+        }
+      ],
+      "examples": [
+        {
+          "title": "获取当前时代",
+          "code": "const ageDef = GameInfo.Ages.lookup(Game.age);\nconsole.log('当前时代:', ageDef?.Name);",
+          "sourceFile": "modules/age-exploration/ui/tutorial/tutorial-items-exploration.js",
+          "sourceLine": 76
+        }
+      ]
+    },
+    {
+      "name": "ComponentID",
+      "description": "组件 ID 工具函数。用于创建、比较、验证游戏对象的唯一标识符。",
+      "methods": [
+        {
+          "name": "isMatch",
+          "description": "比较两个组件 ID 是否匹配（85 次调用）。",
+          "params": "id1, id2",
+          "returns": "bool",
+          "usageCount": 85
+        },
+        {
+          "name": "isValid",
+          "description": "检查组件 ID 是否有效（67 次调用）。",
+          "params": "id",
+          "returns": "bool",
+          "usageCount": 67
+        },
+        {
+          "name": "toLogString",
+          "description": "将组件 ID 转为日志字符串（111 次调用）。",
+          "params": "id",
+          "returns": "string",
+          "usageCount": 111
+        },
+        {
+          "name": "toBitfield",
+          "description": "将组件 ID 转为位域。",
+          "params": "id",
+          "returns": "int",
+          "usageCount": 38
+        },
+        {
+          "name": "getInvalidID",
+          "description": "获取无效的组件 ID（33 次调用）。",
+          "params": "",
+          "returns": "object",
+          "usageCount": 33
+        },
+        {
+          "name": "isInvalid",
+          "description": "检查组件 ID 是否无效。",
+          "params": "id",
+          "returns": "bool",
+          "usageCount": 32
+        }
+      ],
+      "examples": [
+        {
+          "title": "比较组件 ID",
+          "code": "if (ComponentID.isMatch(unit.id, headUnit)) {\n  console.log('是同一个单位');\n}",
+          "sourceFile": "modules/base-standard/ui/unit-actions/unit-actions.js",
+          "sourceLine": 463
+        }
+      ]
+    },
+    {
+      "name": "UI.Player",
+      "description": "UI 层的玩家操作接口。用于获取选中的城市/单位、UI 导航等。",
+      "methods": [
+        {
+          "name": "getHeadSelectedCity",
+          "description": "获取当前选中的城市 ID（60 次调用）。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 60
+        },
+        {
+          "name": "getHeadSelectedUnit",
+          "description": "获取当前选中的单位 ID（44 次调用）。",
+          "params": "",
+          "returns": "int",
+          "usageCount": 44
+        },
+        {
+          "name": "getPrimaryColorValueAsString",
+          "description": "获取玩家主颜色的字符串值。",
+          "params": "playerID",
+          "returns": "string",
+          "usageCount": 33
+        },
+        {
+          "name": "getPrimaryColorValueAsHex",
+          "description": "获取玩家主颜色的十六进制值。",
+          "params": "playerID",
+          "returns": "string",
+          "usageCount": 18
+        },
+        {
+          "name": "getSecondaryColorValueAsHex",
+          "description": "获取玩家副颜色的十六进制值。",
+          "params": "playerID",
+          "returns": "string",
+          "usageCount": 18
+        },
+        {
+          "name": "lookAtID",
+          "description": "将相机移动到指定游戏对象。",
+          "params": "id",
+          "returns": "void",
+          "usageCount": 14
+        },
+        {
+          "name": "selectCity",
+          "description": "选中指定城市。",
+          "params": "cityID",
+          "returns": "void",
+          "usageCount": 14
+        },
+        {
+          "name": "selectUnit",
+          "description": "选中指定单位。",
+          "params": "unitID",
+          "returns": "void",
+          "usageCount": 10
+        },
+        {
+          "name": "deselectAllUnits",
+          "description": "取消所有单位选中。",
+          "params": "",
+          "returns": "void",
+          "usageCount": 8
+        },
+        {
+          "name": "deselectAllCities",
+          "description": "取消所有城市选中。",
+          "params": "",
+          "returns": "void",
+          "usageCount": 4
+        },
+        {
+          "name": "selectNextReadyUnit",
+          "description": "选中下一个就绪单位。",
+          "params": "",
+          "returns": "void",
+          "usageCount": 4
+        }
+      ],
+      "examples": [
+        {
+          "title": "获取选中的城市",
+          "code": "const cityID = UI.Player.getHeadSelectedCity();\nif (cityID) {\n  const city = Cities.get(cityID);\n  // 处理城市逻辑\n}",
+          "sourceFile": "modules/age-modern/ui/tutorial/tutorial-items-modern.js",
+          "sourceLine": 89
+        }
+      ]
+    }
+  ]
+}

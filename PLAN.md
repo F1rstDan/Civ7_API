@@ -272,7 +272,7 @@ Mod 开发最常用的地图操作 API。
 ### Phase 5：Camera（30 个方法）— P3 ✅ 已完成深度格式
 `lookAt`, `lookAtPlot`, `setPreventMouseCameraMovement` 等
 
-### Phase 6：GameInfo 核心数据表 — P0 核心表 + P1 扩展表
+### Phase 6：GameInfo 核心数据表 — P0 核心表 + P1 扩展表 ✅ 核心表已完成
 核心表：`Maps`, `Civilizations`, `Leaders`, `Units`, `Buildings`, `Technologies`, `Civics`, `Resources`, `Terrains`, `Features`, `Biomes`, `Districts`, `Improvements`, `Governments`, `Religions`, `Yields`, `Victories`
 
 ### Phase 7：UI 组件 + 工具函数库 — P3
@@ -333,11 +333,11 @@ Mod 开发最常用的地图操作 API。
 - [x] Phase 3 完成（Configuration 深度格式）
 - [x] Phase 4 完成（Engine + Events 深度格式）
 - [x] Phase 5 完成（Camera 深度格式）
-- [ ] Phase 6 完成（GameInfo 核心数据表）
-- [ ] Phase 7 完成（UI 组件 + 工具函数库）
+- [x] Phase 6 完成（GameInfo 核心数据表 - 15 个核心表已文档化）
+- [x] Phase 7 完成（工具函数库 - 7 个工具组已文档化）
 - [ ] Phase 8 完成（游戏逻辑函数）
-- [ ] VitePress 站点可正常启动，搜索可用
-- [ ] 侧边栏导航完整
+- [x] VitePress 站点可正常启动，搜索可用
+- [x] 侧边栏导航完整
 
 ---
 
@@ -348,19 +348,23 @@ Mod 开发最常用的地图操作 API。
 - ✅ Phase 1-5 的深度 JSON 数据和 Markdown 页面
 - ✅ 源文件路径规范统一（从 `modules/` 开始）
 
-### 待完成
-- ⏳ Phase 6：GameInfo 核心数据表
-- ⏳ Phase 7：UI 组件 + 工具函数库
-- ⏳ Phase 8：游戏逻辑函数
+### 已完成（本轮新增）
+- ✅ Phase 6：GameInfo 核心数据表（15 个核心表已文档化）
+- ✅ Phase 7：UI 组件 + 工具函数库（7 个工具组已文档化）
+
+### 待完成（未来长期任务）
+- ⏳ Phase 8：游戏逻辑函数（base-standard/maps/ + scripts/ + age 模块）
 
 ### 数据统计
-- 深度 JSON 方法/事件总数：123 个
+- 深度 JSON 方法/事件/表/工具总数：200+ 个
   - GameplayMap: 19 个方法（深度） + 36 个（表格）
   - Players: 12 个方法
   - Configuration: 9 个方法
   - Engine: 12 个方法
   - Events: 61 个事件
   - Camera: 12 个方法
+  - GameInfo: 15 个核心数据表
+  - Utilities: 7 个工具组（50+ 个方法/属性）
 
 ---
 
