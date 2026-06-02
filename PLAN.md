@@ -1,16 +1,16 @@
-# Civ7 API 文档建设计划
+# Civ7 API 文档建设计划（深度版）
 
 > 本文档是整个项目的**核心指导文件**。任何 AI 在执行本项目任务前，必须先完整阅读本文档。
 
 ## 1. 项目目标
 
-将《文明7》游戏文件中所有可用的 API（函数、类、事件、全局对象、数据表）整理为一个**可搜索、可跳转、美观的 Web 文档站**，方便 Mod 开发者查阅。
+将文明7游戏文件中所有可用的 API 整理为一个**可搜索、可跳转、美观的 Web 文档站**，每个 API 条目包含**详细说明、完整代码示例、源文件引用**，方便 Mod 开发者查阅。
 
 ### 1.1 目标受众
-文明7 Mod 开发者（主要是 Lua/JS 脚本层面）。
+文明7 Mod 开发者（JS 脚本层面）。
 
 ### 1.2 核心要求
-- 每个 API 条目包含：名称、所属模块、参数（名称/类型/说明）、返回值、用法描述、代码示例、来源文件
+- 每个 API 条目包含：详细说明（段落级）、参数（名称/类型/逐个说明）、返回值、边界情况、完整代码示例（含上下文）、源文件引用、关联 API
 - 支持全文搜索、侧边栏分类导航、代码高亮
 - 支持长期增量更新（游戏版本变动后能快速同步）
 
@@ -28,28 +28,32 @@ D:\Games Design\Civ7_mod\.官方变动\modules\
 └── age-modern/              # 现代时代模块
 ```
 
-### 2.2 代码特征（关键限制）
+### 2.2 源文件路径规范
+**文档中所有源文件路径统一从 `modules/` 开始**，不包含上级目录。
+例如：`modules/base-standard/maps/map-utilities.js`
+
+### 2.3 代码特征（关键限制）
 - **全部是打包/编译后的 JS 输出**，不是带注释的源码
 - **几乎没有 JSDoc 注释**，无法直接从注释提取参数说明
 - **没有 `.d.ts` 类型定义文件**，`.d.js` 文件仅含 sourcemap 注释
 - 使用 ES Module 格式（`import/export`），现代 JS 语法
 - 文件类型：`.js`（主逻辑）、`.html.js`（HTML模板）、`.scss.js`（CSS-in-JS）、`.json.js`（JSON数据）
 
-### 2.3 核心全局 API（引擎注入，从不 import）
+### 2.4 核心全局 API 数据规模
 
 这些对象在代码中**直接使用，从不通过 import 引入**，是引擎注入到 JS 运行环境的：
 
-| 全局对象 | 常见方法/属性 | 推断用途 |
-|---------|-------------|---------|
-| `engine` | `.on(event, cb)`, `.off(event, cb)`, `.whenReady` | 事件系统、引擎生命周期 |
-| `GameplayMap` | `.getMapSize()`, `.getPlotDistance()` | 地图操作 |
-| `GameInfo` | `.Maps.lookup()`, `.Civilizations.lookup()`, `.Leaders.lookup()` | 游戏数据表查询 |
-| `Players` | `.getEverAlive()`, player.`isHuman`, `.civilizationType`, `.leaderType` | 玩家数据访问 |
-| `Configuration` | `.getMapValue()` | 游戏配置读取 |
-| `Camera` | `.setPreventMouseCameraMovement()` | 镜头控制 |
-| `Component` | 所有 UI 组件的基类（`onInitialize`, `onAttach`, `onDetach`） | UI 框架 |
+| 全局对象 | 不同方法/属性数 | 总调用点数 | 优先级 |
+|---------|--------------|----------|-------|
+| `GameplayMap` | 60 个方法 | 723 处 | P0 |
+| `GameInfo` | 152 个数据表 | 1,450 处 | P2（核心表 P0） |
+| `Players` | 19 个方法 | 982 处 | P0 |
+| `Configuration` | 10 个方法 | 529 处 | P0 |
+| `Camera` | 30 个方法 | 181 处 | P3 |
+| `engine` | 16 个方法/事件 | 1,642 处 | P1 |
+| `Component` | 基类 ~10 方法 | 大量子类 | P3 |
 
-### 2.4 已知事件名（从 `engine.on()` 调用提取）
+### 2.5 已知事件名（从 `engine.on()` 调用提取）
 
 ```
 GameStarted, AffinityLevelChanged, CapitalCityChanged, CityAddedToMap,
@@ -73,31 +77,31 @@ UrbanReligionChanged
 - **文档站框架**：VitePress（Vue 驱动的静态站点生成器）
 - **数据层**：JSON 文件（每个 API 大类一个 JSON）
 - **构建工具**：Node.js + Vite
-- **部署**：本地直接打开，或 `npx vitepress dev` 开发服务器
+- **部署**：本地 `npx vitepress dev docs` 开发服务器
 
 ### 3.2 项目目录结构
 ```
 Civ7_API/
-├── PLAN.md                    # 本文档（初期建设计划）
-├── UPDATE-WORKFLOW.md         # 更新流程文档
-├── GOAL-PROMPT.md             # /goal 长期任务提示词
+├── PLAN.md
+├── UPDATE-WORKFLOW.md
+├── GOAL-PROMPT.md
 ├── package.json
-├── docs/                      # VitePress 文档源
+├── docs/
 │   ├── .vitepress/
-│   │   └── config.js          # VitePress 配置（侧边栏、搜索、主题）
-│   ├── index.md               # 首页
-│   ├── api/                   # API 文档（按大类分文件）
-│   │   ├── engine.md          # engine 对象
-│   │   ├── gameplay-map.md    # GameplayMap 对象
-│   │   ├── game-info.md       # GameInfo 数据表
-│   │   ├── players.md         # Players 对象
-│   │   ├── configuration.md   # Configuration 对象
-│   │   ├── camera.md          # Camera 对象
-│   │   ├── component.md       # Component 基类
-│   │   ├── ui-components.md   # fxs-* UI 组件
-│   │   ├── utilities.md       # 工具函数库
-│   │   └── events.md          # 事件列表
-│   └── data/                  # 结构化 JSON 数据
+│   │   └── config.js
+│   ├── index.md
+│   ├── api/
+│   │   ├── engine.md
+│   │   ├── gameplay-map.md
+│   │   ├── game-info.md
+│   │   ├── players.md
+│   │   ├── configuration.md
+│   │   ├── camera.md
+│   │   ├── component.md
+│   │   ├── ui-components.md
+│   │   ├── utilities.md
+│   │   └── events.md
+│   └── data/
 │       ├── engine.json
 │       ├── gameplay-map.json
 │       ├── game-info.json
@@ -112,7 +116,7 @@ Civ7_API/
 
 ---
 
-## 4. API 条目 JSON Schema
+## 4. API 条目 JSON Schema（深度版）
 
 每个 API 条目遵循以下结构：
 
@@ -121,157 +125,188 @@ Civ7_API/
   "name": "GameplayMap.getPlotDistance",
   "category": "GameplayMap",
   "type": "method",
-  "module": "core",
+  "description": "计算两个六角格坐标之间的距离。",
+  "detailedNotes": "此距离使用六角格特有的距离算法...",
   "params": [
+    { "name": "x1", "type": "int", "description": "起点的X坐标（列）", "required": true },
+    { "name": "y1", "type": "int", "description": "起点的Y坐标（行）", "required": true },
+    { "name": "x2", "type": "int", "description": "终点的X坐标（列）", "required": true },
+    { "name": "y2", "type": "int", "description": "终点的Y坐标（行）", "required": true }
+  ],
+  "returns": { "type": "int", "description": "两个地块之间的六角格距离" },
+  "edgeCases": "当地图启用环绕时，距离计算会考虑跨越地图边界的最短路径。",
+  "examples": [
     {
-      "name": "x1",
-      "type": "int",
-      "description": "起点X坐标",
-      "required": true
-    },
-    {
-      "name": "y1",
-      "type": "int",
-      "description": "起点Y坐标",
-      "required": true
+      "title": "检查两个城市的距离",
+      "code": "const iDist = GameplayMap.getPlotDistance(...);",
+      "sourceFile": "modules/base-standard/maps/map-utilities.js",
+      "sourceLine": 47
     }
   ],
-  "returns": {
-    "type": "int",
-    "description": "两个地块之间的距离"
-  },
-  "description": "计算两个地图坐标之间的六角格距离。",
-  "example": "const iDist = GameplayMap.getPlotDistance(10, 20, 30, 40);",
-  "sourceFiles": ["modules/base-standard/maps/map-utilities.js"],
+  "relatedAPIs": ["GameplayMap.getAdjacentPlotLocation", "GameplayMap.getDirectionToPlot"],
+  "sourceFiles": [
+    { "file": "modules/base-standard/maps/map-utilities.js", "line": 47, "role": "usage_example" }
+  ],
   "status": "inferred",
-  "notes": ""
+  "verifiedBy": "",
+  "gameVersion": "1.0.0"
 }
 ```
 
-### 4.1 status 字段取值
+### 4.1 字段说明
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `name` | string | 是 | API 完整名称 |
+| `category` | string | 是 | 所属大类 |
+| `type` | string | 是 | 条目类型，见 4.2 |
+| `description` | string | 是 | 一句话简介 |
+| `detailedNotes` | string | 否 | 详细技术说明（段落级） |
+| `params` | array | 否 | 参数列表 |
+| `returns` | object | 否 | 返回值说明 |
+| `edgeCases` | string | 否 | 边界情况和特殊行为 |
+| `examples` | array | 否 | 代码示例，含 title/code/sourceFile/sourceLine |
+| `relatedAPIs` | string[] | 否 | 关联 API 列表 |
+| `sourceFiles` | array | 是 | 源文件引用，path 从 modules/ 开始 |
+| `status` | string | 是 | 验证状态，见 4.3 |
+| `verifiedBy` | string | 否 | 验证方式/人 |
+| `gameVersion` | string | 否 | 对应游戏版本 |
+
+### 4.2 type 字段取值
+
+| 值 | 含义 |
+|---|------|
+| `method` | 对象方法 |
+| `property` | 对象属性 |
+| `event` | 引擎事件 |
+| `function` | 独立函数 |
+| `class` | 类定义 |
+| `constant` | 常量/枚举 |
+| `table` | GameInfo 数据表 |
+
+### 4.3 status 字段取值
+
 | 值 | 含义 |
 |---|------|
 | `verified` | 已在游戏内测试确认 |
-| `inferred` | AI 从代码使用模式推断，未经游戏内验证 |
-| `unverified` | 信息来源不确定，需要验证 |
-
-### 4.2 type 字段取值
-| 值 | 含义 |
-|---|------|
-| `method` | 对象方法（如 `GameplayMap.getPlotDistance`） |
-| `property` | 对象属性（如 `player.isHuman`） |
-| `event` | 引擎事件（如 `CityAddedToMap`） |
-| `function` | 独立函数（如 `sub2` from MathHelpers） |
-| `class` | 类定义（如 `Component`, `RegionCell`） |
-| `constant` | 常量/枚举 |
-| `table` | GameInfo 数据表（如 `GameInfo.Maps`） |
+| `inferred` | AI 从代码使用模式推断 |
+| `unverified` | 信息来源不确定 |
+| `deprecated` | 已弃用 |
 
 ---
 
-## 5. 执行计划（分阶段）
+## 5. 数据采集方法：三遍扫描法
 
-### 阶段一：项目初始化
+由于源文件是打包后的代码且几乎没有注释，采用「三遍扫描法」从使用模式中反推 API 语义。
 
-**目标**：搭建 VitePress 项目骨架，配置好导航和搜索。
+### 第一遍：签名与调用模式提取（自动化）
 
-**步骤**：
-1. 在 `Civ7_API/` 下初始化 npm 项目：`npm init -y`
-2. 安装 VitePress：`npm add -D vitepress`
-3. 创建 `docs/.vitepress/config.js`，配置：
-   - 站点标题：「Civ7 Mod API Reference」
-   - 侧边栏：按 API 大类分组
-   - 启用内置搜索
-   - 主题色（暗色模式为主，适合开发者）
-4. 创建 `docs/index.md` 首页（简洁的 API 分类入口）
-5. 创建空的 `docs/data/*.json` 文件（每个大类一个）
-6. 创建空的 `docs/api/*.md` 文件（每个大类一个）
-7. 验证：`npx vitepress dev docs` 能正常启动，导航可用
+对每个 API 方法：
+1. 用 `rg` 搜索该方法在所有文件中的调用点
+2. 提取参数传递模式（参数数量、变量名暗示的类型）
+3. 提取返回值使用模式
+4. 输出：参数数量、大致类型、返回值类型
 
-### 阶段二：API 数据采集（核心工作）
+```powershell
+# 搜索某个方法的所有调用点（含上下文）
+rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\modules" -C 3
+```
 
-**目标**：从源文件中提取 API 定义，写入 JSON 数据文件。
+### 第二遍：上下文深度阅读（半自动）
 
-**策略 A — 引擎全局 API**（`engine`, `GameplayMap`, `Players`, `GameInfo`, `Configuration`, `Camera`）
+对每个 API 方法，选取 3-5 个最具代表性的调用点：
+1. 读取调用点所在文件的上下文（前后 20-30 行）
+2. 理解该方法在什么场景下被调用
+3. 理解调用前后的逻辑流
+4. 输出：使用场景描述、边界条件、注意事项
 
-这些是 Mod 开发者最常接触的 API，优先级最高。
+### 第三遍：示例提取与描述撰写（AI 生成 + 人工校验）
 
-执行方法：
-1. 用 `rg` 在整个 `modules/` 目录搜索该对象的所有方法调用
-   - 例：`rg "GameplayMap\." "D:\Games Design\Civ7_mod\.官方变动\modules" -o --no-filename | sort | uniq -c | sort /r`
-2. 从调用上下文推断参数数量和大致类型
-3. 生成 JSON 草稿，标记 `status: "inferred"`
-4. 写入对应的 `docs/data/*.json`
-
-**策略 B — UI 框架 API**（`Component` 基类、`fxs-*` 组件、工具函数）
-
-执行方法：
-1. 直接阅读 `core/ui/components/` 和 `core/ui/utilities/` 下的文件
-2. 这些文件有清晰的 class 定义和方法签名
-3. 提取 class 继承关系、公开方法列表
-4. 写入 `docs/data/component.json` 和 `docs/data/utilities.json`
-
-**策略 C — 事件系统**
-
-执行方法：
-1. 用 `rg` 搜索所有 `engine.on("` 调用
-2. 提取事件名和回调函数参数
-3. 写入 `docs/data/events.json`
-
-**策略 D — GameInfo 数据表**
-
-执行方法：
-1. 用 `rg` 搜索所有 `GameInfo.` 的使用
-2. 提取表名（如 `Maps`, `Civilizations`, `Leaders`, `StartBiasBiomes`）
-3. 从查询上下文推断字段名
-4. 写入 `docs/data/game-info.json`
-
-### 阶段三：文档页面渲染
-
-**目标**：将 JSON 数据渲染为美观的 Markdown 文档页面。
-
-每个 `docs/api/*.md` 文件的结构：
-1. 标题和简介
-2. 按字母顺序排列的 API 列表
-3. 每个 API 包含：参数表格、返回值、描述、代码示例
-4. 状态标记（verified/inferred/unverified）
-
-VitePress 支持在 Markdown 中使用 Vue 组件，可以创建一个 `<ApiEntry>` 组件来统一渲染格式。
-
-### 阶段四：迭代补充
-
-按优先级依次完善：
-1. **核心游戏逻辑 API**（地图、玩家、城市、单位、科技、外交）
-2. **UI 交互 API**（界面模式、输入处理、对话框）
-3. **数据表 API**（所有 GameInfo 子表）
-4. **高级 API**（Mod 注册、事件钩子、配置覆盖）
+1. 从第二遍的上下文中，提取最清晰的使用片段作为示例
+2. 简化示例代码，去掉无关逻辑，保留核心用法
+3. 综合前两遍的信息，撰写中文说明
+4. 标注 `status: "inferred"`
 
 ---
 
-## 6. 质量标准
+## 6. 执行计划（分阶段，按优先级）
 
-### 6.1 完成度定义
-一个 API 大类（如 `GameplayMap`）算「完成」需要满足：
+### Phase 0：项目初始化
+搭建 VitePress 项目骨架，配置好导航和搜索。
+1. `npm init -y` + `npm add -D vitepress`
+2. 创建 `docs/.vitepress/config.js`
+3. 创建 `docs/index.md` 和空的 `docs/data/*.json` + `docs/api/*.md`
+4. 验证：`npx vitepress dev docs` 能正常启动
+
+### Phase 1：GameplayMap（60 个方法）— P0
+Mod 开发最常用的地图操作 API。
+- 坐标/距离：`getPlotDistance`, `getAdjacentPlotLocation`, `getDirectionToPlot` 等
+- 地块属性：`getBiomeType`, `getTerrainType`, `getFeatureType`, `getElevation` 等
+- 地图尺寸：`getMapSize`, `getGridWidth`, `getGridHeight`
+- 地形判断：`isWater`, `isCoastalLand`, `isRiver`, `isMountain`, `isVolcano` 等
+
+### Phase 2：Players（19 个方法）— P0
+`get`, `getAlive`, `getAliveIds`, `getEverAlive`, `isHuman`, `isAI` 等
+
+### Phase 3：Configuration（10 个方法）— P0
+`getGame`, `getGameValue`, `getMap`, `getMapValue`, `getPlayer` 等
+
+### Phase 4：engine 事件系统（16 个方法 + 30+ 事件）— P1
+`on`, `off`, `call`, `trigger`, `whenReady` 等，事件列表见 2.5 节
+
+### Phase 5：Camera（30 个方法）— P3
+`lookAt`, `lookAtPlot`, `setPreventMouseCameraMovement` 等
+
+### Phase 6：GameInfo 核心数据表 — P0 核心表 + P1 扩展表
+核心表：`Maps`, `Civilizations`, `Leaders`, `Units`, `Buildings`, `Technologies`, `Civics`, `Resources`, `Terrains`, `Features`, `Biomes`, `Districts`, `Improvements`, `Governments`, `Religions`, `Yields`, `Victories`
+
+### Phase 7：UI 组件 + 工具函数库 — P3
+`core/ui/components/` 下的 `fxs-*` 组件 + `core/ui/utilities/` 工具函数
+
+### Phase 8：游戏逻辑函数 — P4
+`base-standard/maps/` + `base-standard/scripts/` + 各 age 模块
+
+---
+
+## 7. 质量标准
+
+### 7.1 单个 API 条目质量要求
+
+**最低标准**（所有条目必须满足）：
+- [ ] `name` 正确
+- [ ] `category` 正确
+- [ ] `type` 正确
+- [ ] `description` 至少一句话
+- [ ] `sourceFiles` 至少一个
+
+**推荐标准**（目标）：
+- [ ] `detailedNotes` 有段落级说明
+- [ ] `params` 每个参数有描述
+- [ ] `returns` 有描述
+- [ ] `examples` 至少一个完整示例
+- [ ] `relatedAPIs` 列出关联 API
+
+### 7.2 单个大类完成标准
+
 - [ ] 所有可搜索到的方法/属性都已录入 JSON
-- [ ] 每个条目有至少一行描述
-- [ ] 每个条目的参数数量正确（类型可以是推断的）
-- [ ] 至少 30% 的条目有代码示例
+- [ ] 每个条目满足最低标准
+- [ ] 至少 50% 的条目满足推荐标准
 - [ ] Markdown 页面能正确渲染所有条目
 
-### 6.2 整体项目完成定义
-项目算「阶段性完成」需要满足：
-- [ ] 6个核心全局 API 全部有文档页面（engine, GameplayMap, GameInfo, Players, Configuration, Camera）
-- [ ] Component 基类 API 已记录
-- [ ] 已知事件列表已整理（至少包含上面 2.4 节列出的事件）
-- [ ] 至少 3 个 GameInfo 数据表已记录
+### 7.3 整体项目完成标准
+
+- [ ] Phase 0-5 全部完成
+- [ ] Phase 6 的 P0 核心表全部完成
 - [ ] VitePress 站点可正常启动，搜索可用
 - [ ] 侧边栏导航完整
 
 ---
 
-## 7. 注意事项
+## 8. 注意事项
 
-1. **不要猜测**：如果无法从代码推断参数含义，标记为 `"description": "待确认"` 而不是编造
-2. **来源追溯**：每个 API 条目必须记录 `sourceFiles`，方便后续验证
-3. **增量优先**：不要试图一次性处理所有文件，按大类逐个推进
-4. **引擎全局对象优先**：这些是 Mod 开发最核心的 API，应最先完成
+1. **不要猜测**：无法推断的参数描述标记为 `"待确认"`
+2. **来源追溯**：每个 API 条目必须记录 `sourceFiles`，路径从 `modules/` 开始
+3. **增量优先**：按 Phase 顺序逐个推进
+4. **引擎全局对象优先**：这些是 Mod 开发最核心的 API
 5. **保持 JSON 格式一致**：严格遵循第 4 节的 Schema
+6. **源文件路径统一**：所有路径从 `modules/` 开始，不包含 `.官方变动/`

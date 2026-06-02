@@ -60,6 +60,12 @@ export default defineConfig({
         ]
       },
       {
+        text: '常量与枚举',
+        items: [
+          { text: '常量总览', link: '/api/constants' },
+        ]
+      },
+      {
         text: '事件参考',
         items: [
           { text: '全部事件列表', link: '/api/events' },
