@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: 开始浏览
-      link: /api/gameplay-map
+      link: /api/game
     - theme: alt
       text: 事件列表
       link: /api/events

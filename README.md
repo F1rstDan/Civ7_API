@@ -2,9 +2,9 @@
 
 文明7 Mod 开发 API 参考文档。从官方游戏文件中自动提取所有可用的全局 API、方法、事件和数据表。
 
-**在线文档：[https://f1rstdan.github.io/Civ7_API/](https://f1rstdan.github.io/Civ7_API/)**
+**在线文档，直接体验：[https://f1rstdan.github.io/Civ7_API/](https://f1rstdan.github.io/Civ7_API/)**
 
-## 快速开始
+## 离线文档如何自行部署
 
 ### 方式一：双击启动（推荐小白使用）
 
