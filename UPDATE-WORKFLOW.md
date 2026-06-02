@@ -21,7 +21,7 @@
 
 **如果源文件已通过 git 管理**：
 
-`powershell
+```powershell
 # 查看自上次更新以来哪些文件发生了变动
 cd "D:\Games Design\Civ7_mod\.官方变动"
 git diff --name-status HEAD~1 -- modules/
@@ -31,19 +31,19 @@ git diff --stat HEAD~1 -- modules/core/ui/utilities/
 
 # 查看某个具体文件的变更内容
 git diff HEAD~1 -- modules/base-standard/maps/map-utilities.js
-`
+```
 
 **如果源文件未通过 git 管理**：
 1. 让用户手动说明哪些模块/目录有变动
 2. 或者对比文件修改时间来筛选近期变动的文件
 
-`powershell
+```powershell
 # 列出最近 30 天内修改过的 JS 文件
 Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -File -Include "*.js" |
   Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-30) } |
   Select-Object FullName, LastWriteTime |
   Sort-Object LastWriteTime -Descending
-`
+```
 
 ### 2.2 确定影响范围
 
@@ -54,10 +54,10 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
 | core/ui/utilities/*.js | utilities.md |
 | core/ui/components/*.js | ui-components.md |
 | core/ui/input/*.js | engine.md (事件), utilities.md |
-| ase-standard/maps/*.js | gameplay-map.md |
-| ase-standard/scripts/*.js | gameplay-map.md, 游戏逻辑相关 |
-| ase-standard/ui/**/*.js | 各功能模块文档 |
-| ge-*/scripts/*.js | 该时代专属 API |
+| base-standard/maps/*.js | gameplay-map.md |
+| base-standard/scripts/*.js | gameplay-map.md, 游戏逻辑相关 |
+| base-standard/ui/**/*.js | 各功能模块文档 |
+| age-*/scripts/*.js | 该时代专属 API |
 | core/ui/context-manager/*.js | component.md |
 
 ---
@@ -68,17 +68,17 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
 
 对每个变动文件，执行以下操作：
 
-1. **新增的函数/方法**：搜索 unction , =>, .prototype. 等关键词
+1. **新增的函数/方法**：搜索 `function` , `=>`, `.prototype.` 等关键词
 2. **删除的函数/方法**：对比旧版本确认是否真的被移除
 3. **修改的函数签名**：参数数量或调用方式是否变化
-4. **新增的事件**：搜索 ngine.on(" 新出现的事件名
-5. **新增的全局 API 调用**：搜索 GameplayMap., GameInfo. 等新方法
+4. **新增的事件**：搜索 `engine.on("` 等新出现的事件
+5. **新增的全局 API 调用**：搜索 `GameplayMap.`, `GameInfo.` 等新方法
 
-`powershell
+```powershell
 # 示例：搜索一个文件中所有 GameplayMap 的方法调用
 Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches |
   ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
-`
+```
 
 ### 步骤 2：更新 JSON 数据
 
@@ -95,8 +95,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 
 ### 步骤 4：验证
 
-1. 启动 VitePress 开发服务器：
-px vitepress dev docs
+1. 启动 VitePress 开发服务器：`npx vitepress dev docs`
 2. 检查新增/修改的 API 在页面上正确显示
 3. 检查搜索功能能找到新增的 API
 4. 检查侧边栏导航没有断链
@@ -105,14 +104,14 @@ px vitepress dev docs
 
 在项目根目录维护一个 CHANGELOG.md：
 
-`markdown
+```markdown
 ## [日期] - 游戏版本 X.X.X
 - 新增：XX 个 API 条目
 - 更新：XX 个 API 条目
 - 弃用：XX 个 API 条目
 - 新增模块：XX
 - 来源变动文件：XX 个
-`
+```
 
 ---
 
@@ -123,7 +122,7 @@ px vitepress dev docs
 适用于：DLC 发布、大版本补丁（如 1.1 → 1.2）
 
 1. 重新扫描整个 modules/ 目录
-2. 用 g 搜索所有全局 API 的新用法
+2. 用 `rg` 搜索所有全局 API 的新用法
 3. 对比旧 JSON 数据，找出新增/变更
 4. 更新所有受影响的文档页面
 
@@ -131,7 +130,7 @@ px vitepress dev docs
 
 适用于：热修复、小版本补丁
 
-1. 只关注 git diff 或文件修改时间显示变动的文件
+1. 只关注 `git diff` 或文件修改时间显示变动的文件
 2. 只更新受影响的 JSON 和 Markdown
 3. 不做全量扫描
 
@@ -152,14 +151,13 @@ px vitepress dev docs
 直接修正 JSON 中的 description 字段，并将 status 改为 "verified"（如果已确认）或 "inferred"（如果只是更好的推断）。
 
 ### Q: 某个 API 在新版本中行为变了但签名没变怎么办？
-在 JSON 条目的 
-otes 字段中记录行为变化，附上版本号。
+在 JSON 条目的 `notes` 字段中记录行为变化，附上版本号。
 
-`json
+```json
 {
   "notes": "v1.2 起返回值改为包含方向信息的新对象结构"
 }
-`
+```
 
 ### Q: 新增了一个全新的全局对象怎么办？
 1. 在 docs/data/ 下创建新的 JSON 文件
@@ -168,8 +166,7 @@ otes 字段中记录行为变化，附上版本号。
 4. 更新 PLAN.md 第 2.3 节的全局 API 表格
 
 ### Q: 源文件中的代码难以理解怎么办？
-在 JSON 条目中设置 "status": "unverified"，并在 
-otes 中说明不确定的地方。后续可通过游戏内测试或查阅社区资料来确认。
+在 JSON 条目中设置 `"status": "unverified"`，并在 `notes` 中说明不确定的地方。后续可通过游戏内测试或查阅社区资料来确认。
 
 ---
 
