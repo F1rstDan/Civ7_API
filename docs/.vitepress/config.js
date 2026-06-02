@@ -6,9 +6,10 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
-      { text: 'API', link: '/api/gameplay-map' },
+      { text: 'API', link: '/api/game' },
       { text: '事件', link: '/api/events' },
-    ],
+      { text: '常量', link: '/api/constants' },
+   ],
     sidebar: [
       {
         text: '核心引擎 API',

@@ -11,6 +11,9 @@ hero:
     - theme: alt
       text: 事件列表
       link: /api/events
+    - theme: alt
+      text: 常量列表
+      link: /api/constants
 features:
   - title: GameplayMap
     details: 地图操作 API — 55 个方法，涵盖地块查询、地形、资源、河流等
