@@ -16,3 +16,6 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# Build files
+all-strings.tmp.txt

@@ -25,8 +25,8 @@ Civ7_API/
 在项目根目录 `Civ7_API/` 下执行：
 
 ```powershell
-# 1. 从游戏源码中提取所有大写字符串常量
-rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' "D:\Games Design\Civ7_mod\.官方变动\modules" --no-filename -o | Sort-Object -Unique > all-strings.tmp.txt
+# 1. 从游戏源码中提取所有大写字符串常量(过滤掉 `LOC_` 前缀的字符串)
+rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' "D:\Games Design\Civ7_mod\.官方变动\modules" --no-filename -o | rg -v '^"LOC_' | Sort-Object -Unique > all-strings.tmp.txt
 
 # 2. 运行提取脚本（解析 rg 输出 + 枚举 + GameInfo 表）
 cd scripts && node extract-constants.mjs
@@ -67,21 +67,22 @@ cd scripts && node update-constants.mjs
 **阶段 1：ripgrep 预提取**
 
 ```powershell
-rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' modules/ --no-filename -o | Sort-Object -Unique > all-strings.tmp.txt
+rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' modules/ --no-filename -o | rg -v '^"LOC_' | Sort-Object -Unique > all-strings.tmp.txt
 ```
 
 - `rg`（ripgrep）是用 Rust 编写的超快文本搜索工具，比 Node.js 正则快 10-100 倍
 - 正则 `"[A-Z][A-Z_]+_[A-Z][A-Z_]+"` 匹配引号内的大写+下划线字符串，且至少包含一个下划线
 - `--no-filename` 不输出文件名，`-o` 只输出匹配部分
+- `rg -v '^"LOC_'` 过滤掉 `LOC_` 前缀的字符串（本地化键，约 16,256 个；去重前约 29,750 个）
 - `Sort-Object -Unique` 去重排序
-- 结果：约 29,750 个唯一字符串
+- 结果：约 13,494 个唯一字符串
 
 **阶段 2：Node.js 分类过滤**
 
 读取 rg 输出，执行：
 1. 去除引号
 2. 按第一个下划线前的前缀分组（如 `BIOME_DESERT` → 前缀 `BIOME`）
-3. 过滤掉不需要的前缀：`LOC`（本地化键，约 16,256 个）、`FXS`、`COHTML`
+3. 过滤掉不需要的前缀：`FXS`、`COHTML`
 4. 保留出现 2 次以上的前缀分类，每类最多保留 500 个值
 
 #### 代码枚举提取

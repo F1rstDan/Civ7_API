@@ -26,9 +26,9 @@ function run(cmd, cwd = ROOT, usePowerShell = false) {
 
 console.log('=== 文明7 常量更新流程 ===\n');
 
-// Step 1: rg 提取字符串（用 PowerShell 管道 + Set-Content 确保 UTF-8 编码）
+// Step 1: rg 提取字符串（用 PowerShell 管道 + Set-Content 确保 UTF-8 编码 + 过滤掉 `LOC_` 前缀的字符串）
 console.log('[1/4] 提取字符串常量...');
-run(`rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' "${MODULES_DIR}" --no-filename -o | Sort-Object -Unique | Set-Content -Path "${TMP_FILE}" -Encoding UTF8`, ROOT, true);
+run(`rg '"[A-Z][A-Z_]+_[A-Z][A-Z_]+"' "${MODULES_DIR}" --no-filename -o | rg -v '^"LOC_' | Sort-Object -Unique | Set-Content -Path "${TMP_FILE}" -Encoding UTF8`, ROOT, true);
 
 // Step 2: 提取枚举 + GameInfo → JSON
 console.log('\n[2/4] 提取枚举和 GameInfo 表...');
