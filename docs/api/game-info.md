@@ -2,18 +2,149 @@
 title: GameInfo 数据表
 ---
 
-# GameInfo
+# GameInfo 数据表
 
-游戏数据表查询对象。通过 `GameInfo.TableName` 访问，支持 `.lookup()` 查询和数组遍历。
+游戏数据表访问的全局对象。包含 150+ 个数据表，存储游戏内所有定义数据（单位、建筑、文明、领袖、资源等）。从不通过 import 引入，引擎直接注入。
 
 ```javascript
-const civInfo = GameInfo.Civilizations.lookup(civHash);
-for (const terrain of GameInfo.Terrains) {
-  console.log(terrain.TerrainType);
+// 查找单位定义
+const unitDef = GameInfo.Units.lookup(unit.type);
+if (unitDef) {
+  console.log(unitDef.Name, unitDef.Combat);
+}
+
+// 查找建筑定义
+const buildingDef = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
+
+// 获取当前时代名称
+const ageDef = GameInfo.Ages.lookup(Game.age);
+console.log(ageDef?.Name);
+
+// 遍历所有资源
+GameInfo.Resources.forEach(res => {
+  console.log(res.ResourceType, res.Name);
+});
+```
+
+## 通用访问方法
+
+所有 GameInfo 数据表共享以下访问方法：
+
+| 方法 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `lookup` | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
+| `find` | predicate | `object \| undefined` | 按条件查找单条记录 |
+| `filter` | predicate | `array` | 按条件过滤多条记录 |
+| `forEach` | callback | `void` | 遍历所有记录执行回调 |
+| `count` | — | `int` | 返回记录总数 |
+
+
+## 详细说明
+
+### `GameInfo.Units`
+
+所有单位类型的定义表。最常用的属性包括：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `UnitType` | string | 单位类型标识（如 "UNIT_WARRIOR"） |
+| `Name` | string | 本地化名称键 |
+| `Cost` | int | 生产力消耗 |
+| `Combat` | int | 近战战斗力 |
+| `RangedCombat` | int | 远程战斗力 |
+| `Range` | int | 射程 |
+| `Moves` | int | 基础移动力 |
+| `FoundCity` | bool | 是否能建立城市（开拓者） |
+| `CoreClass` | string | 核心分类（CORE_CLASS_MILITARY 等） |
+
+```javascript
+const unitDef = GameInfo.Units.lookup(unit.type);
+if (unitDef) {
+  if (unitDef.FoundCity == true) {
+    console.log('这是开拓者单位');
+  }
+  if (unitDef.Combat > 0) {
+    console.log('战斗力:', unitDef.Combat);
+  }
 }
 ```
 
-## 数据表列表
+### `GameInfo.Constructibles`
+
+所有可建造项目的定义表。包括建筑、奇观、改良设施。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `ConstructibleType` | string | 类型标识（如 "BUILDING_GRANARY"） |
+| `Name` | string | 本地化名称键 |
+| `Cost` | int | 生产力消耗 |
+| `ConstructibleClass` | string | 分类（BUILDING、WONDER、IMPROVEMENT） |
+| `PrereqDistrict` | string | 前置区域 |
+| `Age` | string | 所属时代 |
+
+```javascript
+const def = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
+if (def) {
+  console.log(def.Name, def.Cost, def.ConstructibleClass);
+}
+```
+
+### `GameInfo.Ages`
+
+时代定义表。用于获取当前时代的显示名称和属性。
+
+```javascript
+const ageDef = GameInfo.Ages.lookup(Game.age);
+if (ageDef != null) {
+  const ageName = ageDef.Name;
+}
+```
+
+### `GameInfo.Leaders`
+
+领袖定义表。通过 `player.leaderType` 获取的哈希值来查找。
+
+```javascript
+const leader = GameInfo.Leaders.lookup(leaderType);
+const leaderName = leader == null ? 'LOC_LEADER_NONE_NAME' : leader.Name;
+```
+
+### `GameInfo.Maps`
+
+地图尺寸配置表。与 `GameplayMap.getMapSize()` 配合使用。
+
+```javascript
+const uiMapSize = GameplayMap.getMapSize();
+const mapInfo = GameInfo.Maps.lookup(uiMapSize);
+let iPlayerCount = mapInfo.PlayersLandmass1 + mapInfo.PlayersLandmass2;
+```
+
+## 常用模式
+
+### lookup + 空值检查
+
+```javascript
+const def = GameInfo.SomeTable.lookup(someHash);
+if (def) {
+  // 安全使用 def
+}
+```
+
+### filter 过滤记录
+
+```javascript
+const militaryUnits = GameInfo.Units.filter(u => u.CoreClass == 'CORE_CLASS_MILITARY');
+```
+
+### forEach 遍历
+
+```javascript
+GameInfo.Yields.forEach(y => {
+  console.log(y.YieldType, y.Name);
+});
+```
+
+## 完整数据表索引
 
 ### 核心数据
 
@@ -133,45 +264,6 @@ for (const terrain of GameInfo.Terrains) {
 | `Notifications` | 通知类型 |
 | `NotificationSounds` | 通知音效 |
 | `DisplayQueuePriorities` | 显示队列优先级 |
----
-title: GameInfo 数据表
----
-
-# GameInfo 数据表
-
-游戏数据表访问的全局对象。包含 150+ 个数据表，存储游戏内所有定义数据（单位、建筑、文明、领袖、资源等）。从不通过 import 引入，引擎直接注入。
-
-```javascript
-// 查找单位定义
-const unitDef = GameInfo.Units.lookup(unit.type);
-if (unitDef) {
-  console.log(unitDef.Name, unitDef.Combat);
-}
-
-// 查找建筑定义
-const buildingDef = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
-
-// 获取当前时代名称
-const ageDef = GameInfo.Ages.lookup(Game.age);
-console.log(ageDef?.Name);
-
-// 遍历所有资源
-GameInfo.Resources.forEach(res => {
-  console.log(res.ResourceType, res.Name);
-});
-```
-
-## 通用访问方法
-
-所有 GameInfo 数据表共享以下访问方法：
-
-| 方法 | 参数 | 返回值 | 说明 |
-|------|------|--------|------|
-| `lookup` | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
-| `find` | predicate | `object \| undefined` | 按条件查找单条记录 |
-| `filter` | predicate | `array` | 按条件过滤多条记录 |
-| `forEach` | callback | `void` | 遍历所有记录执行回调 |
-| `count` | — | `int` | 返回记录总数 |
 
 ## 核心数据表一览
 
@@ -200,111 +292,3 @@ GameInfo.Resources.forEach(res => {
 | `GameInfo.Governments` | 6 | 政体定义 |
 | `GameInfo.Victories` | 10 | 胜利条件定义 |
 
-## 详细说明
-
-### `GameInfo.Units`
-
-所有单位类型的定义表。最常用的属性包括：
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `UnitType` | string | 单位类型标识（如 "UNIT_WARRIOR"） |
-| `Name` | string | 本地化名称键 |
-| `Cost` | int | 生产力消耗 |
-| `Combat` | int | 近战战斗力 |
-| `RangedCombat` | int | 远程战斗力 |
-| `Range` | int | 射程 |
-| `Moves` | int | 基础移动力 |
-| `FoundCity` | bool | 是否能建立城市（开拓者） |
-| `CoreClass` | string | 核心分类（CORE_CLASS_MILITARY 等） |
-
-```javascript
-const unitDef = GameInfo.Units.lookup(unit.type);
-if (unitDef) {
-  if (unitDef.FoundCity == true) {
-    console.log('这是开拓者单位');
-  }
-  if (unitDef.Combat > 0) {
-    console.log('战斗力:', unitDef.Combat);
-  }
-}
-```
-
-### `GameInfo.Constructibles`
-
-所有可建造项目的定义表。包括建筑、奇观、改良设施。
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `ConstructibleType` | string | 类型标识（如 "BUILDING_GRANARY"） |
-| `Name` | string | 本地化名称键 |
-| `Cost` | int | 生产力消耗 |
-| `ConstructibleClass` | string | 分类（BUILDING、WONDER、IMPROVEMENT） |
-| `PrereqDistrict` | string | 前置区域 |
-| `Age` | string | 所属时代 |
-
-```javascript
-const def = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
-if (def) {
-  console.log(def.Name, def.Cost, def.ConstructibleClass);
-}
-```
-
-### `GameInfo.Ages`
-
-时代定义表。用于获取当前时代的显示名称和属性。
-
-```javascript
-const ageDef = GameInfo.Ages.lookup(Game.age);
-if (ageDef != null) {
-  const ageName = ageDef.Name;
-  // ageName 是本地化键，如 "LOC_AGE_ANTIQUITY_NAME"
-}
-```
-
-### `GameInfo.Leaders`
-
-领袖定义表。通过 `player.leaderType` 获取的哈希值来查找。
-
-```javascript
-const leader = GameInfo.Leaders.lookup(leaderType);
-const leaderName = leader == null ? 'LOC_LEADER_NONE_NAME' : leader.Name;
-```
-
-### `GameInfo.Maps`
-
-地图尺寸配置表。与 `GameplayMap.getMapSize()` 配合使用。
-
-```javascript
-const uiMapSize = GameplayMap.getMapSize();
-const mapInfo = GameInfo.Maps.lookup(uiMapSize);
-let iPlayerCount = mapInfo.PlayersLandmass1 + mapInfo.PlayersLandmass2;
-```
-
-## 常用模式
-
-### lookup + 空值检查
-
-```javascript
-const def = GameInfo.SomeTable.lookup(someHash);
-if (def) {
-  // 安全使用 def
-}
-```
-
-### filter 过滤记录
-
-const militaryUnits = GameInfo.Units.filter(u => u.CoreClass == 'CORE_CLASS_MILITARY');
-
-### forEach 遍历
-
-GameInfo.Yields.forEach(y => {
-  console.log(y.YieldType, y.Name);
-});
-
-## 源文件引用
-
-- `modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js` — 教程系统中的 GameInfo 使用
-- `modules/age-modern/ui/tutorial/tutorial-items-modern.js` — 现代时代教程的 GameInfo 使用
-- `modules/base-standard/maps/map-utilities.js` — 地图工具中的 GameInfo.Maps 使用
-- `modules/base-standard/ui/tree-grid/tree-detail.js` — 科技树中的 GameInfo 使用
