@@ -1,4 +1,4 @@
----
+﻿---
 layout: home
 hero:
   name: Civ7 Mod API
@@ -34,3 +34,7 @@ features:
     details: 游戏配置 API — 10 个方法，读取游戏和地图配置
     link: /api/configuration
 ---
+
+<div style="text-align: center; padding: 12px 0 24px; color: var(--vp-c-text-2); font-size: 14px;">
+文档更新：2026-06-02 &nbsp;|&nbsp; 游戏版本：v1.4.0
+</div>
