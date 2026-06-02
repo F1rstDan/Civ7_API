@@ -182,3 +182,36 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 - [ ] VitePress 站点可正常启动
 - [ ] 搜索功能正常
 - [ ] CHANGELOG.md 已更新
+
+---
+
+## 7. 常量与枚举更新
+
+常量数据（字符串常量、代码枚举、GameInfo 数据表）通过自动化脚本提取，不依赖手动维护。
+
+### 7.1 一键更新
+
+```powershell
+cd scripts && node update-constants.mjs
+```
+
+该命令自动执行以下四步：
+1. 用 `rg` 从游戏源码中提取所有大写字符串常量 → `all-strings.tmp.txt`
+2. `extract-constants.mjs` 分类过滤 + 提取枚举和 GameInfo 表 → `docs/data/constants.json`
+3. `generate-constants-md.mjs` 生成 Markdown 文档 → `docs/api/constants.md`
+4. `npx vitepress build docs` 重建站点
+
+### 7.2 何时需要更新常量
+
+- 游戏版本更新后（新 DLC、新文明、新机制会引入新常量）
+- 发现某个 API 使用了文档中未收录的常量值
+- 新增了 GameInfo 数据表
+
+### 7.3 脚本原理简述
+
+- **字符串提取**：使用 rg（ripgrep）扫描所有 `.js` 源文件，匹配 `"[A-Z][A-Z_]+_[A-Z][A-Z_]+"` 模式，提取约 3 万个唯一字符串，过滤掉 LOC_/FXS_/COHTML_ 前缀后保留约 1.6 万个游戏逻辑常量
+- **枚举提取**：Node.js 正则匹配 `export const X = { ... }` 和 `Object.freeze({...})` 模式
+- **GameInfo 表**：正则匹配所有 `GameInfo.XXX` 调用
+- **分类**：按第一个下划线前缀分组（如 `BIOME_DESERT` → 前缀 `BIOME`），归入 13 个主题板块
+
+详细文档见 `scripts/README.md`。

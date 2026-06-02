@@ -86,6 +86,11 @@ Civ7_API/
 ├── UPDATE-WORKFLOW.md
 ├── GOAL-PROMPT.md
 ├── package.json
+├── scripts/
+│   ├── extract-constants.mjs
+│   ├── generate-constants-md.mjs
+│   ├── update-constants.mjs
+│   └── README.md
 ├── docs/
 │   ├── .vitepress/
 │   │   └── config.js
@@ -101,7 +106,11 @@ Civ7_API/
 │   │   ├── ui-components.md
 │   │   ├── utilities.md
 │   │   └── events.md
+│   │   ├── constants.md
+│   │   └── ... (30+ 个 API 文档页面)
 │   └── data/
+│       ├── constants.json
+│       └── ... (其他 API JSON)
 │       ├── engine.json
 │       ├── gameplay-map.json
 │       ├── game-info.json
@@ -231,30 +240,36 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 
 ## 6. 执行计划（分阶段，按优先级）
 
-### Phase 0：项目初始化
+### Phase 0：项目初始化 ✅ 已完成
 搭建 VitePress 项目骨架，配置好导航和搜索。
-1. `npm init -y` + `npm add -D vitepress`
-2. 创建 `docs/.vitepress/config.js`
-3. 创建 `docs/index.md` 和空的 `docs/data/*.json` + `docs/api/*.md`
-4. 验证：`npx vitepress dev docs` 能正常启动
+1. ✅ `npm init -y` + `npm add -D vitepress`
+2. ✅ 创建 `docs/.vitepress/config.js`（含侧边栏、搜索、导航）
+3. ✅ 创建 `docs/index.md` 和 31 个 `docs/api/*.md` 页面
+4. ✅ 创建 6+ 个 `docs/data/*.json` 数据文件
+5. ✅ `npx vitepress dev docs` 可正常启动，搜索可用
+6. ✅ GitHub Pages 部署配置（`.github/workflows/deploy.yml`）
+7. ✅ 批处理启动脚本（`!启动文明7文档站.bat`）
+8. ✅ 常量自动提取脚本（`scripts/extract-constants.mjs` 等）
 
-### Phase 1：GameplayMap（60 个方法）— P0
+### Phase 1：GameplayMap（60 个方法）— P0 ✅ 已完成深度格式
 Mod 开发最常用的地图操作 API。
+- ✅ 深度 JSON 已完成（19 个核心方法，含 detailedNotes、examples、sourceFiles）
+- ✅ Markdown 页面已有完整方法表格（55 个方法）
 - 坐标/距离：`getPlotDistance`, `getAdjacentPlotLocation`, `getDirectionToPlot` 等
 - 地块属性：`getBiomeType`, `getTerrainType`, `getFeatureType`, `getElevation` 等
 - 地图尺寸：`getMapSize`, `getGridWidth`, `getGridHeight`
 - 地形判断：`isWater`, `isCoastalLand`, `isRiver`, `isMountain`, `isVolcano` 等
 
-### Phase 2：Players（19 个方法）— P0
+### Phase 2：Players（19 个方法）— P0 ✅ 已完成深度格式
 `get`, `getAlive`, `getAliveIds`, `getEverAlive`, `isHuman`, `isAI` 等
 
-### Phase 3：Configuration（10 个方法）— P0
+### Phase 3：Configuration（10 个方法）— P0 ✅ 已完成深度格式
 `getGame`, `getGameValue`, `getMap`, `getMapValue`, `getPlayer` 等
 
-### Phase 4：engine 事件系统（16 个方法 + 30+ 事件）— P1
+### Phase 4：engine 事件系统（16 个方法 + 30+ 事件）— P1 ✅ 已完成深度格式
 `on`, `off`, `call`, `trigger`, `whenReady` 等，事件列表见 2.5 节
 
-### Phase 5：Camera（30 个方法）— P3
+### Phase 5：Camera（30 个方法）— P3 ✅ 已完成深度格式
 `lookAt`, `lookAtPlot`, `setPreventMouseCameraMovement` 等
 
 ### Phase 6：GameInfo 核心数据表 — P0 核心表 + P1 扩展表
@@ -265,6 +280,23 @@ Mod 开发最常用的地图操作 API。
 
 ### Phase 8：游戏逻辑函数 — P4
 `base-standard/maps/` + `base-standard/scripts/` + 各 age 模块
+
+### Phase 9：常量与枚举自动提取 — 已完成
+通过自动化脚本从游戏源码中提取所有常量字符串、代码枚举和 GameInfo 数据表。
+
+**自动化工具链**（位于 `scripts/` 目录）：
+
+| 脚本 | 功能 |
+|------|------|
+| `extract-constants.mjs` | 从 rg 输出 + JS 源码提取字符串常量、枚举、GameInfo 表 → JSON |
+| `generate-constants-md.mjs` | 从 JSON 生成分类 Markdown 文档（13 个主题板块） |
+| `update-constants.mjs` | 一键执行完整流程（rg → extract → generate → build） |
+
+**数据规模**：16,046 个字符串常量、200 个分类、12 个代码枚举、151 个 GameInfo 数据表。
+
+**更新命令**：`cd scripts && node update-constants.mjs`
+
+详细原理和用法见 `scripts/README.md`。
 
 ---
 
@@ -295,14 +327,44 @@ Mod 开发最常用的地图操作 API。
 
 ### 7.3 整体项目完成标准
 
-- [ ] Phase 0-5 全部完成
-- [ ] Phase 6 的 P0 核心表全部完成
+- [x] Phase 0 完成（VitePress 站点搭建）
+- [x] Phase 1 完成（GameplayMap 深度格式）
+- [x] Phase 2 完成（Players 深度格式）
+- [x] Phase 3 完成（Configuration 深度格式）
+- [x] Phase 4 完成（Engine + Events 深度格式）
+- [x] Phase 5 完成（Camera 深度格式）
+- [ ] Phase 6 完成（GameInfo 核心数据表）
+- [ ] Phase 7 完成（UI 组件 + 工具函数库）
+- [ ] Phase 8 完成（游戏逻辑函数）
 - [ ] VitePress 站点可正常启动，搜索可用
 - [ ] 侧边栏导航完整
 
 ---
 
-## 8. 注意事项
+## 8. 当前进度总结
+
+### 已完成
+- ✅ 项目初始化（VitePress 站点、配置、部署脚本）
+- ✅ Phase 1-5 的深度 JSON 数据和 Markdown 页面
+- ✅ 源文件路径规范统一（从 `modules/` 开始）
+
+### 待完成
+- ⏳ Phase 6：GameInfo 核心数据表
+- ⏳ Phase 7：UI 组件 + 工具函数库
+- ⏳ Phase 8：游戏逻辑函数
+
+### 数据统计
+- 深度 JSON 方法/事件总数：123 个
+  - GameplayMap: 19 个方法（深度） + 36 个（表格）
+  - Players: 12 个方法
+  - Configuration: 9 个方法
+  - Engine: 12 个方法
+  - Events: 61 个事件
+  - Camera: 12 个方法
+
+---
+
+## 9. 注意事项
 
 1. **不要猜测**：无法推断的参数描述标记为 `"待确认"`
 2. **来源追溯**：每个 API 条目必须记录 `sourceFiles`，路径从 `modules/` 开始

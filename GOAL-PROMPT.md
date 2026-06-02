@@ -26,7 +26,13 @@
 - D:\Games Design\Civ7_mod\Civ7_API\docs\data\*.json → 是否已有 API 数据
 - D:\Games Design\Civ7_mod\Civ7_API\docs\api\*.md → 是否已有文档页面
 
-根据判断结果，从 PLAN.md 第 5 节「执行计划」中对应的阶段开始执行。
+根据判断结果，从 PLAN.md 第 6 节「执行计划」中对应的阶段开始执行。
+
+## 已完成进度（截至 2026-06-02）
+- ✅ Phase 0-5 的深度 JSON 数据和 Markdown 页面已全部完成
+- ✅ 深度 JSON 包含：detailedNotes、examples、sourceFiles、relatedAPIs
+- ✅ 源文件路径规范统一（从 `modules/` 开始）
+- 下一步应从 Phase 6（GameInfo 核心数据表）开始执行
 
 ## 执行原则
 
@@ -107,3 +113,9 @@ objective: |
 直接对 AI 说：
 
 > 文明7 更新了，请阅读 D:\Games Design\Civ7_mod\Civ7_API\UPDATE-WORKFLOW.md，然后帮我检查 modules/ 下的变动并更新 API 文档。
+
+### 方式四：更新常量与枚举
+
+直接对 AI 说：
+
+> 更新文明7的常量文档。运行 `cd scripts && node update-constants.mjs`，然后检查输出是否正常。
