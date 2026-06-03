@@ -1,8 +1,8 @@
 ---
-title: Religion
+title: Religion 宗教
 ---
 
-# Religion
+# Religion 宗教
 
 宗教系统 API。
 

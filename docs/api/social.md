@@ -1,8 +1,8 @@
 ---
-title: Social
+title: Social 社交
 ---
 
-# Social
+# Social 社交
 
 社交功能 API。
 

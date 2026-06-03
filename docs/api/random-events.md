@@ -1,8 +1,8 @@
 ---
-title: Random Events 随机事件系统
+title: Random Events 随机事件
 ---
 
-# Random Events 随机事件系统
+# Random Events 随机事件
 
 文明7的随机事件系统，包括自然灾害（火山喷发、洪水、风暴）、核武器（WMD）以及事件触发 API。
 

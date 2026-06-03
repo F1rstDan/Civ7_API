@@ -1,8 +1,8 @@
 ﻿---
-title: Reflection 调试反射系统
+title: Reflection 调试反射
 ---
 
-# Reflection 调试反射系统
+# Reflection 调试反射
 
 ReflectionArchives 是文明7的调试反射系统，允许检查游戏对象的内部状态。
 

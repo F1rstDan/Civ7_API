@@ -1,8 +1,8 @@
 ---
-title: Notifications
+title: Notifications 通知
 ---
 
-# Notifications
+# Notifications 通知
 
 通知系统 API。
 

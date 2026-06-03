@@ -1,8 +1,8 @@
 ﻿---
-title: MapFeatures 自然特征系统
+title: MapFeatures 自然特征
 ---
 
-# MapFeatures 自然特征系统
+# MapFeatures 自然特征
 
 文明7的地图自然特征系统包括火山、河流、风暴、地块效果和地块产出修改器。
 

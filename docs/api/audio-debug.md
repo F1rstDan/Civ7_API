@@ -1,8 +1,8 @@
 ---
-title: Audio & Debug
+title: Audio & Debug 音频调试
 ---
 
-# Audio & Debug
+# Audio & Debug 音频调试
 
 音频和调试 API。
 

@@ -1,8 +1,8 @@
 ﻿---
-title: Visibility 可见性系统
+title: Visibility 可见性
 ---
 
-# Visibility 可见性系统
+# Visibility 可见性
 
 Visibility 全局对象管理地图的可见性和迷雾系统。
 

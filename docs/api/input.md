@@ -1,8 +1,8 @@
 ---
-title: Input
+title: Input 输入
 ---
 
-# Input
+# Input 输入
 
 输入系统 API。
 

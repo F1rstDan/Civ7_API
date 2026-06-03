@@ -1,8 +1,8 @@
 ---
-title: GameplayMap API
+title: GameplayMap 地图操作
 ---
 
-# GameplayMap
+# GameplayMap 地图操作
 
 地图操作的核心全局对象，直接在脚本中使用，无需 import。
 

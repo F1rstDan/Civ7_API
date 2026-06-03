@@ -1,8 +1,8 @@
 ---
-title: WorldUnits 单位可视化控制
+title: WorldUnits 单位视觉表现
 ---
 
-# WorldUnits 单位可视化控制
+# WorldUnits 单位视觉表现
 
 `WorldUnits` 全局对象用于控制单位在世界地图上的视觉表现：活动动画、空闲样式、战斗动画、生命值显示等。这是**视觉层 API**，不影响游戏逻辑状态。
 

@@ -1,8 +1,8 @@
 ---
-title: Operations & Commands
+title: Operations & Commands 操作命令
 ---
 
-# Operations & Commands
+# Operations & Commands 操作命令
 
 游戏操作和命令 API。用于查询和执行城市、单位、玩家的操作。
 

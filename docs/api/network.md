@@ -1,8 +1,8 @@
 ---
-title: Network
+title: Network 网络
 ---
 
-# Network
+# Network 网络
 
 网络和多人游戏相关 API。涵盖账号、连接、存档、多人游戏管理等。
 

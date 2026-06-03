@@ -1,8 +1,8 @@
 ---
-title: DiplomacyDeals
+title: DiplomacyDeals 外交交易
 ---
 
-# DiplomacyDeals
+# DiplomacyDeals 外交交易
 
 外交交易管理 API。
 

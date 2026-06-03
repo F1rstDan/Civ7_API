@@ -45,9 +45,9 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
   Sort-Object LastWriteTime -Descending
 ```
 
-### 2.3 TunerPanels 变动检查
+### 2.3 调试面板变动检查
 
-TunerPanels 目录位于：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
+调试面板（`.ltp` 文件）目录位于：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
 
 当游戏更新后，需检查 `.ltp` 文件是否有变动：
 
@@ -58,7 +58,7 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -File -
   Sort-Object LastWriteTime -Descending
 ```
 
-**TunerPanels 变动的影响**：
+**调试面板变动的影响**：
 - `.ltp` 文件中的 JS 代码变更可能反映 API 签名变化或新 API 引入
 - 新增的 `.ltp` 文件可能对应新功能模块
 - 修改的 `.ltp` 文件中的代码可直接用于更新 `tunerExamples` 字段
@@ -76,7 +76,7 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -File -
 | base-standard/scripts/*.js | gameplay-map.md, 游戏逻辑相关 |
 | base-standard/ui/**/*.js | 各功能模块文档 |
 | age-*/scripts/*.js | 该时代专属 API |
-| TunerPanels/*.ltp | 对应功能模块的 API 文档（参见 PLAN.md 2.6 节面板清单） |
+| TunerPanels/*.ltp（调试面板） | 对应功能模块的 API 文档（参见 PLAN.md 2.6 节面板清单） |
 | core/ui/context-manager/*.js | component.md |
 
 ---
@@ -99,7 +99,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
   ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
 ```
 
-### 步骤 1b：TunerPanels 变动分析
+### 步骤 1b：调试面板变动分析
 
 对变动的 `.ltp` 文件：
 1. 解析 XML，提取 `<PopulateList>`、`<Action>`、`<GetFunction>`、`<SetFunction>` 中的 JS 代码
@@ -107,7 +107,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 
 ### 步骤 2：更新 Markdown 页面
 
-根据差异分析结果，直接更新对应的 docs/api/*.md 文件，确保新增的 API 在页面上可见。TunerPanels 中发现的官方代码示例可直接写入 Markdown 表格或代码块中。
+根据差异分析结果，直接更新对应的 docs/api/*.md 文件，确保新增的 API 在页面上可见。调试面板中发现的官方代码示例可直接写入 Markdown 表格或代码块中。
 
 ### 步骤 3：验证
 
@@ -149,7 +149,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 1. 只关注 `git diff` 或文件修改时间显示变动的文件
 2. 只更新受影响的 Markdown 文件
 3. 不做全量扫描
-4. 同时检查 TunerPanels 中对应的 `.ltp` 文件是否有变动
+4. 同时检查调试面板中对应的 `.ltp` 文件是否有变动
 
 ### 策略 C：新增模块（DLC）
 
@@ -185,7 +185,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 每次更新完成后，确认以下事项：
 
 - [ ] 变动文件已全部分析
-- [ ] 变动的 TunerPanels .ltp 文件已分析
+- [ ] 变动的调试面板 .ltp 文件已分析
 - [ ] 新增 API 已写入 Markdown
 - [ ] 已删除 API 已从 Markdown 中移除或标注废弃
 - [ ] 已修改 API 已更新参数/描述

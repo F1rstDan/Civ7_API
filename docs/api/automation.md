@@ -1,8 +1,8 @@
 ---
-title: Automation
+title: Automation 自动化
 ---
 
-# Automation
+# Automation 自动化
 
 自动化测试框架 API。用于基准测试和自动化流程。
 

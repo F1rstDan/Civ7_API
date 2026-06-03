@@ -1,8 +1,8 @@
 ---
-title: Locale
+title: Locale 本地化
 ---
 
-# Locale
+# Locale 本地化
 
 本地化/国际化工具对象，用于文本处理和多语言支持。
 

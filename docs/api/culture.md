@@ -1,8 +1,8 @@
 ---
-title: Culture
+title: Culture 文化
 ---
 
-# Culture
+# Culture 文化
 
 文化系统 API。
 

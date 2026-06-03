@@ -1,8 +1,8 @@
 ---
-title: 工具函数与 UI 框架
+title: UI Framework 工具函数
 ---
 
-# 工具函数与 UI 框架
+# UI Framework 工具函数
 
 全局工具函数、辅助对象和 UI 框架组件。从不通过 import 引入，引擎直接注入。
 

@@ -1,8 +1,8 @@
 ---
-title: Modding
+title: Modding 模组
 ---
 
-# Modding
+# Modding 模组
 
 Mod 管理 API。用于查询和管理已安装的 Mod。
 

@@ -1,8 +1,8 @@
 ---
-title: Resources
+title: Resources 资源
 ---
 
-# Resources
+# Resources 资源
 
 资源管理全局对象。
 

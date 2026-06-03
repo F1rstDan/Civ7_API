@@ -1,8 +1,8 @@
 ---
-title: Engine API
+title: Engine 引擎
 ---
 
-# Engine
+# Engine 引擎
 
 引擎核心对象。提供事件系统、数据绑定、引擎就绪检测等功能。从不通过 import 引入，引擎直接注入。
 

@@ -1,8 +1,8 @@
 ---
-title: Players API
+title: Players 玩家管理
 ---
 
-# Players
+# Players 玩家管理
 
 玩家数据访问的全局对象。用于获取玩家实例、查询玩家状态、遍历所有玩家等。从不通过 import 引入，引擎直接注入。
 

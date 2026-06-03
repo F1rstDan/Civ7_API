@@ -1,8 +1,8 @@
 ---
-title: Camera API
+title: Camera 镜头
 ---
 
-# Camera
+# Camera 镜头
 
 相机控制的全局对象。用于控制视角移动、缩放、旋转等。从不通过 import 引入。
 

@@ -1,8 +1,8 @@
 ---
-title: IndependentPowers
+title: IndependentPowers 独立势力
 ---
 
-# IndependentPowers
+# IndependentPowers 独立势力
 
 独立势力 API（城邦、蛮族等）。
 

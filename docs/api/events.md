@@ -1,8 +1,8 @@
 ---
-title: 引擎事件列表
+title: Events 事件参考
 ---
 
-# 引擎事件参考
+# Events 事件参考
 
 文明7引擎事件通过 `engine.on()` 监听，通过 `engine.trigger()` 触发。每个事件的回调参数中包含相关数据对象。
 

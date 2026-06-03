@@ -1,8 +1,8 @@
 ---
-title: Diplomacy
+title: Diplomacy 外交
 ---
 
-# Diplomacy
+# Diplomacy 外交
 
 外交系统 API。
 

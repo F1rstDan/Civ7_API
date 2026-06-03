@@ -1,8 +1,8 @@
 ---
-title: Configuration API
+title: Configuration 配置
 ---
 
-# Configuration
+# Configuration 配置
 
 游戏配置访问的全局对象。分为三个子配置：Game（游戏规则设置）、User（用户偏好设置）、Player（玩家槽位配置）。从不通过 import 引入，引擎直接注入。
 

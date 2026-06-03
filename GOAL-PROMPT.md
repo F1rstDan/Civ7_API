@@ -14,7 +14,7 @@
 
 在做任何操作之前，你必须先完整阅读以下两个文档：
 1. D:\Games Design\Civ7_mod\Civ7_API\PLAN.md — 初期建设计划（项目目标、技术方案、API Schema、执行步骤）
-   - 特别注意 2.6 节：TunerPanels 调试面板作为第二数据源
+   - 特别注意 2.6 节：调试面板作为权威 API 用法参考
 2. D:\Games Design\Civ7_mod\Civ7_API\UPDATE-WORKFLOW.md — 长期更新流程（游戏更新后如何同步文档）
 
 阅读完成后，根据当前项目状态决定执行哪个阶段。
@@ -29,11 +29,12 @@
 
 根据判断结果，从 PLAN.md 第 6 节「执行计划」中对应的阶段开始执行。
 
-## 已完成进度（截至 2026-06-02）
-- ✅ Phase 0-5 的深度 JSON 数据和 Markdown 页面已全部完成
-- ✅ 深度 JSON 包含：detailedNotes、examples、sourceFiles、relatedAPIs
-- ✅ 源文件路径规范统一（从 `modules/` 开始）
-- 下一步应从 Phase T1（TunerPanels 集成 - 更新已有页面）开始执行
+## 已完成进度（截至 2026-06-03）
+- ✅ Phase 0-13 全部完成
+- ✅ 45 个 API 文档页面已创建，含游戏源码和调试面板的完整 API
+- ✅ 侧边栏已按 6 大分类整理（核心引擎、游戏对象、UI 框架、地图系统、常量与枚举、事件参考）
+- ✅ 所有文档标题已统一为"英文名称 中文释义"格式
+- ⏳ Phase 8（游戏逻辑函数）为未来长期任务
 
 ## 执行原则
 
@@ -43,8 +44,8 @@
 4. **JSON 格式**：严格遵循 PLAN.md 第 4 节的 Schema
 5. **不要猜测**：无法推断的参数描述标记为 "待确认"，不要编造
 6. **来源追溯**：每个条目必须记录 sourceFiles
-7. **TunerPanel 优先**：当 .ltp 中有官方代码时，优先填入 tunerExamples 字段，标记 tuner_verified 状态
-7. **状态标记**：新录入的 API 默认 "status": "inferred"
+7. **调试面板优先**：当 .ltp 中有官方代码时，优先在文档中标注来源
+8. **状态标记**：新录入的 API 默认 "status": "inferred"
 
 ## 每次执行的输出
 
@@ -97,8 +98,8 @@ objective: |
   
   然后根据项目当前状态，从 PLAN.md 第 5 节的对应阶段开始执行。
   
-  源文件路径：D:\Games Design\Civ7_mod\.official\modules\
-  TunerPanels 路径：D:\Games Design\Civ7_mod\.official\TunerPanels\
+  源文件路径：D:\Games Design\Civ7_mod\.官方变动\
+  （包含 modules/ 和调试面板 TunerPanels/ 两个数据源）
   
   每次完成一个 API 大类后输出简报，下次继续下一个大类。
   
