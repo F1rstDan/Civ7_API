@@ -104,23 +104,12 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 对变动的 `.ltp` 文件：
 1. 解析 XML，提取 `<PopulateList>`、`<Action>`、`<GetFunction>`、`<SetFunction>` 中的 JS 代码
 2. 搜索新增/变更的 API 调用
-3. 更新对应 JSON 文件中的 `tunerExamples` 字段
-4. 若 TunerPanel 代码确认了之前推断的 API，将 `status` 升级为 `"tuner_verified"`
 
-### 步骤 2：更新 JSON 数据
+### 步骤 2：更新 Markdown 页面
 
-根据差异分析结果，更新对应的 docs/data/*.json 文件：
+根据差异分析结果，直接更新对应的 docs/api/*.md 文件，确保新增的 API 在页面上可见。TunerPanels 中发现的官方代码示例可直接写入 Markdown 表格或代码块中。
 
-- **新增 API**：按 PLAN.md 第 4 节的 Schema 添加新条目，status 设为 "inferred"
-- **删除 API**：将对应条目的 status 改为 "deprecated"，不要直接删除（保留历史记录）
-- **修改 API**：更新参数/返回值/描述，status 改为 "inferred"（需要重新验证）
-- **新增模块**：创建新的 JSON 文件和对应的 Markdown 页面
-
-### 步骤 3：更新 Markdown 页面
-
-同步更新 docs/api/*.md 文件，确保新增的 API 在页面上可见。
-
-### 步骤 4：验证
+### 步骤 3：验证
 
 1. 启动 VitePress 开发服务器：`npx vitepress dev docs`
 2. 检查新增/修改的 API 在页面上正确显示
@@ -150,7 +139,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 
 1. 重新扫描整个 modules/ 目录
 2. 用 `rg` 搜索所有全局 API 的新用法
-3. 对比旧 JSON 数据，找出新增/变更
+3. 对比已有 Markdown 文档，找出新增/变更
 4. 更新所有受影响的文档页面
 
 ### 策略 B：定向更新（小补丁）
@@ -158,9 +147,9 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 适用于：热修复、小版本补丁
 
 1. 只关注 `git diff` 或文件修改时间显示变动的文件
-2. 只更新受影响的 JSON 和 Markdown
+2. 只更新受影响的 Markdown 文件
 3. 不做全量扫描
-4. 同时检查 TunerPanels 中对应的 `.ltp` 文件是否有变动，更新 `tunerExamples`
+4. 同时检查 TunerPanels 中对应的 `.ltp` 文件是否有变动
 
 ### 策略 C：新增模块（DLC）
 
@@ -168,7 +157,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 
 1. 扫描新模块的目录结构
 2. 提取新模块中的 API
-3. 创建新的 JSON 文件和 Markdown 页面
+3. 创建新的 Markdown 页面
 4. 更新侧边栏导航
 
 ---
@@ -176,25 +165,18 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 ## 5. 常见问题处理
 
 ### Q: 发现已有文档的参数描述有误怎么办？
-直接修正 JSON 中的 description 字段，并将 status 改为 "verified"（如果已确认）或 "inferred"（如果只是更好的推断）。
+直接在对应的 Markdown 文件中修正描述。
 
 ### Q: 某个 API 在新版本中行为变了但签名没变怎么办？
-在 JSON 条目的 `notes` 字段中记录行为变化，附上版本号。
-
-```json
-{
-  "notes": "v1.2 起返回值改为包含方向信息的新对象结构"
-}
-```
+在 Markdown 页面中用注释或备注说明行为变化，附上版本号。
 
 ### Q: 新增了一个全新的全局对象怎么办？
-1. 在 docs/data/ 下创建新的 JSON 文件
-2. 在 docs/api/ 下创建新的 Markdown 页面
-3. 更新 docs/.vitepress/config.js 的侧边栏配置
-4. 更新 PLAN.md 第 2.3 节的全局 API 表格
+1. 在 docs/api/ 下创建新的 Markdown 页面
+2. 更新 docs/.vitepress/config.js 的侧边栏配置
+3. 更新 PLAN.md 第 2.3 节的全局 API 表格
 
 ### Q: 源文件中的代码难以理解怎么办？
-在 JSON 条目中设置 `"status": "unverified"`，并在 `notes` 中说明不确定的地方。后续可通过游戏内测试或查阅社区资料来确认。
+在 Markdown 中用 `⚠️ 待确认` 标注不确定的地方。后续可通过游戏内测试或查阅社区资料来确认。
 
 ---
 
@@ -204,11 +186,9 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 
 - [ ] 变动文件已全部分析
 - [ ] 变动的 TunerPanels .ltp 文件已分析
-- [ ] tunerExamples 字段已更新（如有新代码片段）
-- [ ] 新增 API 已录入 JSON（status = inferred）
-- [ ] 已删除 API 已标记 deprecated
+- [ ] 新增 API 已写入 Markdown
+- [ ] 已删除 API 已从 Markdown 中移除或标注废弃
 - [ ] 已修改 API 已更新参数/描述
-- [ ] Markdown 页面已同步更新
 - [ ] VitePress 站点可正常启动
 - [ ] 搜索功能正常
 - [ ] CHANGELOG.md 已更新

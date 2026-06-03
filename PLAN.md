@@ -1,4 +1,4 @@
-﻿# Civ7 API 文档建设计划（深度版）
+# Civ7 API 文档建设计划（深度版）
 
 > 本文档是整个项目的**核心指导文件**。任何 AI 在执行本项目任务前，必须先完整阅读本文档。
 
@@ -112,7 +112,7 @@ UrbanReligionChanged
 
 ### 3.1 技术栈
 - **文档站框架**：VitePress（Vue 驱动的静态站点生成器）
-- **数据层**：JSON 文件（每个 API 大类一个 JSON）
+- **数据层**：Markdown 文件（每个 API 大类一个 .md 页面）+ `docs/data/constants.json`（常量自动化管线的中间格式）
 - **构建工具**：Node.js + Vite
 - **部署**：本地 `npx vitepress dev docs` 开发服务器
 
@@ -146,111 +146,12 @@ Civ7_API/
 │   │   ├── constants.md
 │   │   └── ... (30+ 个 API 文档页面)
 │   └── data/
-│       ├── constants.json
-│       └── ... (其他 API JSON)
-│       ├── engine.json
-│       ├── gameplay-map.json
-│       ├── game-info.json
-│       ├── players.json
-│       ├── configuration.json
-│       ├── camera.json
-│       ├── component.json
-│       ├── ui-components.json
-│       ├── utilities.json
-│       └── events.json
+│       └── constants.json     # 常量自动化管线的中间数据（rg → JSON → MD）
 ```
 
 ---
 
-## 4. API 条目 JSON Schema（深度版）
-
-每个 API 条目遵循以下结构：
-
-```json
-{
-  "name": "GameplayMap.getPlotDistance",
-  "category": "GameplayMap",
-  "type": "method",
-  "description": "计算两个六角格坐标之间的距离。",
-  "detailedNotes": "此距离使用六角格特有的距离算法...",
-  "params": [
-    { "name": "x1", "type": "int", "description": "起点的X坐标（列）", "required": true },
-    { "name": "y1", "type": "int", "description": "起点的Y坐标（行）", "required": true },
-    { "name": "x2", "type": "int", "description": "终点的X坐标（列）", "required": true },
-    { "name": "y2", "type": "int", "description": "终点的Y坐标（行）", "required": true }
-  ],
-  "returns": { "type": "int", "description": "两个地块之间的六角格距离" },
-  "edgeCases": "当地图启用环绕时，距离计算会考虑跨越地图边界的最短路径。",
-  "examples": [
-    {
-      "title": "检查两个城市的距离",
-      "code": "const iDist = GameplayMap.getPlotDistance(...);",
-      "sourceFile": "modules/base-standard/maps/map-utilities.js",
-      "sourceLine": 47
-    }
-  ],
-  "tunerExamples": [
-    {
-      "panelFile": "Cities.ltp",
-      "panelSection": "PopulateList/City List",
-      "code": "let city = Cities.get(cityId);\nlet cityLocation = city.location;"
-    }
-  ],
-  "relatedAPIs": ["GameplayMap.getAdjacentPlotLocation", "GameplayMap.getDirectionToPlot"],
-  "sourceFiles": [
-    { "file": "modules/base-standard/maps/map-utilities.js", "line": 47, "role": "usage_example" }
-  ],
-  "status": "inferred",
-  "verifiedBy": "",
-  "gameVersion": "1.0.0"
-}
-```
-
-### 4.1 字段说明
-
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `name` | string | 是 | API 完整名称 |
-| `category` | string | 是 | 所属大类 |
-| `type` | string | 是 | 条目类型，见 4.2 |
-| `description` | string | 是 | 一句话简介 |
-| `detailedNotes` | string | 否 | 详细技术说明（段落级） |
-| `params` | array | 否 | 参数列表 |
-| `returns` | object | 否 | 返回值说明 |
-| `edgeCases` | string | 否 | 边界情况和特殊行为 |
-| `examples` | array | 否 | 代码示例，含 title/code/sourceFile/sourceLine |
-| `tunerExamples` | array | 否 | TunerPanel 示例，含 panelFile/panelSection/code（来源为 Firaxis 官方调试代码） |
-| `relatedAPIs` | string[] | 否 | 关联 API 列表 |
-| `sourceFiles` | array | 是 | 源文件引用，path 从 modules/ 开始 |
-| `status` | string | 是 | 验证状态，见 4.3 |
-| `verifiedBy` | string | 否 | 验证方式/人 |
-| `gameVersion` | string | 否 | 对应游戏版本 |
-
-### 4.2 type 字段取值
-
-| 值 | 含义 |
-|---|------|
-| `method` | 对象方法 |
-| `property` | 对象属性 |
-| `event` | 引擎事件 |
-| `function` | 独立函数 |
-| `class` | 类定义 |
-| `constant` | 常量/枚举 |
-| `table` | GameInfo 数据表 |
-
-### 4.3 status 字段取值
-
-| 值 | 含义 |
-|---|------|
-| `verified` | 已在游戏内测试确认 |
-| `inferred` | AI 从代码使用模式推断 |
-| `tuner_verified` | 从 TunerPanel 官方调试代码确认 |
-| `unverified` | 信息来源不确定 |
-| `deprecated` | 已弃用 |
-
----
-
-## 5. 数据采集方法：四遍扫描法
+## 4. 数据采集方法：四遍扫描法
 
 由于源文件是打包后的代码且几乎没有注释，采用「四遍扫描法」从使用模式中反推 API 语义。TunerPanels 作为第三遍的核心数据源。
 
@@ -280,7 +181,7 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 1. 从第二遍的上下文中，提取最清晰的使用片段作为示例
 2. 简化示例代码，去掉无关逻辑，保留核心用法
 3. 综合前两遍的信息，撰写中文说明
-4. 标注 `status: "inferred"`
+4. 标注为"推断"状态
 
 ### 第四遍：TunerPanels 官方代码交叉验证（新增）
 
@@ -288,8 +189,8 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 1. 解析 `.ltp` XML，提取所有 `<PopulateList>`、`<Action>`、`<GetFunction>`、`<SetFunction>` 中的 JS 代码
 2. 搜索目标 API 在这些代码片段中的出现
 3. 从官方代码中提取：参数类型确认、返回值用法、子系统层级、操作流程
-4. 将最佳官方代码片段填入 `tunerExamples` 字段
-5. 若 TunerPanel 代码确认了推断，将 `status` 升级为 `"tuner_verified"`
+4. 将最佳官方代码片段记录到对应 Markdown 文档中
+5. 若 TunerPanel 代码确认了推断，在文档中标注为"Tuner 验证"
 
 **TunerPanels 提供的独特价值**：
 - **参数确认**：从 `Game.PlayerOperations.sendRequest(playerId, PlayerOperationTypes.X, args)` 可确认操作类型枚举
@@ -300,14 +201,14 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 
 ---
 
-## 6. 执行计划（分阶段，按优先级）
+## 5. 执行计划（分阶段，按优先级）
 
 ### Phase 0：项目初始化 ✅ 已完成
 搭建 VitePress 项目骨架，配置好导航和搜索。
 1. ✅ `npm init -y` + `npm add -D vitepress`
 2. ✅ 创建 `docs/.vitepress/config.js`（含侧边栏、搜索、导航）
 3. ✅ 创建 `docs/index.md` 和 31 个 `docs/api/*.md` 页面
-4. ✅ 创建 6+ 个 `docs/data/*.json` 数据文件
+4. ✅ 创建 `docs/data/constants.json` 常量数据文件
 5. ✅ `npx vitepress dev docs` 可正常启动，搜索可用
 6. ✅ GitHub Pages 部署配置（`.github/workflows/deploy.yml`）
 7. ✅ 批处理启动脚本（`!启动文明7文档站.bat`）
@@ -315,7 +216,7 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 
 ### Phase 1：GameplayMap（60 个方法）— P0 ✅ 已完成深度格式
 Mod 开发最常用的地图操作 API。
-- ✅ 深度 JSON 已完成（19 个核心方法，含 detailedNotes、examples、sourceFiles）
+- ✅ 深度 Markdown 已完成（19 个核心方法，含详细说明、代码示例、源文件引用）
 - ✅ Markdown 页面已有完整方法表格（55 个方法）
 - 坐标/距离：`getPlotDistance`, `getAdjacentPlotLocation`, `getDirectionToPlot` 等
 - 地块属性：`getBiomeType`, `getTerrainType`, `getFeatureType`, `getElevation` 等
@@ -407,7 +308,7 @@ Mod 开发最常用的地图操作 API。
 
 ---
 
-## 7. 质量标准
+## 6. 质量标准
 
 ### 7.1 单个 API 条目质量要求
 
@@ -416,18 +317,18 @@ Mod 开发最常用的地图操作 API。
 - [ ] `category` 正确
 - [ ] `type` 正确
 - [ ] `description` 至少一句话
-- [ ] `sourceFiles` 至少一个
+- [ ] 源文件引用至少一个
 
 **推荐标准**（目标）：
-- [ ] `detailedNotes` 有段落级说明
+- [ ] 有段落级详细说明
 - [ ] `params` 每个参数有描述
 - [ ] `returns` 有描述
 - [ ] `examples` 至少一个完整示例
-- [ ] `relatedAPIs` 列出关联 API
+- [ ] 列出关联 API
 
 ### 7.2 单个大类完成标准
 
-- [ ] 所有可搜索到的方法/属性都已录入 JSON
+- [ ] 所有可搜索到的方法/属性都已写入 Markdown 文档
 - [ ] 每个条目满足最低标准
 - [ ] 至少 50% 的条目满足推荐标准
 - [ ] Markdown 页面能正确渲染所有条目
@@ -452,11 +353,11 @@ Mod 开发最常用的地图操作 API。
 
 ---
 
-## 8. 当前进度总结
+## 7. 当前进度总结
 
 ### 已完成
 - ✅ 项目初始化（VitePress 站点、配置、部署脚本）
-- ✅ Phase 1-5 的深度 JSON 数据和 Markdown 页面
+- ✅ Phase 1-5 的深度 Markdown 文档页面
 - ✅ 源文件路径规范统一（从 `modules/` 开始）
 
 ### 已完成（本轮新增）
@@ -483,17 +384,16 @@ Mod 开发最常用的地图操作 API。
 - UI 框架：5 个页面
 - 事件参考：1 个页面
 - 常量与枚举：1 个页面（含 TunerPanels 枚举）
-- 深度 JSON 方法/事件/表/工具总数：200+ 个
+- 深度文档化的方法/事件/表/工具总数：200+ 个
 
 ---
 
-## 9. 注意事项
+## 8. 注意事项
 
 1. **不要猜测**：无法推断的参数描述标记为 `"待确认"`
-2. **来源追溯**：每个 API 条目必须记录 `sourceFiles`，路径从 `modules/` 开始
+2. **来源追溯**：每个 API 条目必须记录源文件引用，路径从 `modules/` 开始
 3. **增量优先**：按 Phase 顺序逐个推进
 4. **引擎全局对象优先**：这些是 Mod 开发最核心的 API
-5. **保持 JSON 格式一致**：严格遵循第 4 节的 Schema
-6. **源文件路径统一**：所有路径从 `modules/` 开始，不包含 `.官方变动/`
-7. **TunerPanel 示例优先**：当 `.ltp` 中有官方代码时，优先使用 `tunerExamples` 字段（标记 `tuner_verified` 状态）
-8. **TunerPanel 路径引用**：`tunerExamples` 中的 `panelFile` 使用相对路径（如 `Cities.ltp`），不包含上级目录
+5. **源文件路径统一**：所有路径从 `modules/` 开始，不包含 `.官方变动/`
+6. **TunerPanel 示例优先**：当 `.ltp` 中有官方代码时，优先在文档中标注来源和验证状态
+7. **TunerPanel 路径引用**：文档中引用 `.ltp` 面板文件时使用相对路径（如 Cities.ltp），不包含上级目录
