@@ -209,6 +209,8 @@ if (player) {
 </API>
 ````
 
+（无参数则写 `**参数**: 无`）
+
 ### 5.3 id 匹配规则
 
 触发器的 id = 插槽纯文本。统一使用 `对象.方法名` 格式以避免重名。
@@ -234,7 +236,7 @@ if (player) {
 | 1 | 创建 `docs/.vitepress/theme/components/` 目录 | 目录存在 |
 | 2 | 创建 5 个文件（第四节代码） | 无语法错误 |
 | 3 | `npx vitepress dev docs` | 站点正常，无控制台错误 |
-| 4 | 改造 `players.md` 作为 Demo | 点击方法名弹出弹窗 |
+| 4 | 改造 `camera.md` 作为 Demo | 点击方法名弹出弹窗 |
 | 5 | 逐步改造其余 .md 文件 | 所有 API 可点击 |
 | 6 | `npx vitepress build docs` | 构建无错误 |
 
