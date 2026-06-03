@@ -22,6 +22,7 @@ export default defineConfig({
           { text: 'GameInfo 数据表', link: '/api/game-info' },
           { text: 'Engine 引擎', link: '/api/engine' },
           { text: 'Players 玩家管理', link: '/api/players' },
+          { text: 'Globals 全局工具', link: '/api/globals' },
           { text: 'Configuration 配置', link: '/api/configuration' },
           { text: 'Modding 模组', link: '/api/modding' },
         ]
@@ -58,11 +59,13 @@ export default defineConfig({
         text: 'UI与可视化',
         items: [
           { text: 'Component 基类', link: '/api/component' },
+          { text: 'UI Objects UI对象', link: '/api/ui-objects' },
           { text: 'Audio & Debug 音频调试', link: '/api/audio-debug' },
           { text: 'Camera 镜头', link: '/api/camera' },
           { text: 'Locale 本地化', link: '/api/locale' },
           { text: 'Notifications 通知', link: '/api/notifications' },
           { text: 'WorldUnits 单位视觉表现', link: '/api/world-units' },
+          { text: 'WorldUI 世界UI', link: '/api/world-ui' },
         ]
       },
       {
@@ -91,8 +94,8 @@ export default defineConfig({
           { text: 'Autoplay 自动播放', link: '/api/autoplay' },
           { text: 'Network 网络', link: '/api/network' },
           { text: 'Social 社交', link: '/api/social' },
-          { text: 'UI Framework 工具函数', link: '/api/ui-framework' },
           { text: 'Input 输入', link: '/api/input' },
+          { text: 'API Stats 调用统计', link: '/api/api-stats' },
         ]
       }
     ],
