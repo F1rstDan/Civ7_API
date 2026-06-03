@@ -1,4 +1,4 @@
-# Civ7 API 文档建设计划（深度版）
+﻿# Civ7 API 文档建设计划（深度版）
 
 > 本文档是整个项目的**核心指导文件**。任何 AI 在执行本项目任务前，必须先完整阅读本文档。
 
@@ -68,6 +68,43 @@ LocalPlayerChanged, NotificationAdded, PlotVisibilityChanged,
 ResourceAssigned, ResourceUnassigned, RuralReligionChanged,
 UrbanReligionChanged
 ```
+
+### 2.6 TunerPanels 调试面板（第二数据源，权威 API 用法参考）
+
+**路径**：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
+
+**格式**：`.ltp` XML 文件，每个文件定义 Firaxis 内部 Tuner 调试工具的一个面板。
+
+**价值**：
+- 包含 Firaxis **官方 JavaScript 代码片段**，是最权威的 API 用法示例
+- 代码直接展示了游戏对象的**完整属性链**（如 `player.Treasury.changeGoldBalance(500, -1)`）
+- 揭示了大量从 `modules/` 源码中难以推断的**子系统层级关系**
+- 面板分类比源码更清晰，每个 `.ltp` 文件对应一个功能领域
+
+**面板清单**（37 个文件，按功能分组）：
+
+| 分组 | 面板文件 | 揭示的主要 API |
+|------|---------|---------------|
+| 玩家管理 | Players.ltp, Player.ltp, Player Stories.ltp, Player Legacy Path.ltp, Player Modifiers.ltp | `Players.*`, player 子系统（Treasury, DiplomacyTreasury, Identity, Workers, Happiness, Stats, Techs, Culture, Stories, LegacyPaths, Modifiers, Advisory） |
+| 城市 | Cities.ltp | `Cities.*`, city 子系统（BuildQueue, FoodQueue, Districts, Constructibles, Yields, Religion, Trade, Resources） |
+| 单位 | Units.ltp | `Units.*`, unit 子系统（Health, Combat, Experience, Religion, Formations, Armies, Operations, Abilities） |
+| 区域/建筑 | Districts.ltp | `Districts.*`, `Constructibles.*`, district 属性（isQuarter, isUniqueQuarter, isUrbanCore, isDefensible） |
+| 外交 | Diplomacy.ltp, Deals.ltp | `player.Diplomacy.*`, `Game.DiplomacySessions.*`, `Game.DiplomacyDeals.*`, `Game.Diplomacy.*`, `player.Influence.*` |
+| 贸易 | Trade.ltp | `Game.Trade.*`, `player.Trade.*`, `city.Trade.*` |
+| 资源 | Resources.ltp | `player.Resources.*`, `city.Resources.*` |
+| 地图 | Map.ltp, Map Areas.ltp, Map_Regions.ltp | `WorldBuilder.*`, `MapAreas.*`, `MapRegions.*`, `RegionBuilder.*`, `Visibility.*` |
+| 自然 | Features.ltp, Rivers.ltp, Random Events.ltp, Plot Effects.ltp | `MapFeatures.*`, `MapRivers.*`, `MapStorms.*`, `MapPlotEffects.*`, `MapPlotYields.*` |
+| 外交/胜利 | Victories.ltp, VictoriesDefeats.ltp, Legacies.ltp, Independents.ltp | `Game.VictoryManager.*`, `player.Victories.*`, `player.Legacies.*`, `Game.IndependentPowers.*`, `Game.AgeProgressManager.*` |
+| 效果系统 | Modifiers.ltp, Requirements.ltp | `GameEffects.*`（Modifier/Requirement 完整 API） |
+| 调试/反射 | Reflection.ltp, Autoplay.ltp, Advice.ltp | `ReflectionArchives.*`, `Autoplay.*`, `AdviceManager.*` |
+| 配置/叙事 | Configuration.ltp, Notifications.ltp | `Configuration.*` 补充, `Game.Notifications.*`, `GameSetup.*` |
+| 开局 | AdvancedStart.ltp | `player.AdvancedStart.*` |
+
+**提取方法**：解析 XML 中的以下节点：
+- `<PopulateList>` — 列表数据填充代码（最丰富的 API 用法）
+- `<Action>` — 按钮触发的操作代码（展示完整操作流程）
+- `<GetFunction>` / `<SetFunction>` — 读写控件代码（展示属性读写）
+- `<OnSelection>` — 列表选中事件代码（展示数据解析模式）
 
 ---
 
@@ -152,6 +189,13 @@ Civ7_API/
       "sourceLine": 47
     }
   ],
+  "tunerExamples": [
+    {
+      "panelFile": "Cities.ltp",
+      "panelSection": "PopulateList/City List",
+      "code": "let city = Cities.get(cityId);\nlet cityLocation = city.location;"
+    }
+  ],
   "relatedAPIs": ["GameplayMap.getAdjacentPlotLocation", "GameplayMap.getDirectionToPlot"],
   "sourceFiles": [
     { "file": "modules/base-standard/maps/map-utilities.js", "line": 47, "role": "usage_example" }
@@ -175,6 +219,7 @@ Civ7_API/
 | `returns` | object | 否 | 返回值说明 |
 | `edgeCases` | string | 否 | 边界情况和特殊行为 |
 | `examples` | array | 否 | 代码示例，含 title/code/sourceFile/sourceLine |
+| `tunerExamples` | array | 否 | TunerPanel 示例，含 panelFile/panelSection/code（来源为 Firaxis 官方调试代码） |
 | `relatedAPIs` | string[] | 否 | 关联 API 列表 |
 | `sourceFiles` | array | 是 | 源文件引用，path 从 modules/ 开始 |
 | `status` | string | 是 | 验证状态，见 4.3 |
@@ -199,14 +244,15 @@ Civ7_API/
 |---|------|
 | `verified` | 已在游戏内测试确认 |
 | `inferred` | AI 从代码使用模式推断 |
+| `tuner_verified` | 从 TunerPanel 官方调试代码确认 |
 | `unverified` | 信息来源不确定 |
 | `deprecated` | 已弃用 |
 
 ---
 
-## 5. 数据采集方法：三遍扫描法
+## 5. 数据采集方法：四遍扫描法
 
-由于源文件是打包后的代码且几乎没有注释，采用「三遍扫描法」从使用模式中反推 API 语义。
+由于源文件是打包后的代码且几乎没有注释，采用「四遍扫描法」从使用模式中反推 API 语义。TunerPanels 作为第三遍的核心数据源。
 
 ### 第一遍：签名与调用模式提取（自动化）
 
@@ -235,6 +281,22 @@ rg -n "GameplayMap\.getPlotDistance" "D:\Games Design\Civ7_mod\.官方变动\mod
 2. 简化示例代码，去掉无关逻辑，保留核心用法
 3. 综合前两遍的信息，撰写中文说明
 4. 标注 `status: "inferred"`
+
+### 第四遍：TunerPanels 官方代码交叉验证（新增）
+
+对每个 API 方法，在 TunerPanels `.ltp` 文件中搜索其使用：
+1. 解析 `.ltp` XML，提取所有 `<PopulateList>`、`<Action>`、`<GetFunction>`、`<SetFunction>` 中的 JS 代码
+2. 搜索目标 API 在这些代码片段中的出现
+3. 从官方代码中提取：参数类型确认、返回值用法、子系统层级、操作流程
+4. 将最佳官方代码片段填入 `tunerExamples` 字段
+5. 若 TunerPanel 代码确认了推断，将 `status` 升级为 `"tuner_verified"`
+
+**TunerPanels 提供的独特价值**：
+- **参数确认**：从 `Game.PlayerOperations.sendRequest(playerId, PlayerOperationTypes.X, args)` 可确认操作类型枚举
+- **子系统发现**：从 `player.Treasury.changeGoldBalance(500, -1)` 可发现 Treasury 子系统
+- **操作流程**：从 Deals.ltp 的「Enact Open Borders」可看到完整的交易创建流程
+- **枚举值**：从 `UnitActivityTypes.AWAKE`、`WarTypes.SURPRISE_WAR` 等可直接获取枚举常量
+- **数据表结构**：从 `GameInfo.NarrativeStories.lookup(pStory.type)` 可确认表的存在和用法
 
 ---
 
@@ -297,6 +359,51 @@ Mod 开发最常用的地图操作 API。
 **更新命令**：`cd scripts && node update-constants.mjs`
 
 详细原理和用法见 `scripts/README.md`。
+### Phase T1：TunerPanels 集成 — 更新已有页面 ✅ 已完成
+将 `.ltp` 文件中发现的 API 信息融入现有文档页面。
+- ✅ `players.md`：补充 player 子系统（Treasury, DiplomacyTreasury, Identity, Workers, Happiness, Stats, Influence, Trade, Resources, Modifiers, Formations, Armies）
+- ✅ `cities.md`：完整 Cities API（BuildQueue, FoodQueue, Districts, Constructibles, Yields, Religion）
+- ✅ `units.md`：完整 Units API（Health, Combat, Experience, Religion, Operations, Abilities）
+- ✅ `districts.md`：完整 Districts API + Constructibles API
+- ✅ `diplomacy.md`：完整 Diplomacy 子系统（15+ 方法）
+- ✅ `configuration.md`：补充 GameSetup, NarrativeSifting, editMap
+- ✅ `independent-powers.md`：完整 IndependentPowers API
+- ✅ `notifications.md`：完整 Notifications API
+- ✅ `resources.md`：完整 Resources API
+
+### Phase T2：TunerPanels 集成 — 新增文档页面 ✅ 已完成
+为 `.ltp` 中发现的全新 API 系统创建独立文档页面。
+- ✅ `game-effects.md`：GameEffects 系统（Modifiers + Requirements）
+- ✅ `trade.md`：Game.Trade + player.Trade + city.Trade
+- ✅ `victories.md`：Game.VictoryManager + player.Victories + Defeats
+- ✅ `legacies.md`：player.Legacies + player.LegacyPaths
+- ✅ `stories.md`：player.Stories + NarrativeStories
+- ✅ `map-features.md`：MapFeatures + MapRivers + MapStorms + MapPlotEffects + WorldUI 模型组
+- ✅ `advanced-start.md`：player.AdvancedStart
+- ✅ `visibility.md`：Visibility API
+- ✅ `reflection.md`：ReflectionArchives API
+- ✅ `autoplay.md`：Autoplay API
+- ✅ `random-events.md`：Game.RandomEvents + Game.Combat + WMD（新增）
+- ✅ `unlocks.md`：Game.Unlocks 解锁系统（新增）
+- ✅ `advisors.md`：AdviceManager 建议系统（新增）
+- ✅ `world-units.md`：WorldUnits 单位可视化（新增）
+
+### Phase T3：TunerPanels 常量/枚举补充 ✅ 已完成
+从 `.ltp` 中提取的枚举常量补充到 `constants.md`。
+- ✅ UnitActivityTypes（14 个值，来自 WorldUnits.ltp）
+- ✅ UnitIdleStyles（6 个值，来自 WorldUnits.ltp）
+- ✅ CombatTypes（6 个值，来自 WorldUnits.ltp）
+- ✅ AgeStyles（3 个值，来自 WorldUnits.ltp）
+- ✅ AdvisorySubjectTypes（4 个类别，来自 Advice.ltp）
+- ✅ PlayerOperationTypes 已知值（来自 Pax Imperatoria.ltp、Deals.ltp）
+- ✅ UnitOperationTypes 已知值（来自 Pax Imperatoria.ltp）
+- ✅ DiplomacyDealItemTypes 已知值（来自 Deals.ltp）
+- ✅ WarTypes 已知值（来自 Diplomacy.ltp）
+
+### Phase T4：站点配置更新 ✅ 已完成
+- ✅ 更新 `docs/.vitepress/config.js` 侧边栏，新增所有 Phase T1/T2 的页面
+- ✅ 更新 `README.md` 的 API 概览表
+- 构建站点验证待执行
 
 ---
 
@@ -335,6 +442,10 @@ Mod 开发最常用的地图操作 API。
 - [x] Phase 5 完成（Camera 深度格式）
 - [x] Phase 6 完成（GameInfo 核心数据表 - 15 个核心表已文档化）
 - [x] Phase 7 完成（工具函数库 - 7 个工具组已文档化）
+- [x] Phase T1 完成（TunerPanels 集成 - 更新已有页面：9 个页面已更新）
+- [x] Phase T2 完成（TunerPanels 集成 - 新增页面：14 个新页面已创建）
+- [x] Phase T3 完成（TunerPanels 常量/枚举补充：9 类枚举已添加到 constants.md）
+- [x] Phase T4 完成（站点配置更新：侧边栏 + README 已更新）
 - [ ] Phase 8 完成（游戏逻辑函数）
 - [x] VitePress 站点可正常启动，搜索可用
 - [x] 侧边栏导航完整
@@ -352,19 +463,27 @@ Mod 开发最常用的地图操作 API。
 - ✅ Phase 6：GameInfo 核心数据表（15 个核心表已文档化）
 - ✅ Phase 7：UI 组件 + 工具函数库（7 个工具组已文档化）
 
+### 已完成（TunerPanels 集成）
+- ✅ Phase T1：更新 9 个已有页面（players, cities, units, districts, diplomacy, configuration, independent-powers, notifications, resources）
+- ✅ Phase T2：创建 14 个新页面（game-effects, trade, victories, legacies, stories, map-features, advanced-start, visibility, reflection, autoplay, random-events, unlocks, advisors, world-units）
+- ✅ Phase T3：添加 9 类 TunerPanels 枚举到 constants.md
+- ✅ Phase T4：更新侧边栏配置和 README
+
 ### 待完成（未来长期任务）
 - ⏳ Phase 8：游戏逻辑函数（base-standard/maps/ + scripts/ + age 模块）
 
-### 数据统计
+### 数据统计（TunerPanels 集成后）
+- 文档页面总数：**45 个** Markdown 页面
+- 核心引擎 API：11 个页面
+- 游戏对象：12 个页面
+- Game 子系统（TunerPanels）：6 个页面
+- Player 子系统（TunerPanels）：5 个页面
+- 地图子系统（TunerPanels）：4 个页面
+- 可视化与调试（TunerPanels）：3 个页面
+- UI 框架：5 个页面
+- 事件参考：1 个页面
+- 常量与枚举：1 个页面（含 TunerPanels 枚举）
 - 深度 JSON 方法/事件/表/工具总数：200+ 个
-  - GameplayMap: 19 个方法（深度） + 36 个（表格）
-  - Players: 12 个方法
-  - Configuration: 9 个方法
-  - Engine: 12 个方法
-  - Events: 61 个事件
-  - Camera: 12 个方法
-  - GameInfo: 15 个核心数据表
-  - Utilities: 7 个工具组（50+ 个方法/属性）
 
 ---
 
@@ -376,3 +495,5 @@ Mod 开发最常用的地图操作 API。
 4. **引擎全局对象优先**：这些是 Mod 开发最核心的 API
 5. **保持 JSON 格式一致**：严格遵循第 4 节的 Schema
 6. **源文件路径统一**：所有路径从 `modules/` 开始，不包含 `.官方变动/`
+7. **TunerPanel 示例优先**：当 `.ltp` 中有官方代码时，优先使用 `tunerExamples` 字段（标记 `tuner_verified` 状态）
+8. **TunerPanel 路径引用**：`tunerExamples` 中的 `panelFile` 使用相对路径（如 `Cities.ltp`），不包含上级目录

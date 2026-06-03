@@ -12092,3 +12092,120 @@ HULCHE_MOD_SEE_THROUGH_VEGETATED
 | `isLiveEventGame` |
 | `missingMods` |
 | `unownedMods` |
+
+---
+
+## TunerPanels 发现的枚举
+
+> 以下枚举从 Firaxis 调试面板 `.ltp` 文件中提取，是 API 调用时使用的常量值。
+> 来源：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
+
+### UnitActivityTypes
+
+来源：`WorldUnits.ltp`
+
+调用格式：`"TYPE_" + 活动名`
+
+| 值 | 完整字符串 | 说明 |
+|---|---|---|
+| NONE | `TYPE_NONE` | 无活动 |
+| SLEEP | `TYPE_SLEEP` | 休眠 |
+| HEAL | `TYPE_HEAL` | 治疗 |
+| SENTRY | `TYPE_SENTRY` | 警戒 |
+| PILLAGE | `TYPE_PILLAGE` | 掠夺 |
+| LOOKOUT | `TYPE_LOOKOUT` | 了望 |
+| FORTIFY | `TYPE_FORTIFY` | 驻防 |
+| LANDCLAIM | `TYPE_LANDCLAIM` | 领土宣称 |
+| BEFRIEND | `TYPE_BEFRIEND` | 结交 |
+| COMMANDER_ACTION | `TYPE_COMMANDER_ACTION` | 指挥官行动 |
+| COMMANDER_PACK | `TYPE_COMMANDER_PACK` | 指挥官集结 |
+| COMMANDER_UNPACK | `TYPE_COMMANDER_UNPACK` | 指挥官展开 |
+| COMMANDER_FOCUS_FIRE | `TYPE_COMMANDER_FOCUS_FIRE` | 指挥官集火 |
+| COMMANDER_COORDINATE_ATTACK | `TYPE_COMMANDER_COORDINATE_ATTACK` | 指挥官协调攻击 |
+
+### UnitIdleStyles
+
+来源：`WorldUnits.ltp`
+
+调用格式：`"IDLE_" + 样式名`
+
+| 值 | 完整字符串 | 说明 |
+|---|---|---|
+| DEFAULT | `IDLE_DEFAULT` | 默认空闲 |
+| SELECTED | `IDLE_SELECTED` | 选中状态 |
+| COMBAT | `IDLE_COMBAT` | 战斗状态 |
+| COMBAT_SELECTED | `IDLE_COMBAT_SELECTED` | 战斗选中 |
+| COMBAT_RANGED | `IDLE_COMBAT_RANGED` | 远程战斗 |
+| COMBAT_RANGED_SELECTED | `IDLE_COMBAT_RANGED_SELECTED` | 远程战斗选中 |
+
+### CombatTypes
+
+来源：`WorldUnits.ltp`
+
+调用格式：`Database.makeHash("COMBAT_" + 类型名)`
+
+| 值 | 完整字符串 | 说明 |
+|---|---|---|
+| MELEE | `COMBAT_MELEE` | 近战 |
+| RANGED | `COMBAT_RANGED` | 远程 |
+| BOMBARD | `COMBAT_BOMBARD` | 轰炸 |
+| AIR | `COMBAT_AIR` | 空战 |
+| ICBM | `COMBAT_ICBM` | 洲际导弹 |
+| RELIGIOUS | `COMBAT_RELIGIOUS` | 宗教战斗 |
+
+### AgeStyles
+
+来源：`WorldUnits.ltp`、`WorldUI Models.ltp`
+
+| 值 | 说明 |
+|---|---|
+| 1 | STYLE_1（古典时代） |
+| 2 | STYLE_2（探索时代） |
+| 3 | STYLE_3（现代时代） |
+
+### AdvisorySubjectTypes
+
+来源：`Advice.ltp`
+
+| 索引 | 类别 | 说明 |
+|---|---|---|
+| 0 | Culture | 文化建议 |
+| 1 | Military | 军事建议 |
+| 2 | Economic | 经济建议 |
+| 3 | Science | 科学建议 |
+
+### PlayerOperationTypes（已知值）
+
+来源：`Pax Imperatoria.ltp`、`Deals.ltp`
+
+| 值 | 用法 | 说明 |
+|---|---|---|
+| `CREATE_ELEMENT` | `Game.PlayerOperations.sendRequest(playerId, "CREATE_ELEMENT", payload)` | 创建元素（如单位） |
+| `ENACT_DEAL` | `Game.PlayerOperations.sendRequest(playerId, "ENACT_DEAL", dealData)` | 执行外交交易 |
+
+### UnitOperationTypes（已知值）
+
+来源：`Pax Imperatoria.ltp`
+
+| 值 | 用法 | 说明 |
+|---|---|---|
+| `UNITOPERATION_FOUND_CITY` | `Game.UnitOperations.sendRequest(unitId, "UNITOPERATION_FOUND_CITY", payload)` | 建立城市 |
+
+### DiplomacyDealItemTypes（已知值）
+
+来源：`Deals.ltp`
+
+| 值 | 说明 |
+|---|---|
+| `BORDERS_OPEN` | 开放边境 |
+| `DENOUNCE` | 谴责 |
+| `SUPPORT_INDEPENDENT` | 支持独立势力 |
+
+### WarTypes（已知值）
+
+来源：`Diplomacy.ltp`
+
+| 值 | 说明 |
+|---|---|
+| `SURPRISE_WAR` | 突袭战争 |
+| `FORMAL_WAR` | 正式战争 |

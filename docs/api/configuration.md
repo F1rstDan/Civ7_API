@@ -116,4 +116,62 @@ if (playerConfig) {
 - `modules/base-standard/ui/tutorial/tutorial-manager.js` — 教程系统中的 Configuration 使用
 - `modules/core/ui-next/screens/unlocks/civ-unlocks-model.js` — 文明解锁配置读取
 - `modules/age-exploration/ui/tutorial/tutorial-items-exploration.js` — 探索时代教程配置读取
-- `modules/base-standard/ui/unlocks/panel-player-rewards.js` — 玩家奖励面板配置读取
+- `modules/base-standard/ui/unlocks/panel-player-rewards.js` — 玩家奖励面板配置读取## TunerPanel 补充：Configuration 完整 API（来源 Configuration.ltp）
+
+### Configuration.getGame() 补充
+
+```javascript
+// 来源 Configuration.ltp
+const gameConfig = Configuration.getGame();
+gameConfig.possibleParticipatingPlayerIDs;
+gameConfig.maxPlayers;
+gameConfig.setNarrativeSiftingAmount(amount);
+gameConfig.setNarrativeSiftingType();
+gameConfig.turnOffDiscoveries();
+```
+
+### Configuration.getMap() 补充
+
+```javascript
+// 来源 Configuration.ltp
+const mapConfig = Configuration.getMap();
+mapConfig.mapSizeTypeName;
+mapConfig.getValue("RequestedNaturalWonders");
+Configuration.editMap().setValue("RequestedNaturalWonders", activeRequests);
+```
+
+### Configuration.getPlayer() 补充
+
+```javascript
+// 来源 Configuration.ltp
+const playerConfig = Configuration.getPlayer(playerIndex);
+playerConfig.leaderTypeName;
+playerConfig.civilizationTypeName;
+playerConfig.slotStatus;       // SlotStatus.SS_OPEN/SS_CLOSED/SS_COMPUTER/SS_TAKEN/SS_OBSERVER
+playerConfig.isAlive;
+playerConfig.startingPosition; // {x, y}
+playerConfig.team;
+```
+
+### GameSetup API
+
+```javascript
+// 来源 Configuration.ltp
+GameSetup.findPlayerParameter(player, "PlayerCivilization");
+GameSetup.findPlayerParameter(player, "PlayerLeader");
+GameSetup.setPlayerParameterValue(player, "PlayerCivilization", value);
+```
+
+## 常用枚举
+
+| 枚举 | 说明 |
+|------|------|
+| `SlotStatus.SS_OPEN` | 开放槽位 |
+| `SlotStatus.SS_CLOSED` | 关闭槽位 |
+| `SlotStatus.SS_COMPUTER` | AI 控制 |
+| `SlotStatus.SS_TAKEN` | 已被占用 |
+| `SlotStatus.SS_OBSERVER` | 观察者 |
+
+---
+
+*来源：Configuration.ltp*

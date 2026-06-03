@@ -1,4 +1,4 @@
-# Civ7 API 文档更新流程
+﻿# Civ7 API 文档更新流程
 
 > 本文档指导「当文明7官方发布更新后，如何同步更新 API 文档」。执行更新前请先阅读 PLAN.md。
 
@@ -45,6 +45,24 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
   Sort-Object LastWriteTime -Descending
 ```
 
+### 2.3 TunerPanels 变动检查
+
+TunerPanels 目录位于：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
+
+当游戏更新后，需检查 `.ltp` 文件是否有变动：
+
+```powershell
+Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -File -Filter "*.ltp" |
+  Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-30) } |
+  Select-Object FullName, LastWriteTime |
+  Sort-Object LastWriteTime -Descending
+```
+
+**TunerPanels 变动的影响**：
+- `.ltp` 文件中的 JS 代码变更可能反映 API 签名变化或新 API 引入
+- 新增的 `.ltp` 文件可能对应新功能模块
+- 修改的 `.ltp` 文件中的代码可直接用于更新 `tunerExamples` 字段
+
 ### 2.2 确定影响范围
 
 根据变动文件路径，判断影响哪些 API 大类：
@@ -58,6 +76,7 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
 | base-standard/scripts/*.js | gameplay-map.md, 游戏逻辑相关 |
 | base-standard/ui/**/*.js | 各功能模块文档 |
 | age-*/scripts/*.js | 该时代专属 API |
+| TunerPanels/*.ltp | 对应功能模块的 API 文档（参见 PLAN.md 2.6 节面板清单） |
 | core/ui/context-manager/*.js | component.md |
 
 ---
@@ -79,6 +98,14 @@ Get-ChildItem -Path "D:\Games Design\Civ7_mod\.官方变动\modules" -Recurse -F
 Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches |
   ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
 ```
+
+### 步骤 1b：TunerPanels 变动分析
+
+对变动的 `.ltp` 文件：
+1. 解析 XML，提取 `<PopulateList>`、`<Action>`、`<GetFunction>`、`<SetFunction>` 中的 JS 代码
+2. 搜索新增/变更的 API 调用
+3. 更新对应 JSON 文件中的 `tunerExamples` 字段
+4. 若 TunerPanel 代码确认了之前推断的 API，将 `status` 升级为 `"tuner_verified"`
 
 ### 步骤 2：更新 JSON 数据
 
@@ -133,6 +160,7 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 1. 只关注 `git diff` 或文件修改时间显示变动的文件
 2. 只更新受影响的 JSON 和 Markdown
 3. 不做全量扫描
+4. 同时检查 TunerPanels 中对应的 `.ltp` 文件是否有变动，更新 `tunerExamples`
 
 ### 策略 C：新增模块（DLC）
 
@@ -175,6 +203,8 @@ Select-String -Path "path\to\file.js" -Pattern "GameplayMap\.(\w+)" -AllMatches 
 每次更新完成后，确认以下事项：
 
 - [ ] 变动文件已全部分析
+- [ ] 变动的 TunerPanels .ltp 文件已分析
+- [ ] tunerExamples 字段已更新（如有新代码片段）
 - [ ] 新增 API 已录入 JSON（status = inferred）
 - [ ] 已删除 API 已标记 deprecated
 - [ ] 已修改 API 已更新参数/描述

@@ -21,3 +21,43 @@ title: Notifications
 | `getBlocksTurnAdvancement` | id | `bool` | 是否阻止回合推进 |
 | `canUserDismissNotification` | id | `bool` | 用户是否可以关闭通知 |
 | `getSeverity` | id | `int` | 获取通知严重程度 |
+## TunerPanel 补充：Notifications 完整 API（来源 Notifications.ltp）
+
+### Game.Notifications
+
+```javascript
+// 来源 Notifications.ltp
+// 发送通知
+let args = {};
+args.Type = Game.getHash(notificationType);
+args.AlwaysAdd = true;
+Game.Notifications.send(args, GameContext.localPlayerID);  // 发送给特定玩家
+Game.Notifications.send(args, -2);  // 发送给本地玩家
+
+// 查询通知
+let notificationIDs = Game.Notifications.getIdsForPlayer(playerId);
+for (const id of notificationIDs) {
+  let notification = Game.Notifications.find(id);
+  // notification.Type, notification.AddedOnTurn, notification.Target
+  // notification.Dismissed, notification.Expired
+  let typeName = Game.Notifications.getTypeName(notification.Type);
+  let message = Game.Notifications.getMessage(id);
+}
+
+// 获取回合结束阻塞类型
+Game.Notifications.getEndTurnBlockingType(playerId);
+```
+
+### GameInfo.Notifications 表
+
+```javascript
+// 来源 Notifications.ltp
+for (const item of GameInfo.Notifications) {
+  let name = Locale.compose(item.NotificationType);
+  let message = Locale.compose(item.Message);
+}
+```
+
+---
+
+*来源：Notifications.ltp*

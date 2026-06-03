@@ -33,7 +33,7 @@ Civ7_API/
 ├── docs/                        # 文档源文件
 │   ├── .vitepress/config.js     # VitePress 配置（侧边栏、搜索）
 │   ├── index.md                 # 首页
-│   ├── api/                     # API 文档页面
+│   ├── api/                     # API 文档页面（共 45 个）
 │   │   ├── game.md              # Game 对象
 │   │   ├── gameplay-map.md      # GameplayMap（55个方法）
 │   │   ├── game-info.md         # GameInfo 数据表（84个表）
@@ -41,20 +41,22 @@ Civ7_API/
 │   │   ├── configuration.md     # Configuration（10个方法）
 │   │   ├── camera.md            # Camera（30个方法）
 │   │   ├── engine.md            # Engine 事件系统（16个方法）
-│   │   ├── component.md         # Component UI 基类
-│   │   ├── events.md            # 全部事件列表（148个事件）
 │   │   ├── units.md             # Units 单位管理
 │   │   ├── cities.md            # Cities 城市管理
+│   │   ├── districts.md         # Districts 区域管理
+│   │   ├── resources.md         # Resources 资源管理
 │   │   ├── diplomacy.md         # Diplomacy 外交系统
-│   │   ├── culture.md           # Culture 文化系统
-│   │   ├── religion.md          # Religion 宗教系统
-│   │   ├── locale.md            # Locale 本地化
-│   │   ├── network.md           # Network 网络/多人
-│   │   ├── modding.md           # Modding Mod管理
-│   │   ├── ui-framework.md      # UI框架（UI/Databind/NavTray等）
-│   │   ├── map-builders.md      # 地图构建（TerrainBuilder等）
+│   │   ├── game-effects.md      # GameEffects 效果系统
+│   │   ├── trade.md             # Trade 贸易系统
+│   │   ├── victories.md         # Victories 胜利系统
+│   │   ├── random-events.md     # Random Events 随机事件
+│   │   ├── unlocks.md           # Unlocks 解锁系统
+│   │   ├── world-units.md       # WorldUnits 单位可视化
+│   │   ├── map-features.md      # MapFeatures 自然特征
 │   │   └── ...                  # 更多API页面
 │   └── data/                    # JSON 数据文件
+│       ├── constants.json       # 常量与枚举数据
+│       └── ...                  # 其他 JSON 数据
 ├── PLAN.md                      # 项目建设计划
 ├── UPDATE-WORKFLOW.md           # 游戏更新后的文档同步流程
 ├── GOAL-PROMPT.md               # AI 长期任务提示词
@@ -68,9 +70,13 @@ Civ7_API/
 |------|------|------|
 | 核心引擎 API | 11 个页面 | Game, GameplayMap, GameInfo, Players, Configuration, Camera, Engine, Locale, Network, Modding, Automation |
 | 游戏对象 | 12 个页面 | Units, Cities, Districts, Resources, Diplomacy, Culture, Religion, ProgressionTrees, Notifications 等 |
+| Game 子系统 | 6 个页面 | GameEffects, Trade, Victories, Random Events, Unlocks, Visibility |
+| Player 子系统 | 5 个页面 | Legacies, Stories, AdvancedStart, Autoplay, Advisors |
+| 地图子系统 | 4 个页面 | MapFeatures, Map Builders, Map Regions, Reflection |
+| 可视化与调试 | 3 个页面 | WorldUnits, WorldUI Models, Audio & Debug |
 | UI 框架 | 5 个页面 | Component 基类, UI Framework, Audio & Debug, Input, Social |
-| 地图构建 | 1 个页面 | TerrainBuilder, AreaBuilder, ResourceBuilder, FractalBuilder, StartPositioner |
 | 事件参考 | 1 个页面 | 148 个引擎事件 |
+| 常量与枚举 | 1 个页面 | 16000+ 字符串常量、200 个分类、12 个代码枚举、TunerPanels 枚举 |
 
 ## 更新文档
 
@@ -92,6 +98,8 @@ Civ7_API/
 ## 源文件位置
 
 官方游戏文件位于：`D:\Games Design\Civ7_mod\.官方变动\modules\`
+
+TunerPanels 调试面板位于：`D:\Games Design\Civ7_mod\.官方变动\TunerPanels\`
 
 ## 许可
 
