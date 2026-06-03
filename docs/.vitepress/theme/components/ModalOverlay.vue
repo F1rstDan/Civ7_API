@@ -13,7 +13,7 @@
             <h3 class="modal-title">{{ currentContent?.title || '' }}</h3>
             <button class="modal-close" @click="store.hide()">✕</button>
           </div>
-          <div class="modal-body" v-html="currentContent?.html || ''"></div>
+          <div class="modal-body"><div class="api-modal-content vp-doc" v-html="currentContent?.html || ''"></div></div>
         </div>
       </div>
     </Teleport>
@@ -70,7 +70,7 @@ onUnmounted(() => {
 .modal-container {
   background: var(--vp-c-bg);
   border-radius: 8px;
-  max-width: 640px;
+  max-width: 960px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
@@ -108,25 +108,12 @@ onUnmounted(() => {
   color: var(--vp-c-text-1);
 }
 .modal-body {
-  padding: 20px;
+  padding: 4px 20px;
 }
-.modal-body :deep(table) {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9em;
-}
-.modal-body :deep(th),
-.modal-body :deep(td) {
-  padding: 6px 10px;
-  border: 1px solid var(--vp-c-divider);
-  text-align: left;
-}
-.modal-body :deep(th) {
-  background: var(--vp-c-default-soft);
-  font-weight: 600;
-}
-.modal-body :deep(pre) {
-  border-radius: 6px;
-  overflow-x: auto;
+/* Let .vp-doc handle all content styles (paragraphs, code, tables, etc.).
+   Only override the container-level padding that .vp-doc normally applies
+   to the page content wrapper. */
+.api-modal-content {
+  padding: 0 !important;
 }
 </style>
