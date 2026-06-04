@@ -55,6 +55,7 @@ source:
 - `system-topic`：系统专题页，如科技文化树、贸易、文化。允许多个 `primary_scope`，主方法列表可按 H3 分组收录这些 scope。
 - `reference`：常量、事件、全局说明、统计类文档。不要强制方法列表和 `<API>` 覆盖率，重点检查结构、来源和示例。
 - `ui-api`：UI 层对象、组件、世界 UI 等。允许对象、类、实例方法混合，但必须在标题或表格中标明所属层级。
+- `generated-reference`：由脚本自动生成的参考文档（如 `constants.md`）。默认跳过审查和整改，除非用户明确指名该文件。不可手动编辑，应通过生成脚本更新。
 
 ## 来源与代码示例查找
 
@@ -71,15 +72,21 @@ source:
 当目标文档缺少代码示例时，主动搜索源码补全：
 
 ```powershell
+# API 搜索通用规则：始终用单词边界避免后缀误匹配
+# 例如搜 "Camera" 会误匹配 "ForegroundCamera"、"BackgroundCamera"
+# 用 (?<![A-Za-z0-9_$]) 确保 API_NAME 前面不是标识符字符
+
 # 在 .ltp 面板中搜索目标 API（优先，权威性最高）
-rg -n "API_NAME" "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
+rg -n "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 
 # 在 .js 源码中搜索目标 API
-rg -n "API_NAME" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+rg -n "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
 
 # 搜索子系统用法（如 player.Treasury）
-rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
+rg -n "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 ```
+
+**后缀误匹配警示**：名称短的 API 容易被更长标识符的后缀命中。例如搜索 `Camera` 时，`ForegroundCamera`、`BackgroundCamera` 等也会被匹配。始终在搜索 API 名称时使用单词边界 (`(?<![A-Za-z0-9_$])`)，并在写入方法列表前确认完整接收者链（`ForegroundCamera.reset` 不等于 `Camera.reset`）。
 
 ### API 归属判定（必须）
 
@@ -96,15 +103,17 @@ rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.
 
 **搜索顺序**：
 ```powershell
-# 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup 这类更长链条
-rg -n "(?<![\w$.\]])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+# 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup / ForegroundCamera.method 等误命中的情况
+rg -n "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 2. 搜索同名方法的所有链条，确认是否只存在更长接收者
-rg -n "(\w+\.)*Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+rg -n "(\w+\.)+Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 3. 对实例/子系统 API，搜索实际变量链和属性链
 rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 ```
+
+**后缀误匹配防范**：如果 API 名称是其他标识符的后缀（如 `Camera` 被 `ForegroundCamera` 包含），必须用单词边界 `(?<![A-Za-z0-9_$])` 排除。从源码确认后只收录真正的直接调用者。
 
 **写入前检查**：
 - 主方法列表中的 `<API>` 必须落在 `primary_scope`，并能对应源码中的同一完整接收者链。
@@ -233,13 +242,14 @@ Camera.lookAtPlot(10, 20);
 
 1. 读取目标文件
 2. 先读 YAML，确认 `doc_type`、`primary_scope`、`related_scope`
-3. 逐项对照检查清单
-4. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
-5. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
-6. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
-7. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
-8. 输出问题列表（审查）或直接修复（整改）
-9. 整改时保持现有内容不变，只调整结构和格式
+3. 如果 `doc_type` 为 `generated-reference`：确认是自动生成文件，跳过后续所有检查；用户指名时才进入手动审查
+4. 逐项对照检查清单
+5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
+6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
+7. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
+8. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
+9. 输出问题列表（审查）或直接修复（整改）
+10. 整改时保持现有内容不变，只调整结构和格式
 
 ## 全链路验证
 
@@ -250,3 +260,5 @@ Camera.lookAtPlot(10, 20);
 状态变化：新增/删除/移动的 `<API>` 触发器是否同步到底部内容块。
 输出：方法数量、标题、源码引用、弹窗 id 是否一致。
 上下游影响：被移出方法表的相关 API 是否仍在合适章节保留，链接和 `<API>` 触发器是否不再误导弹窗系统。
+- [ ] 有 frontmatter（title、doc_type、summary 字段）
+- [ ] `doc_type` 为 `generated-reference` 时仅验证 YAML 完整性，跳过方法列表和 `<API>` 校验

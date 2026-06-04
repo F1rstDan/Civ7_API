@@ -1,5 +1,11 @@
 ---
 title: Constants 常量与枚举
+doc_type: generated-reference
+summary: 从游戏源码自动提取的字符串常量、代码枚举和 GameInfo 数据表索引。
+primary_scope: []
+related_scope: []
+source:
+  - D:\Games Design\Civ7_mod\.官方变动\modules\
 ---
 
 # Constants 常量与枚举

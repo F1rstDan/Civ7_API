@@ -3,13 +3,36 @@ import { readFileSync, writeFileSync } from 'fs';
 const data = JSON.parse(readFileSync('../docs/data/constants.json', 'utf-8'));
 
 const lines = [];
-const push = (s = '') => lines.push(s);
 
+const meta = {
+  title: 'Constants 常量与枚举',
+  doc_type: 'generated-reference',
+  summary: '从游戏源码自动提取的字符串常量、代码枚举和 GameInfo 数据表索引。',
+  primary_scope: [],
+  related_scope: [],
+  source: [
+    'D:\\Games Design\\Civ7_mod\\.官方变动\\modules\\',
+  ],
+};
+
+function push(s = '') { lines.push(s); }
+
+// YAML frontmatter (generated-reference)
 push('---');
-push('title: 常量与枚举');
+push('title: ' + meta.title);
+push('doc_type: ' + meta.doc_type);
+push('summary: ' + meta.summary);
+push('primary_scope:');
+push('  []');
+push('related_scope:');
+push('  []');
+push('source:');
+for (const src of meta.source) {
+  push('  - ' + src);
+}
 push('---');
 push('');
-push('# 常量与枚举');
+push('# ' + meta.title);
 push('');
 push('> 从游戏源码中自动提取的常量字符串和枚举。共收录 **' + data.meta.totalStringConstants + '** 个字符串常量（' + data.categories.length + ' 个分类）、**' + data.objectEnums.length + '** 个代码枚举、**' + data.meta.totalGameInfoTables + '** 个 GameInfo 数据表。');
 push('> 生成时间：' + data.meta.generatedAt);
