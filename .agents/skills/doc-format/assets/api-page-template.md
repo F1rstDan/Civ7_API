@@ -1,5 +1,14 @@
 ---
 title: 示例 对象名称
+doc_type: object-api
+summary: 一句话说明该文档覆盖的 API 范围。
+primary_scope:
+  - SomeAPI
+related_scope:
+  - GameInfo.SomeTable
+source:
+  - TunerPanels/Example.ltp
+  - modules/base-standard/ui/example/example.js
 ---
 
 # 示例对象 对象名称

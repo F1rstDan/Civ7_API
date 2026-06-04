@@ -1,5 +1,28 @@
 ---
 title: Units 单位
+doc_type: object-api
+summary: 单位全局对象，负责单位获取、创建、位置、状态和属性修改，并说明相关单位定义表与玩家单位子系统。
+primary_scope:
+  - Units
+related_scope:
+  - GameInfo.Units
+  - GameInfo.UnitOperations
+  - GameInfo.UnitPromotions
+  - GameInfo.UnitPromotionDisciplines
+  - GameInfo.UnitAbilities
+  - GameInfo.UnitEmbarkationTypes
+  - player.Units
+  - unit.Health
+  - unit.Combat
+  - unit.Experience
+  - unit.Religion
+  - Formations
+  - Armies
+source:
+  - TunerPanels/Units.ltp
+  - modules/base-standard/ui/interface-modes/support-unit-map-decoration.js
+  - modules/base-standard/scripts/age-transition-post-load.js
+  - modules/base-standard/ui/tutorial/tutorial-support.js
 ---
 
 # Units 单位

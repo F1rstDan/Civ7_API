@@ -22,6 +22,40 @@ Civ7 API 文档统一排版规范。模板文件在 `assets/api-page-template.md
 | 审查存量文档 | 读取目标文件 → 按检查清单逐项对照 → 校验 API 归属 → 缺少示例时搜索补全 → 输出问题报告 |
 | 整改存量文档 | 读取目标文件 → 按检查清单修复 → 校验 API 归属 → 搜索补全缺失示例 → 写回文件 |
 
+## YAML 元数据
+
+每个 `docs/api/*.md` 都应在 frontmatter 中声明文档范围。先读 YAML，再决定方法表和 `<API>` 的校验策略。
+
+```yaml
+---
+title: Units 单位
+doc_type: object-api
+summary: 单位全局对象，负责单位获取、创建、位置、状态和属性修改。
+primary_scope:
+  - Units
+related_scope:
+  - GameInfo.Units
+  - player.Units
+source:
+  - TunerPanels/Units.ltp
+  - modules/base-standard/scripts/age-transition-post-load.js
+---
+```
+
+字段含义：
+- `title`：页面标题，必填。
+- `doc_type`：文档类型，必填。常用值：`object-api`、`system-topic`、`reference`、`ui-api`。
+- `summary`：一句话说明本页内容边界，后续更新时用来判断是否跑题。
+- `primary_scope`：本页主覆盖 API 范围，通常需要进入主方法列表并覆盖 `<API>` 弹窗。
+- `related_scope`：允许提及的相关 API 范围，通常放在 GameInfo 关联表、相关对象、子系统或示例中，默认不要求 `<API>` 弹窗。
+- `source`：统一记录来源文件，可包含 `.ltp`、`.js`、`.xml` 或其他来源路径。
+
+`doc_type` 策略：
+- `object-api`：单一对象页，如 `Units`、`Camera`、`Game`。主方法列表只放 `primary_scope`；`related_scope` 可以在后文提及，但不能混入主方法列表。
+- `system-topic`：系统专题页，如科技文化树、贸易、文化。允许多个 `primary_scope`，主方法列表可按 H3 分组收录这些 scope。
+- `reference`：常量、事件、全局说明、统计类文档。不要强制方法列表和 `<API>` 覆盖率，重点检查结构、来源和示例。
+- `ui-api`：UI 层对象、组件、世界 UI 等。允许对象、类、实例方法混合，但必须在标题或表格中标明所属层级。
+
 ## 来源与代码示例查找
 
 ### 来源目录
@@ -49,12 +83,14 @@ rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.
 
 ### API 归属判定（必须）
 
-方法列表只收录“当前对象/子系统本身”的 API。搜索到相同方法名时，先确认完整接收者链，禁止把更长链条里的尾部对象误写成当前对象方法。
+先根据 YAML 的 `doc_type`、`primary_scope`、`related_scope` 判断本页允许覆盖的 API 范围。问题不是禁止相关 API 出现，而是避免把相关 API 误放进主方法列表，导致读者误以为短写可调用。
 
 **判定规则**：
-- 文档主对象为 `Units` 时，方法表只允许直接形如 `Units.get(...)` 的调用；`GameInfo.Units.lookup(...)`、`player.Units.getUnits(...)` 只能放在 GameInfo 关联表、子系统或相关对象章节。
-- 文档主对象为实例对象或子系统时，明确写出归属，如 `unit.Experience.getAllPromotions(...)` 或 `player.Units.getUnitIds(...)`；不要缩短成 `Experience.getAllPromotions` 或 `Units.getUnitIds`。
-- `GameInfo.<Table>.lookup/find/forEach` 属于 `GameInfo` 表接口，不属于 `<Table>` 全局对象；例如 `GameInfo.Units.lookup` 不应进入 `Units` 方法列表。
+- 主方法列表只收录 `primary_scope`。例如 `units.md` 的主方法列表只放 `Units.get`、`Units.restoreMovement` 等；`GameInfo.Units.lookup` 和 `player.Units.getUnitIds` 可放在 GameInfo 关联表、相关对象、子系统或示例中。
+- `system-topic` 可以有多个 `primary_scope`。例如 `progression-trees.md` 可同时收录 `Game.ProgressionTrees` 与 `GameInfo.ProgressionTrees`，但 `<API>` id 应尽量使用完整链条。
+- `related_scope` 默认不进入主方法列表，也不要求 `<API>` 弹窗；除非该页明确把它升级为 `primary_scope`。
+- 实例对象或子系统要写完整归属，如 `unit.Experience.getAllPromotions`、`player.Units.getUnitIds`，不要缩短成 `Experience.getAllPromotions` 或 `Units.getUnitIds`。
+- `GameInfo.<Table>.lookup/find/forEach` 属于 `GameInfo` 表接口，不属于 `<Table>` 全局对象；例如 `GameInfo.Units.lookup` 不应写成 `Units.lookup`。
 - 如果源码只出现 `A.B.method(...)`，没有出现独立的 `B.method(...)`，不得把它记录为 `B.method`。
 - 如果不能从源码确认完整接收者链，标注为“未验证前提”，不要写入方法列表。
 
@@ -71,9 +107,10 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 ```
 
 **写入前检查**：
-- 方法表 `<API>对象.方法</API>` 必须能对应到源码中的同一完整接收者链。
-- 快速示例和弹窗示例可以引用相关 API，但不能因此把相关 API 加入当前对象方法表。
-- GameInfo 表、相关全局对象、玩家子系统使用反引号普通文本，不使用 `<API>` 触发器，除非当前页面就是该对象的规范文档。
+- 主方法列表中的 `<API>` 必须落在 `primary_scope`，并能对应源码中的同一完整接收者链。
+- 快速示例和弹窗示例可以引用 `related_scope`，但不能因此把相关 API 加入主方法列表。
+- `related_scope` 使用反引号普通文本即可；只有需要弹窗解释、且本页确实覆盖该 API 时才使用 `<API>`。
+- 对 `Game.ProgressionTrees.getNode` 这类多段链条，优先使用完整 `<API>` id；短 id 只在能确定没有歧义时使用。
 
 **代码示例编写原则**：
 - 精简为主，突出 API 核心作用，省略无关上下文
@@ -84,7 +121,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 ## 文档结构（必须按顺序）
 
 ```
-1. frontmatter（title）
+1. frontmatter（title、doc_type、summary、primary_scope、related_scope、source）
 2. H1 标题
 3. 一句话定位
 4. 快速示例
@@ -101,7 +138,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 
 ### 命名
 - 文件名：小写英文 + 连字符，如 `gameplay-map.md`
-- frontmatter：`title: 英文名 中文名`
+- frontmatter：至少包含 `title`、`doc_type`、`summary`、`primary_scope`、`related_scope`、`source`
 - H1：`# 英文名 中文名`
 
 ### 代码块
@@ -117,7 +154,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 | <API>Camera.lookAtPlot</API> | iX, iY | `void` | 说明 |
 ```
 - `<API>` 内**不加反引号**，textContent 即为 id
-- id 格式：`对象.方法名`
+- id 格式：优先使用完整接收者链，如 `Game.ProgressionTrees.getNode`、`GameInfo.Units.lookup`
 
 **内容块**（页面最底部）：
 ````markdown
@@ -161,13 +198,15 @@ Camera.lookAtPlot(10, 20);
 审查或整改时逐项对照：
 
 - [ ] 有 frontmatter（title 字段）
+- [ ] 有 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`
 - [ ] H1 格式正确（# 英文 中文）
 - [ ] 有一句话定位
 - [ ] 有快速示例代码块
 - [ ] 方法表使用 `<API>` 触发器（非 backtick）
 - [ ] `<API>` 内无反引号
-- [ ] 方法表中的每个 `<API>` 都已验证完整接收者链，未把 `GameInfo.X.method`、`player.X.method` 等误写为 `X.method`
-- [ ] GameInfo 表、相关全局对象、玩家子系统未混入当前对象方法列表
+- [ ] 主方法列表中的每个 `<API>` 都落在 `primary_scope`
+- [ ] `related_scope` 可在正文、示例、相关章节出现，但未混入主方法列表
+- [ ] 未把 `GameInfo.X.method`、`player.X.method` 等误写为 `X.method`
 - [ ] 所有代码块标注 ` ```javascript `
 - [ ] 所有代码块已闭合
 - [ ] 代码块内有 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js` 注释
@@ -183,23 +222,25 @@ Camera.lookAtPlot(10, 20);
 
 1. 读取 `assets/api-page-template.md`
 2. 查阅 `docs/_link-source-addr.md` 确认来源目录
-3. 用 `rg` 在 TunerPanels（.ltp）和 modules（.js）中搜索目标 API 的用法，并按“API 归属判定”确认完整接收者链
-4. 复制模板为目标文件名
-5. 替换占位符，用搜索到的真实代码填充示例（精简到 3-8 行，突出核心 API）
-6. 按实际 API 填充方法表和内容块
-7. 为每个 `<API>` 内容块标注来源（`**来源**: xxx.ltp - FunctionName` 或 `**来源**: xxx/xxx.js`）
-8. 运行脚本检查短写风险；脚本有警告时，回到源码确认归属后再输出
+3. 确定 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`
+4. 用 `rg` 在 TunerPanels（.ltp）和 modules（.js）中搜索目标 API 的用法，并按“API 归属判定”确认完整接收者链
+5. 复制模板为目标文件名
+6. 替换占位符，用搜索到的真实代码填充示例（精简到 3-8 行，突出核心 API）
+7. 按实际 API 填充方法表和内容块
+8. 为每个 `<API>` 内容块标注来源（`**来源**: xxx.ltp - FunctionName` 或 `**来源**: xxx/xxx.js`）
+9. 运行脚本检查短写风险；脚本有警告时，回到源码确认归属后再输出
 
 ## 审查/整改流程
 
 1. 读取目标文件
-2. 逐项对照检查清单
-3. 校验方法表与底部 `<API id>` 是否只包含当前对象/子系统 API；发现短写或跨对象混入时，移到 GameInfo、相关对象或子系统章节
-4. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
-5. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
-6. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
-7. 输出问题列表（审查）或直接修复（整改）
-8. 整改时保持现有内容不变，只调整结构和格式
+2. 先读 YAML，确认 `doc_type`、`primary_scope`、`related_scope`
+3. 逐项对照检查清单
+4. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
+5. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
+6. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
+7. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
+8. 输出问题列表（审查）或直接修复（整改）
+9. 整改时保持现有内容不变，只调整结构和格式
 
 ## 全链路验证
 
