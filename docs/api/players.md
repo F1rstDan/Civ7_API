@@ -102,7 +102,7 @@ for (let i = 0; i < iMaxNumMajors; i++) {
 | `Advisory` | `AdvisoryLibrary` | 顾问子库，提供建议 |
 | `Techs` | `TechsLibrary` | 科技子库 |
 
-### Treasury 子库
+### Treasury 财政子库
 
 ```javascript
 // 来源 Player.ltp
@@ -111,7 +111,7 @@ const treasury = player.Treasury;
 treasury.changeGoldBalance(500, -1);  // +500 金币
 ```
 
-### DiplomacyTreasury 子库
+### DiplomacyTreasury 外交财政子库
 
 ```javascript
 // 来源 Player.ltp
@@ -120,7 +120,7 @@ const treasury = player.DiplomacyTreasury;
 treasury.changeDiplomacyBalance(500);  // +500 影响力
 ```
 
-### Identity 子库
+### Identity 身份子库
 
 ```javascript
 // 来源 Player.ltp
@@ -131,7 +131,7 @@ identity.changeNarrativeTagPoints(tagIndex, 5);  // 叙事标签 +5
 identity.getNarrativeTagPoints(tagIndex);        // 获取标签点数
 ```
 
-### Workers 子库
+### Workers 工人子库
 
 ```javascript
 // 来源 Player.ltp
@@ -140,7 +140,7 @@ const workers = player.Workers;
 workers.AddWorker(1);  // +1 工人
 ```
 
-### Happiness 子库
+### Happiness 幸福度子库
 
 ```javascript
 // 来源 Player.ltp
@@ -148,7 +148,7 @@ workers.AddWorker(1);  // +1 工人
 player.Happiness.startGoldenAge(player.id);
 ```
 
-### Stats 子库
+### Stats 统计子库
 
 ```javascript
 // 来源 Player.ltp
@@ -161,7 +161,7 @@ for (let i = 0; i < GameInfo.Yields.length; i++) {
 }
 ```
 
-### Victories 子库
+### Victories 胜利子库
 
 ```javascript
 // 来源 Victories.ltp
@@ -175,7 +175,7 @@ playerVictories.getDominantCountdownForVictoryType(victoryHash);
 playerVictories.getVictoryCountdownStatus(victoryHash);
 ```
 
-### Legacies 子库
+### Legacies 传承子库
 
 ```javascript
 // 来源 Legacies.ltp
@@ -188,7 +188,7 @@ playerLegacies.setForceTriggered(legacyType, true, true);
 playerLegacies.clearForceTriggered(legacyType, true, true);
 ```
 
-### Stories 子库
+### Stories 故事子库
 
 ```javascript
 // 来源 Player Stories.ltp
@@ -206,11 +206,11 @@ playerStories.getCompletedQuests();
 playerStories.onRequirementsMet(storyId);
 ```
 
-### AdvancedStart 子库
+### AdvancedStart 进阶开局子库
 
 ```javascript
 // 来源 AdvancedStart.ltp, age-transition-post-load.js
-// 高级开局卡片管理
+// 进阶开局卡片管理
 const advStart = player.AdvancedStart;
 advStart.getAvailableCards();
 advStart.getCards();
@@ -219,7 +219,7 @@ advStart.getPlacementComplete();
 advStart.setPlacementComplete(true);
 ```
 
-### Techs 子库
+### Techs 科技子库
 
 ```javascript
 // 来源 Player.ltp
@@ -230,7 +230,7 @@ playerTechs.getResearching();  // 返回 {type, depth, maxDepth}
 playerTechs.getTurnsLeft();
 ```
 
-### Culture 子库
+### Culture 文化子库
 
 ```javascript
 // 来源 Player.ltp
@@ -243,7 +243,7 @@ playerCulture.unlockTradition(traditionIndex);
 playerCulture.isTraditionUnlocked(traditionIndex);
 ```
 
-### Diplomacy 子库
+### Diplomacy 外交子库
 
 ```javascript
 // 来源 Diplomacy.ltp
@@ -271,7 +271,7 @@ diplomacy.getExhaustedTokens();
 diplomacy.getReservedTokens();
 ```
 
-### Influence 子库
+### Influence 影响力子库
 
 ```javascript
 // 来源 Diplomacy.ltp, Independents.ltp
@@ -282,7 +282,7 @@ influence.getSuzerain();          // 获取宗主玩家 ID
 influence.tribeTypeHash;          // 部落类型哈希
 ```
 
-### Trade 子库
+### Trade 贸易子库
 
 ```javascript
 // 来源 Trade.ltp
@@ -293,7 +293,7 @@ playerTrade.countPlayerCityRoutes(cityId);
 playerTrade.projectPossibleTradeRoutes(TradeRouteSearchOptions.INCLUDE_FAILED);
 ```
 
-### Resources 子库
+### Resources 资源子库
 
 ```javascript
 // 来源 Resources.ltp
@@ -303,7 +303,7 @@ pResources.getResources();              // 获取所有资源
 pResources.getCityIDAssigned(resource); // 获取资源分配的城市
 ```
 
-### Modifiers 子库
+### Modifiers 修改器子库
 
 ```javascript
 // 来源 Player Modifiers.ltp
@@ -313,7 +313,7 @@ playerModifiers.getModifiers();                      // 获取所有修改器
 playerModifiers.getModifierSubjects(modifierName);   // 获取修改器主题
 ```
 
-### Advisory 子库
+### Advisory 建议子库
 
 ```javascript
 // 来源 Player.ltp
@@ -326,7 +326,7 @@ request.maxReturnedEntries = 4;
 let recommendations = playerAdvisory.getBuildRecommendations(request);
 ```
 
-### Formations 子库
+### Formations 编队子库
 
 ```javascript
 // 来源 Units.ltp
@@ -338,7 +338,7 @@ for (const formationId of pFormations.getFormationIds()) {
 }
 ```
 
-### Armies 子库
+### Armies 军团子库
 
 ```javascript
 // 来源 Units.ltp
