@@ -104,24 +104,6 @@ WorldUI.ForegroundCamera.endAnimation();
 | <API>WorldUI.ForegroundCamera.endAnimation</API> | — | `void` | 结束当前动画 |
 | <API>WorldUI.ForegroundCamera.setId</API> | id | `void` | 设置镜头 ID |
 
-## 源文件引用
-
-- `modules/core/ui/camera/camera-controller.js`
-- `modules/base-standard/ui/city-zoomer/city-zoomer.js`
-- `modules/base-standard/ui/cinematic/cinematic-manager.js`
-- `modules/core/ui/views/view-manager.js`
-- `modules/core/ui/input/plot-cursor.js`
-- `modules/core/ui/shell/leader-select/leader-select-model-manager.js`
-- `modules/base-standard/ui/automation/automation-base-play-game.js`
-- `modules/base-standard/ui/root-game.js`
-- `modules/base-standard/ui-next/screens/endgame/endgame-cinematics.js`
-- `modules/base-standard/ui/diplomacy/leader-model-manager.js`
-- `modules/base-standard/ui/narrative-event/graphic-narrative-event.js`
-- `TunerPanels/Districts.ltp`
-- `TunerPanels/Units.ltp`
-- `TunerPanels/Cities.ltp`
-- `TunerPanels/Features.ltp`
-
 <API id="Camera.addKeyframe" title="Camera.addKeyframe(keyframe)">
 
 **说明**: 添加关键帧。用于相机动画中设置目标状态，如城市缩放动画。

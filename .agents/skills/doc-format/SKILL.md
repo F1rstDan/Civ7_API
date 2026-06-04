@@ -139,8 +139,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 7. H2 常用枚举（可选）
 8. H2 GameInfo 关联表（可选）
 9. H2 相关全局对象（可选）
-10. 源文件引用
-11. <API> 弹窗内容块（全部放页面最底部）
+10. <API> 弹窗内容块（全部放页面最底部）
 ```
 
 ## 格式规范
@@ -154,7 +153,6 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 - 统一 ` ```javascript ` 围栏，必须闭合
 - 代码块内首行写 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js`
 - 代码块内第二行，一句话简要说明代码功能 `// 简要描述功能`
-- 页面末尾写 `## 源文件引用` 下面是引用列表 - `xxx/xxx.js` - `xxx.ltp`
 
 ### 弹窗标签
 
@@ -220,7 +218,6 @@ Camera.lookAtPlot(10, 20);
 - [ ] 所有代码块已闭合
 - [ ] 代码块内有 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js` 注释
 - [ ] 代码块内有 `// 简要描述功能` 注释
-- [ ] 页面末尾有 `## 源文件引用` 以及引用列表 - `xxx/xxx.js` - `xxx.ltp`
 - [ ] 有代码示例（若缺失，搜索 .ltp / .js 源码补全）
 - [ ] `<API>` 内容块放在页面最底部
 - [ ] 内容块包含：说明、参数表、返回值、来源
@@ -246,7 +243,7 @@ Camera.lookAtPlot(10, 20);
 4. 逐项对照检查清单
 5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
 6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
-7. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
+7. 如果 YAML `source` 字段缺失或不完整：搜索确认后补全
 8. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
 9. 输出问题列表（审查）或直接修复（整改）
 10. 整改时保持现有内容不变，只调整结构和格式

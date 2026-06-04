@@ -96,20 +96,6 @@ if (treeObject) {
 | `player.Culture` | 玩家文化子系统，`getAvailableTrees()` 获取可用文化树列表 |
 | `GameInfo.ProgressionTreeNodes` | 静态节点数据（`Name`、`Description`、`ProgressionTree` 等） |
 
-## 源文件引用
-
-- `TunerPanels/Player.ltp`
-- `modules/base-standard/ui/tree-grid/tree-grid.js`
-- `modules/base-standard/ui/tutorial/tutorial-support.js`
-- `modules/base-standard/ui/tutorial/tutorial-items-all-ages.js`
-- `modules/base-standard/ui/tech-tree/model-tech-tree.js`
-- `modules/base-standard/ui/culture-tree/model-culture-tree.js`
-- `modules/base-standard/ui/production-chooser/production-chooser-helpers.js`
-- `modules/base-standard/ui/tech-civic-complete/screen-tech-civic-complete.js`
-- `modules/base-standard/ui/attribute-trees/model-attribute-trees.js`
-- `modules/base-standard/ui/sub-system-dock/panel-sub-system-dock.js`
-- `modules/base-standard/ui-next/screens/choosers/tech-chooser/tech-chooser.js`
-- `modules/base-standard/ui-next/screens/choosers/culture-chooser/culture-chooser.js`
 ---
 
 <API id="Game.ProgressionTrees.getNode" title="Game.ProgressionTrees.getNode(playerID, nodeType)">

@@ -238,13 +238,6 @@ const commanderType = player.Units?.getBuildUnit("UNIT_ARMY_COMMANDER");
 const units = player.Units.getUnitTypesUnlockedWithTag("UNIT_CLASS_RANGED", false);
 ```
 
-## 源文件引用
-
-- `TunerPanels/Units.ltp`
-- `modules/base-standard/ui/interface-modes/support-unit-map-decoration.js`
-- `modules/base-standard/scripts/age-transition-post-load.js`
-- `modules/base-standard/ui/tutorial/tutorial-support.js`
-
 <API id="Units.get" title="Units.get(id)">
 
 **说明**: 根据单位 ID 获取单位对象，是最常用的入口方法。

@@ -1,5 +1,13 @@
 ---
 title: Modding 模组
+source:
+  - TunerPanels/Modding.ltp
+  - modules/core/ui/shell/mods-content/mods-content.js
+  - modules/core/ui/component-support.js
+  - modules/core/ui/utilities/utilities-network.js
+  - modules/core/ui/save-load/model-save-load.js
+  - modules/core/ui/shell/mp-browser/mp-browser-new.js
+  - modules/core/ui/shell/main-menu/main-menu.js
 ---
 
 # Modding 模组
@@ -36,17 +44,6 @@ for (const mod of Modding.getInstalledMods()) {
 | <API>Modding.disableMods</API> | handles | `void` | 禁用指定句柄的 Mod |
 | <API>Modding.applyModsTemplate</API> | template | `void` | 应用 Mod 模板（如 "enable-all"、"disable-user"） |
 | <API>Modding.isOfficialAge</API> | age | `bool` | 判断指定时代是否为官方时代 |
-
-## 源文件引用
-- `TunerPanels/Modding.ltp`
-- `modules/core/ui/shell/mods-content/mods-content.js`
-- `modules/core/ui/component-support.js`
-- `modules/core/ui/utilities/utilities-network.js`
-- `modules/core/ui/save-load/model-save-load.js`
-- `modules/core/ui/shell/mp-browser/mp-browser-new.js`
-- `modules/core/ui/shell/main-menu/main-menu.js`
-
----
 
 <API id="Modding.getInstalledMods" title="Modding.getInstalledMods()">
 

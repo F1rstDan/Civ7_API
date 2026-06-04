@@ -20,7 +20,7 @@ source:
 
 # Game 核心对象
 
-游戏核心状态对象。提供当前游戏的运行时信息和管理功能。从不通过 import 引入，引擎直接注入。
+游戏核心状态对象。提供当前游戏的运行时信息和管理功能。引擎直接注入，无需手动 import 引入。
 
 ```javascript
 // 来源 modules/base-standard/ui/system-bar/panel-system-bar.js
@@ -133,23 +133,6 @@ Benchmark 自动化测试中使用的 Game 子对象。源码中仅以 `Benchmar
 | <API>Benchmark.Game.getDebugUiVisiblity</API> | — | `bool` | 获取调试 UI 可见性 |
 | <API>Benchmark.Game.getBenchmarkType</API> | — | `string` | 获取基准测试类型 |
 | <API>Benchmark.Game.setLightweightGraphPosition</API> | rect | `void` | 设置轻量图表位置 |
-
-## 源文件引用
-
-- `TunerPanels/Notifications.ltp`
-- `TunerPanels/WorldUnits.ltp`
-- `TunerPanels/Player.ltp`
-- `modules/base-standard/ui/system-bar/panel-system-bar.js`
-- `modules/base-standard/ui/benchmark/screen-benchmark.js`
-- `modules/base-standard/ui/automation/automation-base-benchmark-game.js`
-- `modules/base-standard/ui/automation/automation-test-benchmark-graphics.js`
-- `modules/base-standard/ui/action/panel-action.js`
-- `modules/base-standard/ui/age-rankings/model-age-rankings.js`
-- `modules/base-standard/ui/legends-report/screen-legends-report.js`
-- `modules/core/ui/shell/extras/screen-extras.js`
-- `modules/base-standard/ui/cinematic/screen-cinematic-placard.js`
-
----
 
 <API id="Game.getHash" title="Game.getHash()">
 

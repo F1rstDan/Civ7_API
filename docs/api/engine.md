@@ -1,5 +1,11 @@
 ---
 title: Engine 引擎
+source:
+  - modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js
+  - modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+  - modules/base-standard/maps/continents.js
+  - modules/base-standard/ui/unit-promotion/model-unit-promotion.js
+  - modules/base-standard/ui/tutorial/tutorial-manager.js
 ---
 
 # Engine 引擎
@@ -130,10 +136,4 @@ const updateModel = () => engine.updateWholeModel(UnitPromotion);
 UnitPromotion.updateCallback = updateModel;
 ```
 
-## 源文件引用
-
-- `modules/base-standard/ui/unit-combat-preview/panel-unit-combat-preview.js` — 战斗预览面板的事件监听
-- `modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js` — 古典时代教程的事件监听
-- `modules/base-standard/maps/continents.js` — 地图生成脚本的 engine.call 使用
-- `modules/base-standard/ui/unit-promotion/model-unit-promotion.js` — 数据绑定模型使用
 - `modules/base-standard/ui/tutorial/tutorial-manager.js` — 教程管理器的引擎事件使用

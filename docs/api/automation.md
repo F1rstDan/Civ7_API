@@ -66,20 +66,6 @@ Automation.sendTestComplete("PlayGame");
 |------|------|
 | `Benchmark.Automation` | 基准测试专用自动化子对象，提供 `Benchmark.Automation.start()` 和 `Benchmark.Automation.stop()` 用于图形/AI 基准测试 |
 
-## 源文件引用
-
-- `modules/base-standard/ui/automation/automation-base-play-game.js`
-- `modules/base-standard/ui/automation/automation-test-support.js`
-- `modules/base-standard/ui/automation/automation-test-transition.js`
-- `modules/base-standard/ui/automation/automation-test-load-game.js`
-- `modules/base-standard/ui/automation/automation-test-benchmark-graphics.js`
-- `modules/base-standard/ui/automation/automation-base-benchmark-game.js`
-- `modules/core/ui/shell/main-menu/main-menu.js`
-- `modules/core/ui/context-manager/context-manager.js`
-- `TunerPanels/Autoplay.ltp`
-
----
-
 <API id="Automation.log" title="Automation.log(message)">
 
 **说明**: 输出一条自动化日志，用于测试脚本的调试和状态跟踪。

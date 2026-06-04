@@ -81,10 +81,6 @@ GameInfo.OtherTable;   // 其他定义表
 |------|------|
 | OtherAPI.method() | 用途说明 |
 
-## 源文件引用
-- `xxx/xxx.js`
-- `xxx.ltp`
-
 ---
 
 <API id="SomeAPI.get" title="SomeAPI.get(id)">

@@ -1,5 +1,30 @@
 ---
 title: Players 玩家管理
+source:
+  - modules/base-standard/maps/assign-starting-plots.js
+  - modules/base-standard/maps/map-utilities.js
+  - modules/base-standard/scripts/age-transition-post-load.js
+  - modules/base-standard/ui/victory-progress/model-victory-progress.js
+  - modules/base-standard/ui/victory-manager/victory-manager.js
+  - modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+  - modules/base-standard/ui/tutorial/tutorial-support.js
+  - modules/base-standard/ui/cinematic/cinematic-manager.js
+  - modules/base-standard/ui/automation/automation-test-support.js
+  - modules/core/ui/utilities/utilities-image.js
+  - TunerPanels/Players.ltp
+  - TunerPanels/Player.ltp
+  - TunerPanels/Independents.ltp
+  - TunerPanels/Diplomacy.ltp
+  - TunerPanels/Trade.ltp
+  - TunerPanels/Resources.ltp
+  - TunerPanels/Victories.ltp
+  - TunerPanels/Legacies.ltp
+  - TunerPanels/Player Stories.ltp
+  - TunerPanels/Player Modifiers.ltp
+  - TunerPanels/AdvancedStart.ltp
+  - TunerPanels/Units.ltp
+  - TunerPanels/Player Legacy Path.ltp
+  - TunerPanels/VictoriesDefeats.ltp
 ---
 
 # Players 玩家管理
@@ -385,35 +410,6 @@ for (const armyId of pArmies.getArmyIds()) {
 | `GameInfo.Leaders.lookup(hash)` | 查询领袖信息 | Players.ltp |
 | `GameInfo.Civilizations.lookup(hash)` | 查询文明信息 | Players.ltp |
 | `Configuration.getPlayer(playerId)` | 获取玩家配置 | automation-test-support.js |
-
-## 源文件引用
-
-- `modules/base-standard/maps/assign-starting-plots.js` — 起始位置分配：isHuman / isAI 区分
-- `modules/base-standard/maps/map-utilities.js` — 地图工具：getEverAlive 遍历
-- `modules/base-standard/scripts/age-transition-post-load.js` — 时代过渡：Players.get 遍历
-- `modules/base-standard/ui/victory-progress/model-victory-progress.js` — 胜利进度：getNumAliveHumans
-- `modules/base-standard/ui/victory-manager/victory-manager.js` — 胜利管理：getAlive 遍历
-- `modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js` — 外交栏：getAlive 遍历
-- `modules/base-standard/ui/tutorial/tutorial-support.js` — 教程：isValid 检查
-- `modules/base-standard/ui/cinematic/cinematic-manager.js` — 过场动画：isParticipant 检查
-- `modules/base-standard/ui/automation/automation-test-support.js` — 自动化测试：getAliveIds 遍历
-- `modules/core/ui/utilities/utilities-image.js` — 图片工具：getEverAlive + find
-- `TunerPanels/Players.ltp` — 调试面板：getWasEverAliveIds 遍历显示
-- `TunerPanels/Player.ltp` — 调试面板：grantYield / grantGreatWork / grantCultureSlot / Treasury 等
-- `TunerPanels/Independents.ltp` — 调试面板：getAliveMinorIds / getNumWasEverAliveMajors
-- `TunerPanels/Diplomacy.ltp` — 调试面板：Diplomacy / Influence 子库
-- `TunerPanels/Trade.ltp` — 调试面板：Trade 子库
-- `TunerPanels/Resources.ltp` — 调试面板：Resources 子库
-- `TunerPanels/Victories.ltp` — 调试面板：Victories 子库
-- `TunerPanels/Legacies.ltp` — 调试面板：Legacies 子库
-- `TunerPanels/Player Stories.ltp` — 调试面板：Stories / Identity 子库
-- `TunerPanels/Player Modifiers.ltp` — 调试面板：Modifiers 子库
-- `TunerPanels/AdvancedStart.ltp` — 调试面板：AdvancedStart 子库
-- `TunerPanels/Units.ltp` — 调试面板：Formations / Armies 子库
-- `TunerPanels/Player Legacy Path.ltp` — 调试面板：LegacyPaths 子库
-- `TunerPanels/VictoriesDefeats.ltp` — 调试面板：胜利/失败
-
----
 
 <API id="Players.get" title="Players.get(playerID)">
 

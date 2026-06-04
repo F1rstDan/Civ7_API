@@ -1,5 +1,10 @@
 ---
 title: Configuration 配置
+source:
+  - modules/base-standard/ui/tutorial/tutorial-manager.js
+  - modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+  - modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
+  - modules/base-standard/ui/unlocks/panel-player-rewards.js
 ---
 
 # Configuration 配置
@@ -110,13 +115,6 @@ if (playerConfig) {
   const leaderName = playerConfig.leaderName ?? 'Unknown';
 }
 ```
-
-## 源文件引用
-
-- `modules/base-standard/ui/tutorial/tutorial-manager.js` — 教程系统中的 Configuration 使用
-- `modules/core/ui-next/screens/unlocks/civ-unlocks-model.js` — 文明解锁配置读取
-- `modules/age-exploration/ui/tutorial/tutorial-items-exploration.js` — 探索时代教程配置读取
-- `modules/base-standard/ui/unlocks/panel-player-rewards.js` — 玩家奖励面板配置读取## TunerPanel 补充：Configuration 完整 API（来源 Configuration.ltp）
 
 ### Configuration.getGame() 补充
 
