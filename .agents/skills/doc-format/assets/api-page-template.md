@@ -22,6 +22,7 @@ if (obj) {
 |------|------|--------|------|
 | <API>SomeAPI.get</API> | id | `Object` | 根据 ID 获取对象 |
 | <API>SomeAPI.forEach</API> | callback | `void` | 遍历所有对象 |
+| <API>Game.getHash</API> | — | `int` | 获取游戏哈希值 |
 
 ## 子对象/子系统
 
@@ -93,6 +94,26 @@ GameInfo.OtherTable;   // 其他定义表
 const obj = SomeAPI.get(id);
 if (obj) {
   console.log(obj.name);
+}
+```
+
+</API>
+<API id="SomeAPI.getHash" title="SomeAPI.getHash()">
+
+**说明**: 获取游戏哈希值。
+
+**参数**: 无
+
+**返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 xxx/xxx.js
+// 简要描述功能
+const obj = SomeAPI.getHash();
+if (obj) {
+  console.log(obj);
 }
 ```
 
