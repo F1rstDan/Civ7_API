@@ -1,4 +1,4 @@
 interface:
   display_name: "Doc Format 文档标准化格式"
-  short_description: "标准化 Civ7 API 文档的排版格式。"
-  default_prompt: "审查 docs/api/camera.md 是否符合文档规范，缺少代码示例时搜索源码补全"
+  short_description: "标准化 Civ7 API 文档格式，并校验 API 归属。"
+  default_prompt: "审查 docs/api/units.md 是否符合文档规范，重点确认方法列表中的 API 归属没有被 GameInfo 或 player 子系统误混入"

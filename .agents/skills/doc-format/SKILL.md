@@ -2,7 +2,7 @@
 name: doc-format
 description: >
   标准化 Civ7 API 文档的排版格式。用于：新建 docs/api/*.md 文档时套用统一模板；
-  审查/整改存量文档使其符合弹窗规范（<API> 标签）和结构规范；为大型对象（如 Players、Cities）
+  审查/整改存量文档使其符合 API 弹窗标签规范和结构规范；为大型对象（如 Players、Cities）
   决定是否拆分子系统页；当文档缺少代码示例或来源标注(源文件引用)时，自动搜索游戏源码（.js / .ltp）补全。
   触发条件：用户提到"规范文档"、"整理格式"、"新建 API 文档"、"文档模板"、
   "拆分子系统"、"文档格式审查"，或要求对 docs/api/ 下的 .md 文件做排版。
@@ -10,7 +10,7 @@ description: >
 
 # Doc Format
 
-Civ7 API 文档统一排版规范。模板文件在 `assets/api-page-template.md`。
+Civ7 API 文档统一排版规范。模板文件在 `assets/api-page-template.md`。API 归属校验脚本在 `scripts/check_api_doc_ids.py`。
 
 ## 工作流
 
@@ -19,8 +19,8 @@ Civ7 API 文档统一排版规范。模板文件在 `assets/api-page-template.md
 | 意图 | 流程 |
 |------|------|
 | 新建文档 | 复制模板 → 查找来源 → 搜索代码示例 → 填充内容 |
-| 审查存量文档 | 读取目标文件 → 按检查清单逐项对照 → 缺少示例时搜索补全 → 输出问题报告 |
-| 整改存量文档 | 读取目标文件 → 按检查清单修复 → 搜索补全缺失示例 → 写回文件 |
+| 审查存量文档 | 读取目标文件 → 按检查清单逐项对照 → 校验 API 归属 → 缺少示例时搜索补全 → 输出问题报告 |
+| 整改存量文档 | 读取目标文件 → 按检查清单修复 → 校验 API 归属 → 搜索补全缺失示例 → 写回文件 |
 
 ## 来源与代码示例查找
 
@@ -46,6 +46,34 @@ rg -n "API_NAME" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
 # 搜索子系统用法（如 player.Treasury）
 rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 ```
+
+### API 归属判定（必须）
+
+方法列表只收录“当前对象/子系统本身”的 API。搜索到相同方法名时，先确认完整接收者链，禁止把更长链条里的尾部对象误写成当前对象方法。
+
+**判定规则**：
+- 文档主对象为 `Units` 时，方法表只允许直接形如 `Units.get(...)` 的调用；`GameInfo.Units.lookup(...)`、`player.Units.getUnits(...)` 只能放在 GameInfo 关联表、子系统或相关对象章节。
+- 文档主对象为实例对象或子系统时，明确写出归属，如 `unit.Experience.getAllPromotions(...)` 或 `player.Units.getUnitIds(...)`；不要缩短成 `Experience.getAllPromotions` 或 `Units.getUnitIds`。
+- `GameInfo.<Table>.lookup/find/forEach` 属于 `GameInfo` 表接口，不属于 `<Table>` 全局对象；例如 `GameInfo.Units.lookup` 不应进入 `Units` 方法列表。
+- 如果源码只出现 `A.B.method(...)`，没有出现独立的 `B.method(...)`，不得把它记录为 `B.method`。
+- 如果不能从源码确认完整接收者链，标注为“未验证前提”，不要写入方法列表。
+
+**搜索顺序**：
+```powershell
+# 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup 这类更长链条
+rg -n "(?<![\w$.\]])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+
+# 2. 搜索同名方法的所有链条，确认是否只存在更长接收者
+rg -n "(\w+\.)*Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+
+# 3. 对实例/子系统 API，搜索实际变量链和属性链
+rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+```
+
+**写入前检查**：
+- 方法表 `<API>对象.方法</API>` 必须能对应到源码中的同一完整接收者链。
+- 快速示例和弹窗示例可以引用相关 API，但不能因此把相关 API 加入当前对象方法表。
+- GameInfo 表、相关全局对象、玩家子系统使用反引号普通文本，不使用 `<API>` 触发器，除非当前页面就是该对象的规范文档。
 
 **代码示例编写原则**：
 - 精简为主，突出 API 核心作用，省略无关上下文
@@ -138,6 +166,8 @@ Camera.lookAtPlot(10, 20);
 - [ ] 有快速示例代码块
 - [ ] 方法表使用 `<API>` 触发器（非 backtick）
 - [ ] `<API>` 内无反引号
+- [ ] 方法表中的每个 `<API>` 都已验证完整接收者链，未把 `GameInfo.X.method`、`player.X.method` 等误写为 `X.method`
+- [ ] GameInfo 表、相关全局对象、玩家子系统未混入当前对象方法列表
 - [ ] 所有代码块标注 ` ```javascript `
 - [ ] 所有代码块已闭合
 - [ ] 代码块内有 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js` 注释
@@ -147,22 +177,36 @@ Camera.lookAtPlot(10, 20);
 - [ ] `<API>` 内容块放在页面最底部
 - [ ] 内容块包含：说明、参数表、返回值、来源
 - [ ] 大型文件（>350 行）是否需要拆分
+- [ ] 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
 
 ## 新建文档流程
 
 1. 读取 `assets/api-page-template.md`
 2. 查阅 `docs/_link-source-addr.md` 确认来源目录
-3. 用 `rg` 在 TunerPanels（.ltp）和 modules（.js）中搜索目标 API 的用法
+3. 用 `rg` 在 TunerPanels（.ltp）和 modules（.js）中搜索目标 API 的用法，并按“API 归属判定”确认完整接收者链
 4. 复制模板为目标文件名
 5. 替换占位符，用搜索到的真实代码填充示例（精简到 3-8 行，突出核心 API）
 6. 按实际 API 填充方法表和内容块
 7. 为每个 `<API>` 内容块标注来源（`**来源**: xxx.ltp - FunctionName` 或 `**来源**: xxx/xxx.js`）
+8. 运行脚本检查短写风险；脚本有警告时，回到源码确认归属后再输出
 
 ## 审查/整改流程
 
 1. 读取目标文件
 2. 逐项对照检查清单
-3. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
-4. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
-5. 输出问题列表（审查）或直接修复（整改）
-6. 整改时保持现有内容不变，只调整结构和格式
+3. 校验方法表与底部 `<API id>` 是否只包含当前对象/子系统 API；发现短写或跨对象混入时，移到 GameInfo、相关对象或子系统章节
+4. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
+5. 如果来源标注(或源文件引用)缺失或不完整：搜索确认后补全
+6. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
+7. 输出问题列表（审查）或直接修复（整改）
+8. 整改时保持现有内容不变，只调整结构和格式
+
+## 全链路验证
+
+输出前按以下链路自查，并把无法确认的部分标为“未验证前提”：
+
+输入：用户目标文件和目标对象是否明确。
+处理流程：模板、来源搜索、API 归属判定、示例提取是否都执行。
+状态变化：新增/删除/移动的 `<API>` 触发器是否同步到底部内容块。
+输出：方法数量、标题、源码引用、弹窗 id 是否一致。
+上下游影响：被移出方法表的相关 API 是否仍在合适章节保留，链接和 `<API>` 触发器是否不再误导弹窗系统。

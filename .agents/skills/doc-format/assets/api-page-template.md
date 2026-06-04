@@ -22,7 +22,7 @@ if (obj) {
 |------|------|--------|------|
 | <API>SomeAPI.get</API> | id | `Object` | 根据 ID 获取对象 |
 | <API>SomeAPI.forEach</API> | callback | `void` | 遍历所有对象 |
-| <API>Game.getHash</API> | — | `int` | 获取游戏哈希值 |
+| <API>SomeAPI.getHash</API> | — | `int` | 获取对象哈希值 |
 
 ## 子对象/子系统
 
@@ -120,4 +120,3 @@ if (obj) {
 ```
 
 </API>
-
