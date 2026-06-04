@@ -1,7 +1,9 @@
 <template>
   <Layout>
-    <template #doc-bottom>
+    <template #doc-footer-before>
       <SourceRefs />
+    </template>
+    <template #doc-bottom>
       <ModalOverlay />
     </template>
   </Layout>
