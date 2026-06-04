@@ -7,20 +7,18 @@ title: GameInfo 数据表
 游戏数据表访问的全局对象。包含 150+ 个数据表，存储游戏内所有定义数据（单位、建筑、文明、领袖、资源等）。从不通过 import 引入，引擎直接注入。
 
 ```javascript
-// 查找单位定义
+// 来源 TunerPanels/Units.ltp、TunerPanels/Districts.ltp、TunerPanels/Player.ltp
+// GameInfo 常用访问模式：lookup 查找定义、forEach 遍历表
 const unitDef = GameInfo.Units.lookup(unit.type);
 if (unitDef) {
   console.log(unitDef.Name, unitDef.Combat);
 }
 
-// 查找建筑定义
 const buildingDef = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
 
-// 获取当前时代名称
 const ageDef = GameInfo.Ages.lookup(Game.age);
 console.log(ageDef?.Name);
 
-// 遍历所有资源
 GameInfo.Resources.forEach(res => {
   console.log(res.ResourceType, res.Name);
 });
@@ -32,11 +30,11 @@ GameInfo.Resources.forEach(res => {
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `lookup` | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
-| `find` | predicate | `object \| undefined` | 按条件查找单条记录 |
-| `filter` | predicate | `array` | 按条件过滤多条记录 |
-| `forEach` | callback | `void` | 遍历所有记录执行回调 |
-| `count` | — | `int` | 返回记录总数 |
+| <API>GameInfo.lookup</API> | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
+| <API>GameInfo.find</API> | predicate | `object \| undefined` | 按条件查找单条记录 |
+| <API>GameInfo.filter</API> | predicate | `array` | 按条件过滤多条记录 |
+| <API>GameInfo.forEach</API> | callback | `void` | 遍历所有记录执行回调 |
+| <API>GameInfo.count</API> | — | `int` | 返回记录总数 |
 
 
 ## 详细说明
@@ -58,6 +56,8 @@ GameInfo.Resources.forEach(res => {
 | `CoreClass` | string | 核心分类（CORE_CLASS_MILITARY 等） |
 
 ```javascript
+// 来源 TunerPanels/Units.ltp
+// 通过单位类型哈希查找单位定义
 const unitDef = GameInfo.Units.lookup(unit.type);
 if (unitDef) {
   if (unitDef.FoundCity == true) {
@@ -83,7 +83,9 @@ if (unitDef) {
 | `Age` | string | 所属时代 |
 
 ```javascript
-const def = GameInfo.Constructibles.lookup('BUILDING_RAIL_STATION');
+// 来源 TunerPanels/Districts.ltp
+// 通过 constructible 类型哈希查找建造物定义
+const def = GameInfo.Constructibles.lookup(instance.type);
 if (def) {
   console.log(def.Name, def.Cost, def.ConstructibleClass);
 }
@@ -94,6 +96,8 @@ if (def) {
 时代定义表。用于获取当前时代的显示名称和属性。
 
 ```javascript
+// 来源 TunerPanels/Player.ltp
+// 通过 Game.age 获取当前时代定义
 const ageDef = GameInfo.Ages.lookup(Game.age);
 if (ageDef != null) {
   const ageName = ageDef.Name;
@@ -105,7 +109,9 @@ if (ageDef != null) {
 领袖定义表。通过 `player.leaderType` 获取的哈希值来查找。
 
 ```javascript
-const leader = GameInfo.Leaders.lookup(leaderType);
+// 来源 TunerPanels/Player.ltp
+// 通过玩家 leaderType 查找领袖定义
+const leader = GameInfo.Leaders.lookup(player.leaderType);
 const leaderName = leader == null ? 'LOC_LEADER_NONE_NAME' : leader.Name;
 ```
 
@@ -114,6 +120,8 @@ const leaderName = leader == null ? 'LOC_LEADER_NONE_NAME' : leader.Name;
 地图尺寸配置表。与 `GameplayMap.getMapSize()` 配合使用。
 
 ```javascript
+// 来源 modules/base-standard/maps/map-utilities.js
+// 获取地图尺寸信息并计算玩家数量
 const uiMapSize = GameplayMap.getMapSize();
 const mapInfo = GameInfo.Maps.lookup(uiMapSize);
 let iPlayerCount = mapInfo.PlayersLandmass1 + mapInfo.PlayersLandmass2;
@@ -124,6 +132,8 @@ let iPlayerCount = mapInfo.PlayersLandmass1 + mapInfo.PlayersLandmass2;
 ### lookup + 空值检查
 
 ```javascript
+// 来源 TunerPanels/Player.ltp
+// lookup 返回 null 时的安全访问模式
 const def = GameInfo.SomeTable.lookup(someHash);
 if (def) {
   // 安全使用 def
@@ -133,15 +143,22 @@ if (def) {
 ### filter 过滤记录
 
 ```javascript
-const militaryUnits = GameInfo.Units.filter(u => u.CoreClass == 'CORE_CLASS_MILITARY');
+// 来源 modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+// 按条件过滤数据表记录
+const civUnlocks = GameInfo.UnlockRewards.filter(
+  (reward) => reward.UnlockRewardKind == "KIND_CIVILIZATION"
+);
 ```
 
 ### forEach 遍历
 
 ```javascript
-GameInfo.Yields.forEach(y => {
-  console.log(y.YieldType, y.Name);
-});
+// 来源 TunerPanels/Player.ltp
+// 遍历产出表获取所有产出类型
+for (let i = 0; i < GameInfo.Yields.length; i++) {
+  const yieldType = GameInfo.Yields[i].YieldType;
+  console.log(yieldType, GameInfo.Yields[i].Name);
+}
 ```
 
 ## 完整数据表索引
@@ -292,3 +309,138 @@ GameInfo.Yields.forEach(y => {
 | `GameInfo.Governments` | 6 | 政体定义 |
 | `GameInfo.Victories` | 10 | 胜利条件定义 |
 
+*来源：TunerPanels/Player.ltp、TunerPanels/Units.ltp、TunerPanels/Districts.ltp、TunerPanels/Players.ltp、TunerPanels/VictoriesDefeats.ltp、modules/base-standard/maps/map-utilities.js、modules/core/ui-next/screens/unlocks/civ-unlocks-model.js、modules/core/ui/utilities/utilities-core-textprovider.js*
+
+<API id="GameInfo.lookup" title="GameInfo.lookup(hashOrType)">
+
+**说明**: 通过哈希值（number）或类型字符串（string）查找数据表中的单条记录。这是 GameInfo 最常用的访问方法。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| hashOrType | `number \| string` | 记录的哈希值或类型标识字符串 |
+
+**返回值**: `object \| null` — 找到返回记录对象，未找到返回 `null`
+
+**使用示例**:
+
+```javascript
+// 来源 TunerPanels/Units.ltp
+// 通过单位类型哈希查找单位定义
+const unitInfo = GameInfo.Units.lookup(pUnit.type);
+
+// 来源 TunerPanels/Player.ltp
+// 通过 Game.age 获取当前时代定义
+const currentAge = GameInfo.Ages.lookup(Game.age);
+```
+
+**来源**: TunerPanels/Units.ltp、TunerPanels/Player.ltp
+
+</API>
+
+<API id="GameInfo.find" title="GameInfo.find(predicate)">
+
+**说明**: 按条件查找数据表中**第一条**匹配的记录。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| predicate | `function` | 筛选回调，签名为 `(record) => boolean` |
+
+**返回值**: `object \| undefined` — 找到返回第一条匹配记录，未找到返回 `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/utilities/utilities-core-textprovider.js
+// 按 ID 查找邻接产出变化定义
+const yieldChangeDef = GameInfo.Adjacency_YieldChanges.find(
+  (o) => o.ID == element.YieldChangeId
+);
+
+// 来源 modules/base-standard/ui/tree-grid/tree-support.js
+// 按 UnitType 查找单位定义
+const unitInfo = GameInfo.Units.find(
+  (o) => o.UnitType == unlock.TargetType
+);
+```
+
+**来源**: modules/core/ui/utilities/utilities-core-textprovider.js
+
+</API>
+
+<API id="GameInfo.filter" title="GameInfo.filter(predicate)">
+
+**说明**: 按条件过滤数据表，返回**所有**匹配的记录组成的数组。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| predicate | `function` | 筛选回调，签名为 `(record) => boolean` |
+
+**返回值**: `array` — 所有匹配记录的数组，无匹配时返回空数组 `[]`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+// 过滤出所有文明解锁奖励
+const civUnlocks = GameInfo.UnlockRewards.filter(
+  (reward) => reward.UnlockRewardKind == "KIND_CIVILIZATION"
+);
+
+// 来源 modules/base-standard/ui/tree-grid/tree-support.js
+// 过滤出替代指定单位的所有单位
+const replaceUnits = GameInfo.UnitReplaces.filter(
+  (r) => r.ReplacesUnitType == unitType
+);
+```
+
+**来源**: modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+
+</API>
+
+<API id="GameInfo.forEach" title="GameInfo.forEach(callback)">
+
+**说明**: 遍历数据表中的所有记录，对每条记录执行回调。适用于需要遍历整张表的场景。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| callback | `function` | 回调函数，签名为 `(record) => void` |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 TunerPanels/Player.ltp
+// 遍历产出表获取所有产出类型
+for (let i = 0; i < GameInfo.Yields.length; i++) {
+  const yieldType = GameInfo.Yields[i].YieldType;
+  console.log(yieldType);
+}
+
+// 来源 TunerPanels/Legacies.ltp
+// forEach 遍历所有传承记录
+GameInfo.Legacies.forEach(u => {
+  console.log(u.Name);
+});
+```
+
+**来源**: TunerPanels/Player.ltp、TunerPanels/Legacies.ltp
+
+</API>
+
+<API id="GameInfo.count" title="GameInfo.count()">
+
+**说明**: 返回数据表中的记录总数。
+
+**参数**: 无
+
+**返回值**: `int` — 表中记录的总数
+
+**使用示例**:
+
+```javascript
+// 来源 TunerPanels/Player.ltp
+// 获取产出类型的数量
+const yieldCount = GameInfo.Yields.count;
+```
+</API>
