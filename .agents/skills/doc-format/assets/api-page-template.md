@@ -8,6 +8,8 @@ title: 示例 对象名称
 
 ```javascript
 // 快速示例：展示最常用的 1-3 个操作
+// 来源 xxx.ltp
+// 简要描述功能
 const obj = SomeAPI.get(id);
 if (obj) {
   console.log(obj.name);
@@ -34,6 +36,7 @@ if (obj) {
 
 ```javascript
 // 来源 xxx.ltp
+// 简要描述功能
 const sub = obj.SubA;
 sub.methodA(arg);
 sub.methodB();
@@ -42,7 +45,8 @@ sub.methodB();
 ### SubB 子系统
 
 ```javascript
-// 来源 xxx.ltp
+// 来源 xxx/xxx.js
+// 简要描述功能
 const sub = obj.SubB;
 sub.methodC();
 ```
@@ -69,7 +73,7 @@ GameInfo.OtherTable;   // 其他定义表
 
 ---
 
-*来源：xxx.ltp*
+*来源：xxx.ltp; xxx/xxx.js*
 
 <API id="SomeAPI.get" title="SomeAPI.get(id)">
 
@@ -84,13 +88,13 @@ GameInfo.OtherTable;   // 其他定义表
 **使用示例**:
 
 ```javascript
+// 来源 xxx/xxx.js
+// 简要描述功能
 const obj = SomeAPI.get(id);
 if (obj) {
   console.log(obj.name);
 }
 ```
-
-**来源**: xxx.ltp - SomeFunction
 
 </API>
 
