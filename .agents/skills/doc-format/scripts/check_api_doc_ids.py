@@ -88,6 +88,33 @@ def suffix_scope_match(api_id: str, scopes: list[str]) -> str | None:
     return None
 
 
+def related_tail_collision(api_id: str, scopes: list[str], text: str) -> tuple[str, int] | None:
+    """Find Camera.reset vs WorldUI.ForegroundCamera.reset style short writes."""
+    if "." not in api_id:
+        return None
+
+    receiver, method_tail = api_id.split(".", 1)
+    for scope in scopes:
+        last_segment = scope.split(".")[-1]
+        if last_segment == receiver or not last_segment.endswith(receiver):
+            continue
+        candidate = f"{scope}.{method_tail}"
+        pattern = re.compile(rf"\b{re.escape(candidate)}\s*\(")
+        match = pattern.search(text)
+        if match:
+            return candidate, line_number(text, match.start())
+    return None
+
+
+def is_generated_doc(path: Path, frontmatter: dict[str, object], text: str) -> bool:
+    doc_type = str(frontmatter.get("doc_type", "")).strip()
+    if doc_type in {"generated-reference", "generated-constants"}:
+        return True
+    if path.name.lower() == "constants.md" and "自动提取" in text[:500]:
+        return True
+    return False
+
+
 def is_main_method_h2(heading: str) -> bool:
     if "方法列表" not in heading:
         return False
@@ -153,7 +180,7 @@ def warning(path: Path, line: int, message: str) -> str:
     return f"{path}:{line}: warning: {message}"
 
 
-def validate_file(path: Path) -> list[str]:
+def validate_file(path: Path, include_generated: bool = False) -> list[str]:
     text = path.read_text(encoding="utf-8")
     frontmatter, _body = parse_frontmatter(text)
     doc_type = str(frontmatter.get("doc_type", "")).strip()
@@ -163,6 +190,9 @@ def validate_file(path: Path) -> list[str]:
     tags = collect_api_tags(text)
     searchable = searchable_text(text)
     messages: list[str] = []
+
+    if is_generated_doc(path, frontmatter, text) and not include_generated:
+        return messages
 
     for key in ("doc_type", "summary", "primary_scope", "related_scope", "source"):
         if key not in frontmatter:
@@ -211,6 +241,17 @@ def validate_file(path: Path) -> list[str]:
                 )
             )
 
+        collision = related_tail_collision(tag.api_id, related, searchable)
+        if collision and not is_related:
+            candidate, hit_line = collision
+            messages.append(
+                warning(
+                    path,
+                    tag.line,
+                    f"<API>{tag.api_id}</API> may belong to related scope {candidate} found on line {hit_line}; use the full receiver chain or move it out of the main method list.",
+                )
+            )
+
         if is_primary:
             for longer_chain, hit_line in find_longer_chains(searchable, tag.api_id):
                 if in_scope(longer_chain, related) or (allowed and not in_scope(longer_chain, primary)):
@@ -231,12 +272,24 @@ def validate_file(path: Path) -> list[str]:
 
 def main(argv: list[str]) -> int:
     if len(argv) < 2:
-        print("Usage: python check_api_doc_ids.py <docs/api/file.md> [more.md ...]")
+        print("Usage: python check_api_doc_ids.py [--include-generated] <docs/api/file.md> [more.md ...]")
+        return 2
+
+    include_generated = False
+    filenames: list[str] = []
+    for arg in argv[1:]:
+        if arg == "--include-generated":
+            include_generated = True
+        else:
+            filenames.append(arg)
+
+    if not filenames:
+        print("Usage: python check_api_doc_ids.py [--include-generated] <docs/api/file.md> [more.md ...]")
         return 2
 
     messages: list[str] = []
-    for filename in argv[1:]:
-        messages.extend(validate_file(Path(filename)))
+    for filename in filenames:
+        messages.extend(validate_file(Path(filename), include_generated=include_generated))
 
     if messages:
         for message in messages:
