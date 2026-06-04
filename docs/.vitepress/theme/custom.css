@@ -1,0 +1,18 @@
+/* 加宽整体布局 */
+:root {
+  --vp-layout-max-width: 80%;
+}
+
+/* 移除正文内容的宽度限制 */
+.vp-doc {
+  max-width: none !important;
+}
+
+.content-container {
+  max-width: none !important;
+}
+
+/* 容器占满可用宽度 */
+.VPDoc .container {
+  max-width: none !important;
+}
