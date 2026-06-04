@@ -78,8 +78,9 @@ rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.
 
 ### 代码块
 - 统一 ` ```javascript ` 围栏，必须闭合
-- 代码块内首行写 `// 来源 xxx.ltp` 或 `// 来源 xxx.js`
-- 页面末尾写 `*来源：xxx.ltp*` 或 `*来源：xxx.js*`（多种来源用顿号分隔）
+- 代码块内首行写 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js`
+- 代码块内第二行，一句话简要说明代码功能 `// 简要描述功能`
+- 页面末尾写 `*来源：xxx.ltp*` 或 `*来源：xxx/xxx.js*`（斜体；多种来源用顿号分隔）
 
 ### 弹窗标签
 
@@ -106,10 +107,10 @@ rg -n "\.Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.
 **使用示例**:
 
 ```javascript
+// 来源 xxx/xxx.js
+// 简要描述功能
 Camera.lookAtPlot(10, 20);
 ```
-
-**来源**: Camera.ltp - SomeFunction
 
 </API>
 ````
@@ -138,8 +139,9 @@ Camera.lookAtPlot(10, 20);
 - [ ] `<API>` 内无反引号
 - [ ] 所有代码块标注 ` ```javascript `
 - [ ] 所有代码块已闭合
-- [ ] 代码块内有 `// 来源 xxx.ltp` 或 `// 来源 xxx.js` 注释
-- [ ] 页面末尾有 `*来源：xxx.ltp*` 或 `*来源：xxx.js*`
+- [ ] 代码块内有 `// 来源 xxx.ltp` 或 `// 来源 xxx/xxx.js` 注释
+- [ ] 代码块内有 `// 简要描述功能` 注释
+- [ ] 页面末尾有 `*来源：xxx.ltp*` 或 `*来源：xxx/xxx.js*`（斜体；多种来源用顿号分隔）
 - [ ] 有代码示例（若缺失，搜索 .ltp / .js 源码补全）
 - [ ] `<API>` 内容块放在页面最底部
 - [ ] 内容块包含：说明、参数表、返回值、来源
@@ -153,7 +155,7 @@ Camera.lookAtPlot(10, 20);
 4. 复制模板为目标文件名
 5. 替换占位符，用搜索到的真实代码填充示例（精简到 3-8 行，突出核心 API）
 6. 按实际 API 填充方法表和内容块
-7. 为每个 `<API>` 内容块标注来源（`**来源**: xxx.ltp - FunctionName` 或 `**来源**: xxx.js`）
+7. 为每个 `<API>` 内容块标注来源（`**来源**: xxx.ltp - FunctionName` 或 `**来源**: xxx/xxx.js`）
 
 ## 审查/整改流程
 
