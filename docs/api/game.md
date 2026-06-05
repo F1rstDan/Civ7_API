@@ -13,9 +13,13 @@ source:
   - modules/base-standard/ui/system-bar/panel-system-bar.js
   - modules/base-standard/ui/benchmark/screen-benchmark.js
   - modules/base-standard/ui/automation/automation-base-benchmark-game.js
+  - modules/base-standard/ui/automation/automation-test-benchmark-graphics.js
   - modules/base-standard/ui/action/panel-action.js
   - modules/base-standard/ui/age-rankings/model-age-rankings.js
   - modules/base-standard/ui/legends-report/screen-legends-report.js
+  - modules/base-standard/ui/cinematic/screen-cinematic-placard.js
+  - modules/core/ui/shell/extras/screen-extras.js
+doc_update: 2026-06-05
 ---
 
 # Game 核心对象
@@ -30,9 +34,9 @@ const turn = Game.turn;
 const dateStr = Game.getTurnDate();
 ```
 
-## 属性
+## 属性与方法
 
-| 属性 | 类型 | 说明 |
+| 属性（共 2 个） | 类型 | 说明 |
 |------|------|------|
 | `age` | `int` | 当前时代编号 |
 | `turn` | `int` | 当前回合数 |
@@ -47,9 +51,7 @@ const currentAge = GameInfo.Ages.lookup(Game.age);
 turnNumberElement.textContent = Locale.compose("LOC_ACTION_PANEL_CURRENT_TURN", Game.turn);
 ```
 
-## 方法列表（共 3 个）
-
-| 方法 | 参数 | 返回值 | 说明 |
+| 方法（共 3 个） | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>Game.getHash</API> | — | `int` | 获取游戏哈希值 |
 | <API>Game.getTurnDate</API> | — | `string` | 获取当前回合日期字符串 |

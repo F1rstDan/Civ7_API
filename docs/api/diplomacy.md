@@ -15,6 +15,7 @@ source:
   - TunerPanels/Diplomacy.ltp
   - TunerPanels/Deals.ltp
   - TunerPanels/Independents.ltp
+doc_update: 2026-06-05
 ---
 
 # Diplomacy 外交
@@ -30,7 +31,7 @@ if (diplomacy.hasMet(otherPlayerID) && diplomacy.canDeclareWarOn(otherPlayerID, 
 }
 ```
 
-## 方法列表（共 24 个）
+## 方法列表（共 30 个）
 
 ### player.Diplomacy 子系统
 
@@ -88,6 +89,7 @@ if (diplomacy.hasMet(otherPlayerID) && diplomacy.canDeclareWarOn(otherPlayerID, 
 
 ```javascript
 // 来源 Diplomacy.ltp, Independents.ltp
+// 影响力/宗主权基本用法
 const influence = player.Influence;
 influence.setSuzerain(playerID);
 influence.getSuzerain();
@@ -261,6 +263,17 @@ if (result.Success) {
 
 **返回值**: `object` (取 `.Success` 判断)
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 检查是否可以和谈
+const canMakePeace = player.Diplomacy.canMakePeaceWith(otherPlayerID).Success;
+if (canMakePeace) {
+  console.log("可以和谈");
+}
+```
+
 </API>
 <API id="player.Diplomacy.forceDeclareWar"><h3>player.Diplomacy.forceDeclareWar(otherPlayerID)</h3>
 
@@ -272,6 +285,15 @@ if (result.Success) {
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 强制执行宣战
+const diplomacy = player.Diplomacy;
+diplomacy.forceDeclareWar(toPlayer.id);
+```
+
 </API>
 <API id="player.Diplomacy.forceAttackOperation"><h3>player.Diplomacy.forceAttackOperation(otherPlayerID)</h3>
 
@@ -282,6 +304,15 @@ if (result.Success) {
 | otherPlayerID | `int` | 目标玩家 ID |
 
 **返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 强制执行攻击行动
+const diplomacy = player.Diplomacy;
+diplomacy.forceAttackOperation(toPlayer.id);
+```
 
 </API>
 <API id="player.Diplomacy.getNumGrievances"><h3>player.Diplomacy.getNumGrievances(otherPlayerID)</h3>
@@ -314,6 +345,15 @@ console.log(grievances.toFixed(1));
 
 **返回值**: `float`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取好感值
+const favors = player.Diplomacy.getNumFavors(otherPlayerID);
+console.log(favors.toFixed(1));
+```
+
 </API>
 <API id="player.Diplomacy.changeNumGrievances"><h3>player.Diplomacy.changeNumGrievances(otherPlayerID, amount)</h3>
 
@@ -325,6 +365,16 @@ console.log(grievances.toFixed(1));
 | amount | `float` | 修改量 |
 
 **返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 修改不满值
+const diplomacy = player.Diplomacy;
+diplomacy.changeNumGrievances(targetPlayerID, 1000);   // 增加
+diplomacy.changeNumGrievances(targetPlayerID, -1000);  // 减少
+```
 
 </API>
 <API id="player.Diplomacy.changeNumFavors"><h3>player.Diplomacy.changeNumFavors(otherPlayerID, amount)</h3>
@@ -338,6 +388,16 @@ console.log(grievances.toFixed(1));
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 修改好感值
+const diplomacy = player.Diplomacy;
+diplomacy.changeNumFavors(targetPlayerID, 1000);   // 增加
+diplomacy.changeNumFavors(targetPlayerID, -1000);  // 减少
+```
+
 </API>
 <API id="player.Diplomacy.getRelationshipLevel"><h3>player.Diplomacy.getRelationshipLevel(otherPlayerID)</h3>
 
@@ -348,6 +408,15 @@ console.log(grievances.toFixed(1));
 | otherPlayerID | `int` | 目标玩家 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取关系等级数值
+const relLevel = player.Diplomacy.getRelationshipLevel(otherPlayerID);
+console.log(relLevel);
+```
 
 </API>
 <API id="player.Diplomacy.getRelationshipLevelName"><h3>player.Diplomacy.getRelationshipLevelName(otherPlayerID)</h3>
@@ -381,6 +450,16 @@ console.log(relStatus);
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 修改关系等级
+const diplomacy = player.Diplomacy;
+diplomacy.changeRelationshipLevel(targetPlayerID, 1);   // 增加
+diplomacy.changeRelationshipLevel(targetPlayerID, -1);  // 减少
+```
+
 </API>
 <API id="player.Diplomacy.getTotalTokens"><h3>player.Diplomacy.getTotalTokens()</h3>
 
@@ -408,6 +487,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 
 **返回值**: `object` (取 `.value`)
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取可用令牌数
+const available = player.Diplomacy.getAvailableTokens().value;
+console.log(available);
+```
+
 </API>
 <API id="player.Diplomacy.getCommittedTokens"><h3>player.Diplomacy.getCommittedTokens()</h3>
 
@@ -416,6 +504,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 **参数**: 无
 
 **返回值**: `object` (取 `.value`)
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取已承诺令牌数
+const committed = player.Diplomacy.getCommittedTokens().value;
+console.log(committed);
+```
 
 </API>
 <API id="player.Diplomacy.getEscrowTokens"><h3>player.Diplomacy.getEscrowTokens()</h3>
@@ -426,6 +523,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 
 **返回值**: `object` (取 `.value`)
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取托管令牌数
+const escrow = player.Diplomacy.getEscrowTokens().value;
+console.log(escrow);
+```
+
 </API>
 <API id="player.Diplomacy.getExhaustedTokens"><h3>player.Diplomacy.getExhaustedTokens()</h3>
 
@@ -435,6 +541,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 
 **返回值**: `object` (取 `.value`)
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取已耗尽令牌数
+const exhausted = player.Diplomacy.getExhaustedTokens().value;
+console.log(exhausted);
+```
+
 </API>
 <API id="player.Diplomacy.getReservedTokens"><h3>player.Diplomacy.getReservedTokens()</h3>
 
@@ -443,6 +558,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 **参数**: 无
 
 **返回值**: `object` (取 `.value`)
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取已保留令牌数
+const reserved = player.Diplomacy.getReservedTokens().value;
+console.log(reserved);
+```
 
 </API>
 <API id="player.Diplomacy.changeAvailableTokens"><h3>player.Diplomacy.changeAvailableTokens(amount)</h3>
@@ -454,6 +578,15 @@ const availableTokens = player.Diplomacy.getAvailableTokens().value;
 | amount | `int` | 修改量 |
 
 **返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 修改可用令牌数
+player.Diplomacy.changeAvailableTokens(1);   // 增加
+player.Diplomacy.changeAvailableTokens(-1);  // 减少
+```
 
 </API>
 <API id="Game.Diplomacy.getEventUnion"><h3>Game.Diplomacy.getEventUnion(player1ID, player2ID)</h3>
@@ -548,6 +681,15 @@ for (let event of Game.Diplomacy.getActiveEvents()) {
 
 **返回值**: `object`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取影响力独立数据
+let data = Game.Diplomacy.getInfluenceIndependentData(eventID);
+// data.independentPlayerID
+```
+
 </API>
 <API id="Game.Diplomacy.getLandClaimData"><h3>Game.Diplomacy.getLandClaimData(eventID)</h3>
 
@@ -558,6 +700,14 @@ for (let event of Game.Diplomacy.getActiveEvents()) {
 | eventID | `int` | 事件 ID |
 
 **返回值**: `object`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取领土声索数据
+let landClaimData = Game.Diplomacy.getLandClaimData(eventID);
+```
 
 </API>
 <API id="Game.DiplomacySessions.requestSession"><h3>Game.DiplomacySessions.requestSession(fromPlayer, toPlayer, type)</h3>
@@ -591,6 +741,17 @@ Game.DiplomacySessions.requestSession(fromPlayer, toPlayer, "DECLARE_SURPRISE_WA
 
 **返回值**: `int[]`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取开放会话 ID 列表
+let aIDs = Game.DiplomacySessions.getOpenSessionIDs(playerID);
+for (const id of aIDs) {
+  console.log(id);
+}
+```
+
 </API>
 <API id="Game.DiplomacySessions.findOpenSession"><h3>Game.DiplomacySessions.findOpenSession(sessionID)</h3>
 
@@ -602,6 +763,15 @@ Game.DiplomacySessions.requestSession(fromPlayer, toPlayer, "DECLARE_SURPRISE_WA
 
 **返回值**: `object`
 
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 查找开放会话
+let session = Game.DiplomacySessions.findOpenSession(sessionID);
+// session.from, session.to, session.pendingStatements
+```
+
 </API>
 <API id="Game.DiplomacySessions.getKeyNameOrNumber"><h3>Game.DiplomacySessions.getKeyNameOrNumber(type)</h3>
 
@@ -612,5 +782,13 @@ Game.DiplomacySessions.requestSession(fromPlayer, toPlayer, "DECLARE_SURPRISE_WA
 | type | `int` | 键类型 |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 Diplomacy.ltp
+// 获取会话键名
+let keyName = Game.DiplomacySessions.getKeyNameOrNumber(statementType);
+```
 
 </API>

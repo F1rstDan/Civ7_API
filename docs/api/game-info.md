@@ -23,6 +23,7 @@ source:
   - modules/base-standard/maps/map-utilities.js
   - modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
   - modules/core/ui/utilities/utilities-core-textprovider.js
+doc_update: 2026-06-05
 ---
 
 # GameInfo 数据表
@@ -53,11 +54,10 @@ GameInfo.Resources.forEach(res => {
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| <API>GameInfo.lookup</API> | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
-| <API>GameInfo.find</API> | predicate | `object \| undefined` | 按条件查找单条记录 |
-| <API>GameInfo.filter</API> | predicate | `array` | 按条件过滤多条记录 |
-| <API>GameInfo.forEach</API> | callback | `void` | 遍历所有记录执行回调 |
-| <API>GameInfo.count</API> | — | `int` | 返回记录总数 |
+| <API>GameInfo.*.lookup</API> | hashOrType | `object \| null` | 通过哈希值或类型字符串查找单条记录（最常用） |
+| <API>GameInfo.*.find</API> | predicate | `object \| undefined` | 按条件查找单条记录 |
+| <API>GameInfo.*.filter</API> | predicate | `array` | 按条件过滤多条记录 |
+| <API>GameInfo.*.forEach</API> | callback | `void` | 遍历所有记录执行回调 |
 
 
 ## 详细说明
@@ -333,7 +333,7 @@ for (let i = 0; i < GameInfo.Yields.length; i++) {
 | `GameInfo.Victories` | 10 | 胜利条件定义 |
 
 
-<API id="GameInfo.lookup"><h3>GameInfo.lookup(hashOrType)</h3>
+<API id="GameInfo.*.lookup"><h3>GameInfo.*.lookup(hashOrType)</h3>
 
 **说明**: 通过哈希值（number）或类型字符串（string）查找数据表中的单条记录。这是 GameInfo 最常用的访问方法。
 
@@ -359,7 +359,7 @@ const currentAge = GameInfo.Ages.lookup(Game.age);
 
 </API>
 
-<API id="GameInfo.find"><h3>GameInfo.find(predicate)</h3>
+<API id="GameInfo.*.find"><h3>GameInfo.*.find(predicate)</h3>
 
 **说明**: 按条件查找数据表中**第一条**匹配的记录。
 
@@ -389,7 +389,7 @@ const unitInfo = GameInfo.Units.find(
 
 </API>
 
-<API id="GameInfo.filter"><h3>GameInfo.filter(predicate)</h3>
+<API id="GameInfo.*.filter"><h3>GameInfo.*.filter(predicate)</h3>
 
 **说明**: 按条件过滤数据表，返回**所有**匹配的记录组成的数组。
 
@@ -419,7 +419,7 @@ const replaceUnits = GameInfo.UnitReplaces.filter(
 
 </API>
 
-<API id="GameInfo.forEach"><h3>GameInfo.forEach(callback)</h3>
+<API id="GameInfo.*.forEach"><h3>GameInfo.*.forEach(callback)</h3>
 
 **说明**: 遍历数据表中的所有记录，对每条记录执行回调。适用于需要遍历整张表的场景。
 
@@ -450,19 +450,3 @@ GameInfo.Legacies.forEach(u => {
 
 </API>
 
-<API id="GameInfo.count"><h3>GameInfo.count()</h3>
-
-**说明**: 返回数据表中的记录总数。
-
-**参数**: 无
-
-**返回值**: `int` — 表中记录的总数
-
-**使用示例**:
-
-```javascript
-// 来源 TunerPanels/Player.ltp
-// 获取产出类型的数量
-const yieldCount = GameInfo.Yields.count;
-```
-</API>

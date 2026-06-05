@@ -10,12 +10,27 @@ related_scope:
   - InterfaceMode
   - ComponentID
 source:
-  - 源码全局对象分析
+  - modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+  - modules/base-standard/ui/unit-actions/unit-actions.js
+  - modules/core/ui/utilities/utilities-data.js
+  - modules/core/ui/utilities/utilities-image.js
+doc_update: 2026-06-05
 ---
 
-# 全局工具对象
+# globals 全局工具对象
 
 全局工具函数和辅助对象。从不通过 import 引入，引擎直接注入。
+
+## 快速示例
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 获取本地玩家对象，判断单位归属
+const player = Players.get(GameContext.localPlayerID);
+if (unit.owner == GameContext.localPlayerID) {
+  // 属于本地玩家的单位
+}
+```
 
 ## GameContext — 游戏上下文
 
@@ -25,7 +40,7 @@ source:
 | `localObserverID` | `int` | 本地观察者 ID |
 
 ```javascript
-// 来源 源码全局对象
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
 // 获取本地玩家对象
 const player = Players.get(GameContext.localPlayerID);
 ```
@@ -38,10 +53,9 @@ const player = Players.get(GameContext.localPlayerID);
 | `query` | queryType, ...args | `array` | 执行数据库查询 |
 
 ```javascript
-// 来源 源码全局对象
-// 使用哈希值判断单位核心类别
-const HASH = Database.makeHash('CORE_CLASS_MILITARY');
-if (unit.coreClass == HASH) { /* 军事单位 */ }
+// 来源 modules/base-standard/ui/unit-actions/unit-actions.js
+// 使用哈希值判断核武器类型
+parameters.Type = Database.makeHash("WMD_NUCLEAR_DEVICE");
 ```
 
 ## InterfaceMode — 界面模式
@@ -55,11 +69,13 @@ if (unit.coreClass == HASH) { /* 军事单位 */ }
 | `switchToDefault` | — | `void` | 切换回默认模式 |
 
 ```javascript
-// 来源 源码全局对象
-// 检查当前界面模式
-if (InterfaceMode.getCurrent() == 'INTERFACEMODE_CITY_PRODUCTION') {
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 检查当前界面模式并切换
+if (InterfaceMode.getCurrent() == "INTERFACEMODE_CITY_PRODUCTION") {
   // 在城市生产界面
 }
+InterfaceMode.switchTo("INTERFACEMODE_TUTORIAL_START", { lazyInit: true });
+InterfaceMode.switchToDefault();
 ```
 
 ## ComponentID — 组件 ID 工具
@@ -72,3 +88,15 @@ if (InterfaceMode.getCurrent() == 'INTERFACEMODE_CITY_PRODUCTION') {
 | `toBitfield` | id | `int` | ID 转位域 |
 | `getInvalidID` | — | `object` | 获取无效 ID |
 | `isInvalid` | id | `bool` | 检查 ID 是否无效 |
+
+```javascript
+// 来源 modules/core/ui/utilities/utilities-data.js
+// 判断贸易路线是否经过某城市
+if (ComponentID.isMatch(route.leftCityID, cityId)) {
+  return Cities.get(route.leftCityID);
+}
+
+// 来源 modules/core/ui/utilities/utilities-image.js
+// 输出 ID 日志
+console.error("Failed attempt to get a unit icon for unit cid: ", ComponentID.toLogString(componentID));
+```

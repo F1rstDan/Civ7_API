@@ -11,6 +11,8 @@ related_scope:
 source:
   - TunerPanels/Deals.ltp
   - TunerPanels/Diplomacy.ltp
+  - modules/base-standard/ui/diplomacy-peace-deal/panel-diplomacy-peace-deal.js
+doc_update: 2026-06-05
 ---
 
 # DiplomacyDeals 外交交易
@@ -232,6 +234,14 @@ Game.DiplomacyDeals.addItemToWorkingDeal(workingDealId, dealItem);
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-diplomacy-peace-deal.js
+// 移除工作交易中的项目
+Game.DiplomacyDeals.removeItemFromWorkingDeal(workingDealId, dealItem.id);
+```
+
 </API>
 <API id="Game.DiplomacyDeals.sendWorkingDeal"><h3>Game.DiplomacyDeals.sendWorkingDeal(workingDealId, proposalAction)</h3>
 
@@ -262,6 +272,19 @@ Game.DiplomacyDeals.sendWorkingDeal(workingDealId, DiplomacyDealProposalActions.
 | workingDealId | `object` | 工作交易 ID 对象 |
 
 **返回值**: `object`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-diplomacy-peace-deal.js
+// 获取工作交易详情
+const workingDeal = Game.DiplomacyDeals.getWorkingDeal(workingDealId);
+if (workingDeal) {
+  workingDeal.itemIds.forEach((itemID) => {
+    // 遍历交易项目
+  });
+}
+```
 
 </API>
 <API id="Game.DiplomacyDeals.getPossibleWorkingDealItems"><h3>Game.DiplomacyDeals.getPossibleWorkingDealItems(workingDealId, playerId, itemType)</h3>

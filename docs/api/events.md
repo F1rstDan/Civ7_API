@@ -10,7 +10,12 @@ related_scope:
   - Units
   - GameplayMap
 source:
-  - 
+  - modules/base-standard/ui/city-banners/city-banner-manager.js
+  - modules/base-standard/ui/action/panel-action.js
+  - modules/base-standard/ui/victory-manager/victory-manager.js
+  - modules/base-standard/ui/victory-progress/model-victory-progress.js
+  - modules/base-standard/scripts/age-transition-post-load.js
+doc_update: 2026-06-05 
 ---
 
 # Events 事件参考
@@ -18,7 +23,7 @@ source:
 文明7引擎事件通过 `engine.on()` 监听，通过 `engine.trigger()` 触发。每个事件的回调参数中包含相关数据对象。
 
 ```javascript
-// 来源 源码事件系统
+// 来源 modules/base-standard/ui/city-banners/city-banner-manager.js
 // 监听城市添加到地图事件
 engine.on('CityAddedToMap', (data) => {
   console.log('城市添加到地图', data);
@@ -145,3 +150,46 @@ engine.on('CityAddedToMap', (data) => {
 |--------|------|----------|
 | `TutorialBegin` | 教程开始 | — |
 | `TutorialCallout` | 教程提示显示/隐藏 | — |
+
+## 使用示例
+
+```javascript
+// 来源 modules/base-standard/ui/city-banners/city-banner-manager.js
+// 批量注册多个城市事件监听
+engine.on("CityAddedToMap", this.cityAddedToMapListener);
+engine.on("CityRemovedFromMap", this.cityRemovedFromMapListener);
+engine.on("CityPopulationChanged", this.cityPopulationChangedListener);
+engine.on("CityProductionChanged", this.cityProductionChangedListener);
+engine.on("CityYieldChanged", this.cityYieldChangedListener);
+```
+
+```javascript
+// 来源 modules/base-standard/ui/action/panel-action.js
+// 游戏流程事件监听与取消
+engine.on("GameStarted", this.onGameStarted, this);
+engine.on("LocalPlayerTurnBegin", this.onLocalPlayerTurnBegin, this);
+engine.on("LocalPlayerTurnEnd", this.onLocalPlayerTurnEnd, this);
+
+// 取消监听
+engine.off("LocalPlayerTurnBegin", this.onLocalPlayerTurnBegin, this);
+```
+
+```javascript
+// 来源 modules/base-standard/ui/victory-progress/model-victory-progress.js
+// 时代与胜利事件监听
+engine.on("GameAgeEnded", this.onAgeEnded, this);
+engine.on("PlayerDefeat", this.onPlayerDefeated, this);
+```
+
+```javascript
+// 来源 modules/base-standard/ui/tutorial/tutorial-callout.js
+// 触发教程提示事件
+engine.trigger("TutorialCallout");
+```
+
+```javascript
+// 来源 modules/base-standard/scripts/age-transition-post-load.js
+// 时代过渡相关事件
+engine.on("RequestAgeInitializationParameters", requestInitializationParameters);
+engine.on("GenerateAgeTransition", generateTransition);
+```

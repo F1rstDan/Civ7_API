@@ -14,6 +14,13 @@ source:
   - TunerPanels/Player.ltp
   - TunerPanels/Random Events.ltp
   - modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+  - modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+  - modules/base-standard/ui-next/tooltips/plot-tooltip/plot-tooltip.js
+  - modules/base-standard/maps/feature-biome-generator.js
+  - modules/base-standard/maps/volcano-generator.js
+  - modules/base-standard/maps/resource-generator.js
+  - modules/base-standard/scripts/age-transition-post-load.js
+doc_update: 2026-06-05
 ---
 
 # GameplayMap 地图操作
@@ -88,6 +95,14 @@ const iDist = GameplayMap.getPlotDistance(10, 20, 30, 40);
 | <API>GameplayMap.getPlotIndicesInRadius</API> | iX, iY, radius | `int[]` | 半径内所有地块索引数组 |
 | <API>GameplayMap.getRandomSeed</API> | — | `int` | 地图随机种子 |
 
+## GameInfo 关联表
+
+```javascript
+GameInfo.Terrains;       // 地形类型定义表
+GameInfo.Features;       // 地物类型定义表
+GameInfo.Resources;      // 资源类型定义表
+```
+
 <!-- 
   以下 <API> 内容块为各方法的弹窗说明。
   按方法字母序排列（getXxx 在前，isXxx 在后，hasXxx 在最后）。
@@ -100,6 +115,14 @@ const iDist = GameplayMap.getPlotDistance(10, 20, 30, 40);
 **参数**: 无
 
 **返回值**: `int` — 地图尺寸枚举值
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/terra-incognita.js
+// 获取地图尺寸用于初始化
+const uiMapSize = GameplayMap.getMapSize();
+```
 
 </API>
 
@@ -230,6 +253,15 @@ if (GameplayMap.isValidLocation(center)) {
 
 **返回值**: `object` — `{ x: int, y: int }`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/volcano-generator.js
+// 获取相邻地块位置
+const iLocation = GameplayMap.getLocationFromIndex(iIndex);
+const pAdjacentPlot = GameplayMap.getAdjacentPlotLocation(iLocation, iDirection);
+```
+
 </API>
 
 <API id="GameplayMap.getDirectionToPlot"><h3>GameplayMap.getDirectionToPlot(fromLoc, toLoc)</h3>
@@ -256,6 +288,15 @@ if (GameplayMap.isValidLocation(center)) {
 
 **返回值**: `int` — 地形类型哈希值
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取地形类型并查询名称
+const terrainType = GameplayMap.getTerrainType(location.x, location.y);
+const terrain = GameInfo.Terrains.lookup(terrainType);
+```
+
 </API>
 
 <API id="GameplayMap.getBiomeType"><h3>GameplayMap.getBiomeType(iX, iY)</h3>
@@ -269,6 +310,14 @@ if (GameplayMap.isValidLocation(center)) {
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取生物群落类型
+const biomeType = GameplayMap.getBiomeType(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.getFeatureType"><h3>GameplayMap.getFeatureType(iX, iY)</h3>
@@ -281,6 +330,14 @@ if (GameplayMap.isValidLocation(center)) {
 | iY | `int` | Y 坐标 |
 
 **返回值**: `int` — 地物类型哈希值
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取地物类型
+const type = GameplayMap.getFeatureType(location.x, location.y);
+```
 
 </API>
 
@@ -329,6 +386,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取大陆类型
+const continentType = GameplayMap.getContinentType(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.getElevation"><h3>GameplayMap.getElevation(iX, iY)</h3>
@@ -341,6 +406,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 获取海拔用于调整纬度计算
+latitude += Math.round(GameplayMap.getElevation(iX, iY) / 120);
+```
 
 </API>
 
@@ -355,6 +428,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 获取降雨量用于植被生成
+const rainfall = GameplayMap.getRainfall(iX, iY);
+```
+
 </API>
 
 <API id="GameplayMap.getPlotLatitude"><h3>GameplayMap.getPlotLatitude(iX, iY)</h3>
@@ -367,6 +448,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `float`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 获取纬度用于生物群落判断
+const latitude = GameplayMap.getPlotLatitude(iX, iY);
+```
 
 </API>
 
@@ -420,6 +509,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 
 **返回值**: `int` — 玩家 ID 或 -1
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取地块所有者
+const playerID = GameplayMap.getOwner(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.getOwnerName"><h3>GameplayMap.getOwnerName(iX, iY)</h3>
@@ -432,6 +529,14 @@ const resource = GameplayMap.getResourceType(loc.x, loc.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取地块所有者文明名称
+const civName = GameplayMap.getOwnerName(location.x, location.y);
+```
 
 </API>
 
@@ -480,6 +585,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/scripts/age-transition-post-load.js
+// 获取陆地区域 ID 用于资源分布
+const landmassRegionId = GameplayMap.getLandmassRegionId(kLocation.x, kLocation.y);
+```
+
 </API>
 
 <API id="GameplayMap.getAreaId"><h3>GameplayMap.getAreaId(iX, iY)</h3>
@@ -519,6 +632,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取河流类型
+const riverType = GameplayMap.getRiverType(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.getRiverName"><h3>GameplayMap.getRiverName(iX, iY)</h3>
@@ -531,6 +652,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取河流名称
+let riverNameLabel = GameplayMap.getRiverName(location.x, location.y);
+```
 
 </API>
 
@@ -545,6 +674,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取道路类型
+const routeTypeHash = GameplayMap.getRouteType(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.getVolcanoName"><h3>GameplayMap.getVolcanoName(iX, iY)</h3>
@@ -557,6 +694,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取火山名称
+const volcanoName = GameplayMap.getVolcanoName(location.x, location.y);
+```
 
 </API>
 
@@ -571,6 +716,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断是否为水域，用于地物生成
+if (GameplayMap.isWater(iX, iY) == false) {
+  // 陆地地块处理
+}
+```
+
 </API>
 
 <API id="GameplayMap.isMountain"><h3>GameplayMap.isMountain(iX, iY)</h3>
@@ -583,6 +738,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/plot-tooltip.js
+// 判断是否为山脉用于地形提示
+const isMountain = GameplayMap.isMountain(local.plotCoord.x, local.plotCoord.y);
+```
 
 </API>
 
@@ -597,6 +760,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 判断沿海地块是否为湖泊
+if (terrain.TerrainType == "TERRAIN_COAST" && GameplayMap.isLake(location.x, location.y)) {
+  // 湖泊中的沿海地块
+}
+```
+
 </API>
 
 <API id="GameplayMap.isRiver"><h3>GameplayMap.isRiver(iX, iY)</h3>
@@ -609,6 +782,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断河流用于植被生成
+if (GameplayMap.isRiver(iX, iY)) {
+  // 沿河地块处理
+}
+```
 
 </API>
 
@@ -623,6 +806,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断可通航河流用于排除特殊地物生成
+if (GameplayMap.isNavigableRiver(iX, iY) == false) {
+  // 非通航河流地块处理
+}
+```
+
 </API>
 
 <API id="GameplayMap.isCoastalLand"><h3>GameplayMap.isCoastalLand(iX, iY)</h3>
@@ -635,6 +828,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断沿海陆地用于地物生成
+if (GameplayMap.isCoastalLand(iX, iY)) {
+  // 沿海陆地处理
+}
+```
 
 </API>
 
@@ -662,6 +865,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 判断火山并获取活跃状态
+if (GameplayMap.isVolcano(location.x, location.y)) {
+  const active = GameplayMap.isVolcanoActive(location.x, location.y);
+}
+```
+
 </API>
 
 <API id="GameplayMap.isVolcanoActive"><h3>GameplayMap.isVolcanoActive(iX, iY)</h3>
@@ -675,6 +888,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 判断火山活跃状态
+const active = GameplayMap.isVolcanoActive(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.isNaturalWonder"><h3>GameplayMap.isNaturalWonder(iX, iY)</h3>
@@ -687,6 +908,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 判断自然奇观
+const isNaturalWonder = GameplayMap.isNaturalWonder(location.x, location.y);
+```
 
 </API>
 
@@ -729,6 +958,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 判断渡口
+const isFerry = GameplayMap.isFerry(location.x, location.y);
+```
+
 </API>
 
 <API id="GameplayMap.isAdjacentToFeature"><h3>GameplayMap.isAdjacentToFeature(iX, iY)</h3>
@@ -741,6 +978,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断是否与特定地物相邻
+if (!GameplayMap.isAdjacentToFeature(iX, iY, featIdx)) {
+  // 不与该地物相邻时的处理
+}
+```
 
 </API>
 
@@ -755,6 +1002,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断是否与陆地相邻
+if (GameplayMap.isAdjacentToLand(iX, iY)) {
+  // 与陆地相邻的水域地块
+}
+```
+
 </API>
 
 <API id="GameplayMap.isAdjacentToRivers"><h3>GameplayMap.isAdjacentToRivers(iX, iY)</h3>
@@ -768,6 +1025,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断是否与河流相邻用于植被生成
+if (GameplayMap.isAdjacentToRivers(iX, iY, 1)) {
+  // 沿河相邻地块处理
+}
+```
+
 </API>
 
 <API id="GameplayMap.isAdjacentToShallowWater"><h3>GameplayMap.isAdjacentToShallowWater(iX, iY)</h3>
@@ -780,6 +1047,16 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | iY | `int` | Y 坐标 |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/feature-biome-generator.js
+// 判断是否与浅水相邻
+if (GameplayMap.isAdjacentToShallowWater(x, y)) {
+  // 浅水相邻地块处理
+}
+```
 
 </API>
 
@@ -808,6 +1085,14 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 
 **返回值**: `object` — 产出数据对象
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 获取地块产出
+const rawYields = GameplayMap.getYields(plotIndex, playerID);
+```
+
 </API>
 
 <API id="GameplayMap.getYieldsWithCity"><h3>GameplayMap.getYieldsWithCity(iX, iY, city)</h3>
@@ -835,6 +1120,19 @@ const cityComponentID = GameplayMap.getOwningCityFromXY(location.x, location.y);
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/helpers.js
+// 检查地块对本地玩家的可见性
+const revealedState = GameplayMap.getRevealedState(
+  localPlayer.id, location.x, location.y
+);
+if (revealedState != RevealedStates.VISIBLE) {
+  // 地块不可见时的处理
+}
+```
 
 </API>
 
@@ -868,5 +1166,13 @@ let aPlots = GameplayMap.getPlotIndicesInRadius(loc.x, loc.y, 2);
 **参数**: 无
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/scripts/age-transition-post-load.js
+// 获取随机种子用于时代过渡
+const seed = GameplayMap.getRandomSeed() * (1 + g_incomingAge);
+```
 
 </API>

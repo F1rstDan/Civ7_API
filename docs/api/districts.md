@@ -9,6 +9,10 @@ related_scope:
   - player.Districts
 source:
   - TunerPanels/Districts.ltp
+  - modules/base-standard/ui-next/tooltips/plot-tooltip/plot-tooltip.js
+  - modules/base-standard/ui/interface-modes/support-city-decoration.js
+  - modules/base-standard/ui/tuner-input/tuner-input.js
+doc_update: 2026-06-05
 ---
 
 # Districts 区域
@@ -23,23 +27,23 @@ console.log(district.type, district.cityId, district.location);
 console.log(district.isQuarter, district.isUniqueQuarter);
 ```
 
-## 方法列表（共 6 个）
+## 方法（共 5 个）
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>Districts.get</API> | id | `District` | 根据 ID 获取城区对象 |
 | <API>Districts.getAtLocation</API> | location | `District` | 获取指定位置的城区 |
-| <API>Districts.lookup</API> | type | `object` | 根据类型查询城区定义 |
-| <API>Districts.getFreeConstructible</API> | districtID | `object` | 获取空闲的可建造物 |
-| <API>Districts.getLocations</API> | districtID | `array` | 获取城区的所有位置 |
+| <API>Districts.getFreeConstructible</API> | plotCoord, playerID | `object` | 获取空闲的可建造物 |
+| <API>Districts.getLocations</API> | districtIDs | `array` | 获取城区的所有位置 |
 | <API>Districts.getIdAtLocation</API> | location | `int` | 获取指定位置的城区 ID |
 
-## TunerPanel 补充：Districts 完整 API（来源 Districts.ltp）
+## 实例属性
 
-### Districts 全局对象
+District 实例对象包含以下属性：
 
 ```javascript
 // 来源 Districts.ltp
+// District 实例基本属性与状态
 const district = Districts.get(districtId);
 
 // 基本属性
@@ -64,10 +68,13 @@ for (const id of district.getConstructibleIdsOfClass("BUILDING")) { /* ... */ }
 for (const id of district.getConstructibleIdsOfClass("IMPROVEMENT")) { /* ... */ }
 ```
 
+## 子系统
+
 ### player.Districts 子系统
 
 ```javascript
 // 来源 Districts.ltp
+// 遍历玩家管辖的所有城区
 const pDistricts = player.Districts;
 for (const districtId of pDistricts.getDistrictIds()) {
   const district = Districts.get(districtId);
@@ -79,6 +86,15 @@ for (const districtId of pDistricts.getDistrictIds()) {
 ```javascript
 GameInfo.Districts;        // 区域定义表
 GameInfo.Constructibles;   // 建筑/改良/奇观定义表
+```
+
+```javascript
+// 来源 Districts.ltp
+// 根据区域类型哈希查询区域定义
+const info = GameInfo.Districts.lookup(district.type);
+if (info != null) {
+  console.log(info.DistrictType);
+}
 ```
 
 ---
@@ -124,37 +140,50 @@ const district = Districts.getAtLocation({ x: 10, y: 20 });
 ```
 
 </API>
-<API id="Districts.lookup"><h3>Districts.lookup(type)</h3>
+<API id="Districts.getFreeConstructible"><h3>Districts.getFreeConstructible(plotCoord, playerID)</h3>
 
-**说明**: 根据类型哈希查询城区定义。
-
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| type | `int` | 类型哈希值 |
-
-**返回值**: `object` \| `undefined`
-
-</API>
-<API id="Districts.getFreeConstructible"><h3>Districts.getFreeConstructible(districtID)</h3>
-
-**说明**: 获取城区中空闲的可建造物槽位。
+**说明**: 获取指定地块上空闲的可建造物槽位。无空闲时返回 `-1`。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
-| districtID | `int` | 城区 ID |
+| plotCoord | `object` | 地块坐标 `{x, y}` |
+| playerID | `int` | 玩家 ID |
 
-**返回值**: `object` \| `undefined`
+**返回值**: `object` \| `-1`
+
+**使用示例**:
+
+```javascript
+// 来源 plot-tooltip.js
+// 查询地块上可建造的空闲槽位
+const freeConstructible = Districts.getFreeConstructible(plotCoord, GameContext.localPlayerID);
+if (freeConstructible !== -1) {
+  console.log(freeConstructible);
+}
+```
 
 </API>
-<API id="Districts.getLocations"><h3>Districts.getLocations(districtID)</h3>
+<API id="Districts.getLocations"><h3>Districts.getLocations(districtIDs)</h3>
 
 **说明**: 获取城区占据的所有地块位置。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
-| districtID | `int` | 城区 ID |
+| districtIDs | `array` | 城区 ID 数组 |
 
 **返回值**: `array`
+
+**使用示例**:
+
+```javascript
+// 来源 support-city-decoration.js
+// 获取城区占据的所有地块坐标
+const districtIdsRural = cityDistricts.getIdsOfType(DistrictTypes.RURAL);
+const locations = Districts.getLocations(districtIdsRural);
+if (locations.length > 0) {
+  console.log(locations);
+}
+```
 
 </API>
 <API id="Districts.getIdAtLocation"><h3>Districts.getIdAtLocation(location)</h3>
@@ -166,5 +195,16 @@ const district = Districts.getAtLocation({ x: 10, y: 20 });
 | location | `object` | 坐标 `{x, y}` |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 tuner-input.js
+// 根据坐标查询城区 ID
+const districtId = Districts.getIdAtLocation(loc);
+if (districtId && districtId.owner !== -1 && districtId.id !== -1) {
+  console.log(districtId);
+}
+```
 
 </API>

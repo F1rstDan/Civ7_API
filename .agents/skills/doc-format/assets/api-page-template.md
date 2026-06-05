@@ -30,12 +30,12 @@ if (obj) {
 
 ## 属性与方法
 
-| 属性（共 N 个） | 类型 | 说明 |
+| 属性(2) | 类型 | 说明 |
 |------|------|------|
 | `SomeAPI.id` | `int` | 当前对象 ID |
 | `SomeAPI.isActive` | `bool` | 是否启用状态 |
 
-| 方法（共 N 个） | 参数 | 返回值 | 说明 |
+| 方法(3) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>SomeAPI.get</API> | id | `Object` | 根据 ID 获取对象 |
 | <API>SomeAPI.forEach</API> | callback | `void` | 遍历所有对象 |
@@ -48,12 +48,12 @@ if (obj) {
 const Object = SomeAPI.get(GameContext.localPlayerID);
 ```
 
-| 属性（共 N 个） | 类型 | 说明 |
+| 属性(N) | 类型 | 说明 |
 |------|------|------|
 | `Object.id` | `int` | 当前对象 ID |
 | `Object.isActive` | `bool` | 是否启用状态 |
 
-| 方法（共 N 个） | 参数 | 返回值 | 说明 |
+| 方法(N) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>Object.getHash</API> | — | `int` | 获取对象哈希值 |
 

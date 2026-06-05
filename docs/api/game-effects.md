@@ -22,8 +22,8 @@ source:
 GameEffects 是文明7的 Modifier（修改器）和 Requirement（需求）系统的核心 API。它管理游戏中所有活动的效果、需求集和需求。
 
 ```javascript
-// 快速示例：查询修改器信息
 // 来源 Modifiers.ltp
+// 查询修改器信息
 const count = GameEffects.getModifierCount();
 const modifiers = GameEffects.getModifiers();
 for (const modifier of modifiers) {
@@ -179,6 +179,7 @@ GameEffects.getRequirementSetContext(instanceId);
 
 ```javascript
 // 来源 Player Modifiers.ltp
+// 获取游戏级修改器
 const gameModifiers = Game.Modifiers;
 gameModifiers.getModifiers();
 // 每个 modifier: modifierType, collectionType, affectsYields, requiresConstructibles
@@ -189,6 +190,7 @@ gameModifiers.getModifierSubjects(modifierName);
 
 ```javascript
 // 来源 Player Modifiers.ltp
+// 获取玩家修改器
 const playerModifiers = player.Modifiers;
 playerModifiers.getModifiers();
 // 每个 modifier: modifierType, collectionType, affectsYields, requiresConstructibles
@@ -199,6 +201,7 @@ playerModifiers.getModifierSubjects(modifierName);
 
 ```javascript
 // 来源 Player Modifiers.ltp
+// 获取城市修改器
 const cityModifiers = city.Modifiers;
 cityModifiers.getModifiers();
 cityModifiers.getModifierSubjects(modifierName);
@@ -207,6 +210,8 @@ cityModifiers.getModifierSubjects(modifierName);
 ## GameInfo 关联表
 
 ```javascript
+// 来源 GameInfo 数据表查询
+// 修改器相关数据表
 GameInfo.Modifiers;           // 修改器定义表
 GameInfo.DynamicModifiers;    // 动态修改器表（含 CollectionType, EffectType）
 GameInfo.Types;               // 通用类型表

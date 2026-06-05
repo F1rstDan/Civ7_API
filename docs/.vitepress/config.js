@@ -22,7 +22,6 @@ export default defineConfig({
           { text: 'GameInfo 数据表', link: '/api/game-info' },
           { text: 'Engine 引擎', link: '/api/engine' },
           { text: 'Players 玩家管理', link: '/api/players' },
-          { text: 'Globals 全局工具', link: '/api/globals' },
           { text: 'Configuration 配置', link: '/api/configuration' },
           { text: 'Modding 模组', link: '/api/modding' },
         ]
@@ -95,6 +94,7 @@ export default defineConfig({
           { text: 'Network 网络', link: '/api/network' },
           { text: 'Social 社交', link: '/api/social' },
           { text: 'Input 输入', link: '/api/input' },
+          { text: 'Globals 全局工具', link: '/api/globals' },
           { text: 'API Stats 调用统计', link: '/api/api-stats' },
         ]
       }
