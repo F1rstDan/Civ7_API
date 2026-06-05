@@ -104,7 +104,7 @@ WorldUI.ForegroundCamera.endAnimation();
 | <API>WorldUI.ForegroundCamera.endAnimation</API> | — | `void` | 结束当前动画 |
 | <API>WorldUI.ForegroundCamera.setId</API> | id | `void` | 设置镜头 ID |
 
-<API id="Camera.addKeyframe" title="Camera.addKeyframe(keyframe)">
+<API id="Camera.addKeyframe"><h3>Camera.addKeyframe(keyframe)</h3>
 
 **说明**: 添加关键帧。用于相机动画中设置目标状态，如城市缩放动画。
 
@@ -133,7 +133,7 @@ Camera.addKeyframe(cameraFrame);
 
 </API>
 
-<API id="Camera.calculateCameraFocusAndZoom" title="Camera.calculateCameraFocusAndZoom(plots, tilt, options)">
+<API id="Camera.calculateCameraFocusAndZoom"><h3>Camera.calculateCameraFocusAndZoom(plots, tilt, options)</h3>
 
 **说明**: 计算镜头焦点和缩放级别。用于城市缩放等需要精确计算相机参数的场景。
 
@@ -158,7 +158,7 @@ const calculatedFocus = Camera.calculateCameraFocusAndZoom(city.getPurchasedPlot
 
 </API>
 
-<API id="Camera.clearAnimation" title="Camera.clearAnimation()">
+<API id="Camera.clearAnimation"><h3>Camera.clearAnimation()</h3>
 
 **说明**: 强制清除当前镜头动画。在退出特殊镜头模式时使用。
 
@@ -178,7 +178,7 @@ Camera.clearAnimation();
 
 </API>
 
-<API id="Camera.dragFocus" title="Camera.dragFocus(dx, dy)">
+<API id="Camera.dragFocus"><h3>Camera.dragFocus(dx, dy)</h3>
 
 **说明**: 拖动镜头焦点。用于鼠标拖拽世界地图时的镜头跟随。
 
@@ -199,7 +199,7 @@ Camera.dragFocus(this.lastMouseDragPos, newMouseDragPos);
 
 </API>
 
-<API id="Camera.findDynamicCameraSettings" title="Camera.findDynamicCameraSettings(id)">
+<API id="Camera.findDynamicCameraSettings"><h3>Camera.findDynamicCameraSettings(id)</h3>
 
 **说明**: 查找动态镜头配置。通过 ID 查找预设的镜头参数。
 
@@ -219,7 +219,7 @@ const params = Camera.findDynamicCameraSettings("DEFAULT_CAMERA_SETTINGS");
 
 </API>
 
-<API id="Camera.getMovementMultiplier" title="Camera.getMovementMultiplier()">
+<API id="Camera.getMovementMultiplier"><h3>Camera.getMovementMultiplier()</h3>
 
 **说明**: 获取移动倍率。用于控制器/手柄光标移动时缩放速度。
 
@@ -237,7 +237,7 @@ scale *= Camera.getMovementMultiplier();
 
 </API>
 
-<API id="Camera.getState" title="Camera.getState()">
+<API id="Camera.getState"><h3>Camera.getState()</h3>
 
 **说明**: 获取当前相机状态，包含缩放级别、焦点坐标等信息。
 
@@ -257,7 +257,7 @@ Camera.zoom(amount);
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.reset" title="WorldUI.ForegroundCamera.reset(fov, cameraPos, subjectPos)">
+<API id="WorldUI.ForegroundCamera.reset"><h3>WorldUI.ForegroundCamera.reset(fov, cameraPos, subjectPos)</h3>
 
 **说明**: 重置前景相机到指定状态。在进入领袖外交、叙事事件等场景时调用，设置 FOV、相机位置和注视目标。
 
@@ -279,7 +279,7 @@ WorldUI.ForegroundCamera.reset(35, { x: 0, y: 0, z: 0 }, { x: 0, y: 1, z: 0 });
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.beginAnimation" title="WorldUI.ForegroundCamera.beginAnimation(initialState, delay)">
+<API id="WorldUI.ForegroundCamera.beginAnimation"><h3>WorldUI.ForegroundCamera.beginAnimation(initialState, delay)</h3>
 
 **说明**: 开始前景相机动画。设置初始相机状态和延迟时间，后续通过 `addDeltaKeyframe` / `addKeyframe_Translate` 添加关键帧，最后 `endAnimation` 结束。
 
@@ -305,7 +305,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.addDeltaKeyframe" title="WorldUI.ForegroundCamera.addDeltaKeyframe(delta, duration, delay)">
+<API id="WorldUI.ForegroundCamera.addDeltaKeyframe"><h3>WorldUI.ForegroundCamera.addDeltaKeyframe(delta, duration, delay)</h3>
 
 **说明**: 添加增量关键帧。在 `beginAnimation` 之后调用，以增量方式叠加相机状态变化。
 
@@ -337,7 +337,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.addKeyframe_Translate" title="WorldUI.ForegroundCamera.addKeyframe_Translate(offset, duration, delay)">
+<API id="WorldUI.ForegroundCamera.addKeyframe_Translate"><h3>WorldUI.ForegroundCamera.addKeyframe_Translate(offset, duration, delay)</h3>
 
 **说明**: 添加位移关键帧。在 `beginAnimation` 之后调用，以绝对位移方式移动前景相机。
 
@@ -362,7 +362,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.endAnimation" title="WorldUI.ForegroundCamera.endAnimation()">
+<API id="WorldUI.ForegroundCamera.endAnimation"><h3>WorldUI.ForegroundCamera.endAnimation()</h3>
 
 **说明**: 结束当前前景相机动画，使动画生效。与 `beginAnimation` 配对使用。
 
@@ -383,7 +383,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.setId" title="WorldUI.ForegroundCamera.setId(id)">
+<API id="WorldUI.ForegroundCamera.setId"><h3>WorldUI.ForegroundCamera.setId(id)</h3>
 
 **说明**: 设置前景镜头 ID。用于标识动画序列，动画完成后可通过 ID 监听完成事件。
 
@@ -405,7 +405,7 @@ this.leaderSequenceGate.waitingForForegroundCameraId = cameraId;
 
 </API>
 
-<API id="Camera.isWorldDragging" title="Camera.isWorldDragging()">
+<API id="Camera.isWorldDragging"><h3>Camera.isWorldDragging()</h3>
 
 **说明**: 是否正在拖拽世界。用于判断用户是否正在拖拽地图，通常用于压制 tooltip 显示。
 
@@ -423,7 +423,7 @@ const isWorldDraggingNext = Camera.isWorldDragging();
 
 </API>
 
-<API id="Camera.lookAt" title="Camera.lookAt(x, y, params?)">
+<API id="Camera.lookAt"><h3>Camera.lookAt(x, y, params?)</h3>
 
 **说明**: 平滑移动相机到目标世界坐标。常用于 UI 点击跳转到某个地块或城市。
 
@@ -446,7 +446,7 @@ Camera.lookAt(cameraState.focusPoint.x, cameraState.focusPoint.y, params);
 
 </API>
 
-<API id="Camera.lookAtPlot" title="Camera.lookAtPlot(iX, iY, params?)">
+<API id="Camera.lookAtPlot"><h3>Camera.lookAtPlot(iX, iY, params?)</h3>
 
 **说明**: 接受地块的 iX, iY 坐标，比 `lookAt` 更方便。接受可选的 params 对象控制缩放和动画。
 
@@ -472,7 +472,7 @@ Camera.lookAtPlot(city.location, { zoom: 1, tilt: 30 });
 
 </API>
 
-<API id="Camera.panFocus" title="Camera.panFocus(panAmount, ...)">
+<API id="Camera.panFocus"><h3>Camera.panFocus(panAmount, ...)</h3>
 
 **说明**: 平移镜头焦点。在迷你地图拖拽、边缘平移等场景中广泛使用。
 
@@ -497,7 +497,7 @@ Camera.panFocus(delta, false);
 
 </API>
 
-<API id="Camera.pickPlot" title="Camera.pickPlot(x, y)">
+<API id="Camera.pickPlot"><h3>Camera.pickPlot(x, y)</h3>
 
 **说明**: 从屏幕比例坐标（0~1）转换为游戏地图上的地块坐标。用于将屏幕中心点等比例位置转换为地图坐标。
 
@@ -518,7 +518,7 @@ const center = Camera.pickPlot(0.5, 0.5);
 
 </API>
 
-<API id="Camera.pickPlotFromPoint" title="Camera.pickPlotFromPoint(x, y)">
+<API id="Camera.pickPlotFromPoint"><h3>Camera.pickPlotFromPoint(x, y)</h3>
 
 **说明**: 从屏幕像素坐标获取地块。与 `pickPlot` 不同，此方法接受像素坐标而非比例坐标。
 
@@ -543,7 +543,7 @@ this.plotCursorCoords = Camera.pickPlotFromPoint(inputEvent.detail.x, inputEvent
 
 </API>
 
-<API id="Camera.popCamera" title="Camera.popCamera()">
+<API id="Camera.popCamera"><h3>Camera.popCamera()</h3>
 
 **说明**: 从栈中恢复相机状态，与 `pushCamera` 配对使用。
 
@@ -564,7 +564,7 @@ if (this.isLeaderCameraActive) {
 
 </API>
 
-<API id="Camera.pushCamera" title="Camera.pushCamera(cameraPos, subjectPos)">
+<API id="Camera.pushCamera"><h3>Camera.pushCamera(cameraPos, subjectPos)</h3>
 
 **说明**: 将当前相机状态压入栈，并设置新的相机位置和目标点。与 `popCamera` 配对使用实现相机状态保存和恢复。
 
@@ -593,7 +593,7 @@ Camera.pushCamera({ x: 285, y: 80, z: 255 }, { x: 0, y: -95, z: -20 });
 
 </API>
 
-<API id="Camera.pushDynamicCamera" title="Camera.pushDynamicCamera(plot, settings)">
+<API id="Camera.pushDynamicCamera"><h3>Camera.pushDynamicCamera(plot, settings)</h3>
 
 **说明**: 压入动态镜头设置。用于电影镜头、胜利画面、自然奇观等场景。
 
@@ -615,7 +615,7 @@ Camera.lookAtPlot(this.currentCinematicData.plot, { instantaneous: true });
 
 </API>
 
-<API id="Camera.pushFlyoverCamera" title="Camera.pushFlyoverCamera(plot, settings)">
+<API id="Camera.pushFlyoverCamera"><h3>Camera.pushFlyoverCamera(plot, settings)</h3>
 
 **说明**: 压入飞越镜头。用于过场动画中的俯瞰效果。
 
@@ -636,7 +636,7 @@ Camera.pushFlyoverCamera(this.currentPoi.plot, this.currentPoi.camera);
 
 </API>
 
-<API id="Camera.restoreCameraZoom" title="Camera.restoreCameraZoom()">
+<API id="Camera.restoreCameraZoom"><h3>Camera.restoreCameraZoom()</h3>
 
 **说明**: 恢复之前通过 `saveCameraZoom` 保存的缩放级别。
 
@@ -656,7 +656,7 @@ Camera.clearAnimation();
 
 </API>
 
-<API id="Camera.restoreDefaults" title="Camera.restoreDefaults()">
+<API id="Camera.restoreDefaults"><h3>Camera.restoreDefaults()</h3>
 
 **说明**: 恢复相机到默认设置。在退出特殊镜头模式时使用。
 
@@ -674,7 +674,7 @@ Camera.restoreDefaults();
 
 </API>
 
-<API id="Camera.rotate" title="Camera.rotate(angle, isRelative)">
+<API id="Camera.rotate"><h3>Camera.rotate(angle, isRelative)</h3>
 
 **说明**: 旋转相机视角。
 
@@ -699,7 +699,7 @@ if (status == InputActionStatuses.FINISH) {
 
 </API>
 
-<API id="Camera.saveCameraZoom" title="Camera.saveCameraZoom()">
+<API id="Camera.saveCameraZoom"><h3>Camera.saveCameraZoom()</h3>
 
 **说明**: 保存当前缩放级别。后续可通过 `restoreCameraZoom` 恢复。
 
@@ -719,7 +719,7 @@ const calculatedFocus = Camera.calculateCameraFocusAndZoom(city.getPurchasedPlot
 
 </API>
 
-<API id="Camera.setPreventMouseCameraMovement" title="Camera.setPreventMouseCameraMovement(prevent)">
+<API id="Camera.setPreventMouseCameraMovement"><h3>Camera.setPreventMouseCameraMovement(prevent)</h3>
 
 **说明**: 在 UI 弹窗或对话框打开时，通常需要禁止鼠标相机移动以避免误操作。
 
@@ -743,7 +743,7 @@ set isWorldInputAllowed(state) {
 
 </API>
 
-<API id="Camera.setPreventMouseCameraZoom" title="Camera.setPreventMouseCameraZoom(prevent)">
+<API id="Camera.setPreventMouseCameraZoom"><h3>Camera.setPreventMouseCameraZoom(prevent)</h3>
 
 **说明**: 禁用或启用鼠标滚轮缩放。在需要锁定缩放级别的 UI 场景中使用。
 
@@ -763,7 +763,7 @@ Camera.setPreventMouseCameraZoom(!state);
 
 </API>
 
-<API id="Camera.zoom" title="Camera.zoom(level)">
+<API id="Camera.zoom"><h3>Camera.zoom(level)</h3>
 
 **说明**: 设置绝对缩放级别，范围 0~1（0 为最远，1 为最近）。不是相对增量，而是直接设置目标缩放值。
 
@@ -785,7 +785,7 @@ Camera.zoom(amount);
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.reset" title="WorldUI.ForegroundCamera.reset(fov, cameraPos, subjectPos)">
+<API id="WorldUI.ForegroundCamera.reset"><h3>WorldUI.ForegroundCamera.reset(fov, cameraPos, subjectPos)</h3>
 
 **说明**: 重置前景相机到指定状态。在进入领袖外交、叙事事件等场景时调用，设置 FOV、相机位置和注视目标。
 
@@ -807,7 +807,7 @@ WorldUI.ForegroundCamera.reset(35, { x: 0, y: 0, z: 0 }, { x: 0, y: 1, z: 0 });
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.beginAnimation" title="WorldUI.ForegroundCamera.beginAnimation(initialState, delay)">
+<API id="WorldUI.ForegroundCamera.beginAnimation"><h3>WorldUI.ForegroundCamera.beginAnimation(initialState, delay)</h3>
 
 **说明**: 开始前景相机动画。设置初始相机状态和延迟时间，后续通过 `addDeltaKeyframe` / `addKeyframe_Translate` 添加关键帧，最后 `endAnimation` 结束。
 
@@ -833,7 +833,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.addDeltaKeyframe" title="WorldUI.ForegroundCamera.addDeltaKeyframe(delta, duration, delay)">
+<API id="WorldUI.ForegroundCamera.addDeltaKeyframe"><h3>WorldUI.ForegroundCamera.addDeltaKeyframe(delta, duration, delay)</h3>
 
 **说明**: 添加增量关键帧。在 `beginAnimation` 之后调用，以增量方式叠加相机状态变化。
 
@@ -865,7 +865,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.addKeyframe_Translate" title="WorldUI.ForegroundCamera.addKeyframe_Translate(offset, duration, delay)">
+<API id="WorldUI.ForegroundCamera.addKeyframe_Translate"><h3>WorldUI.ForegroundCamera.addKeyframe_Translate(offset, duration, delay)</h3>
 
 **说明**: 添加位移关键帧。在 `beginAnimation` 之后调用，以绝对位移方式移动前景相机。
 
@@ -890,7 +890,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.endAnimation" title="WorldUI.ForegroundCamera.endAnimation()">
+<API id="WorldUI.ForegroundCamera.endAnimation"><h3>WorldUI.ForegroundCamera.endAnimation()</h3>
 
 **说明**: 结束当前前景相机动画，使动画生效。与 `beginAnimation` 配对使用。
 
@@ -911,7 +911,7 @@ WorldUI.ForegroundCamera.endAnimation();
 
 </API>
 
-<API id="WorldUI.ForegroundCamera.setId" title="WorldUI.ForegroundCamera.setId(id)">
+<API id="WorldUI.ForegroundCamera.setId"><h3>WorldUI.ForegroundCamera.setId(id)</h3>
 
 **说明**: 设置前景镜头 ID。用于标识动画序列，动画完成后可通过 ID 监听完成事件。
 

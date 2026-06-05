@@ -12,7 +12,7 @@
 2. 点击后弹出一个**居中弹窗（Modal）**，包含：详细说明、参数表格、返回值、使用示例（带代码高亮）、来源标注
 3. 支持 ESC 键关闭、点击遮罩关闭
 4. **所有数据都写在 `.md` 文件中**，不使用外部 JSON 文件或 Markdown-it 插件
-5. 语法尽量精简：触发器用 `<API>方法名</API>`，内容块用 `<API id="..." title="...">`
+5. 语法尽量精简：触发器用 `<API>方法名</API>`，内容块用 `<API id="..."><h3>...</h3>`
 
 ---
 
@@ -183,7 +183,7 @@ store.js (modalStore: reactive)
 ### 5.2 内容块（页面底部）
 
 ````markdown
-<API id="Players.get" title="Players.get(playerID)">
+<API id="Players.get"><h3>Players.get(playerID)</h3>
 
 **说明**: 根据玩家 ID 获取 PlayerLibrary 对象。ID 无效时返回 `undefined`。
 
@@ -224,7 +224,7 @@ if (player) {
 ### 5.4 批量改造步骤
 
 1. **表格**：将 `` `方法名` `` 替换为 `<API>`方法名`</API>`
-2. **底部**：添加 `<API id="方法名" title="...">` 内容块
+2. **底部**：添加 `<API id="方法名"><h3>...</h3>` 内容块
 3. **内容来源**：优先搬现有"详细说明"段落，其次从 `.ltp`、`.js` 提取官方示例
 
 ---

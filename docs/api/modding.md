@@ -45,7 +45,7 @@ for (const mod of Modding.getInstalledMods()) {
 | <API>Modding.applyModsTemplate</API> | template | `void` | 应用 Mod 模板（如 "enable-all"、"disable-user"） |
 | <API>Modding.isOfficialAge</API> | age | `bool` | 判断指定时代是否为官方时代 |
 
-<API id="Modding.getInstalledMods" title="Modding.getInstalledMods()">
+<API id="Modding.getInstalledMods"><h3>Modding.getInstalledMods()</h3>
 
 **说明**: 获取所有已安装 Mod 的列表，每项为包含 id、name、enabled、handle 等字段的对象。
 
@@ -68,7 +68,7 @@ for (const mod of Modding.getInstalledMods()) {
 
 </API>
 
-<API id="Modding.getInstalledModHandles" title="Modding.getInstalledModHandles()">
+<API id="Modding.getInstalledModHandles"><h3>Modding.getInstalledModHandles()</h3>
 
 **说明**: 获取所有已安装 Mod 的句柄（整数）列表，通常用于轮询检测 Mod 列表变化。
 
@@ -92,7 +92,7 @@ if (!compareInstalledMods(this.installedModHandles, installedMods)) {
 
 </API>
 
-<API id="Modding.getActiveMods" title="Modding.getActiveMods()">
+<API id="Modding.getActiveMods"><h3>Modding.getActiveMods()</h3>
 
 **说明**: 获取当前活跃 Mod 的句柄列表。活跃 Mod 指正在生效中的 Mod。
 
@@ -113,7 +113,7 @@ let isActive = activeMods.indexOf(mod.handle) != -1;
 
 </API>
 
-<API id="Modding.getModInfo" title="Modding.getModInfo(handle)">
+<API id="Modding.getModInfo"><h3>Modding.getModInfo(handle)</h3>
 
 **说明**: 根据 Mod 句柄获取该 Mod 的完整信息对象。
 
@@ -136,7 +136,7 @@ this.selectedModHandle = modHandle;
 
 </API>
 
-<API id="Modding.getModProperty" title="Modding.getModProperty(handle, prop)">
+<API id="Modding.getModProperty"><h3>Modding.getModProperty(handle, prop)</h3>
 
 **说明**: 获取指定 Mod 的某个属性值，如作者信息、浏览器显示设置等。
 
@@ -162,7 +162,7 @@ const showInBrowser = Modding.getModProperty(m.handle, "ShowInBrowser");
 
 </API>
 
-<API id="Modding.getModHandle" title="Modding.getModHandle(url)">
+<API id="Modding.getModHandle"><h3>Modding.getModHandle(url)</h3>
 
 **说明**: 根据 Mod URL 获取对应的句柄。
 
@@ -184,7 +184,7 @@ const modHandle = Modding.getModHandle(mod.ID);
 
 </API>
 
-<API id="Modding.getModulesToExclude" title="Modding.getModulesToExclude()">
+<API id="Modding.getModulesToExclude"><h3>Modding.getModulesToExclude()</h3>
 
 **说明**: 获取需要排除的模块 ID 列表，通常在构建 Mod 列表时用于过滤不应显示的条目。
 
@@ -206,7 +206,7 @@ installedMods = installedMods.filter((m) => !modIdsToIgnore.includes(m.id));
 
 </API>
 
-<API id="Modding.getInitialScripts" title="Modding.getInitialScripts(type)">
+<API id="Modding.getInitialScripts"><h3>Modding.getInitialScripts(type)</h3>
 
 **说明**: 获取指定类型的初始脚本列表，用于游戏启动时加载 Mod 脚本。
 
@@ -231,7 +231,7 @@ for (const s of scripts) {
 
 </API>
 
-<API id="Modding.getLastErrorString" title="Modding.getLastErrorString()">
+<API id="Modding.getLastErrorString"><h3>Modding.getLastErrorString()</h3>
 
 **说明**: 获取最后发生的错误信息字符串，通常在 Mod 加载失败或网络出错时使用。
 
@@ -254,7 +254,7 @@ if (lastError) {
 
 </API>
 
-<API id="Modding.getTransitionInProgress" title="Modding.getTransitionInProgress()">
+<API id="Modding.getTransitionInProgress"><h3>Modding.getTransitionInProgress()</h3>
 
 **说明**: 获取当前游戏过渡状态，用于判断是否处于时代转换等过渡场景。
 
@@ -274,7 +274,7 @@ const transitionState = Modding.getTransitionInProgress();
 
 </API>
 
-<API id="Modding.userModSupportAvailable" title="Modding.userModSupportAvailable()">
+<API id="Modding.userModSupportAvailable"><h3>Modding.userModSupportAvailable()</h3>
 
 **说明**: 检查当前环境是否支持用户 Mod（社区 Mod）。
 
@@ -296,7 +296,7 @@ if (Modding.userModSupportAvailable()) {
 
 </API>
 
-<API id="Modding.canEnableMods" title="Modding.canEnableMods(handles, checkDependencies)">
+<API id="Modding.canEnableMods"><h3>Modding.canEnableMods(handles, checkDependencies)</h3>
 
 **说明**: 检查指定 Mod 是否可以被启用。返回对象含 status 字段，0 表示允许操作。
 
@@ -321,7 +321,7 @@ const allowed = canEnableModResult.status == 0;
 
 </API>
 
-<API id="Modding.canDisableMods" title="Modding.canDisableMods(handles)">
+<API id="Modding.canDisableMods"><h3>Modding.canDisableMods(handles)</h3>
 
 **说明**: 检查指定 Mod 是否可以被禁用。返回对象含 status 字段，0 表示允许操作。
 
@@ -345,7 +345,7 @@ const allowed = canDisableModResult.status == 0;
 
 </API>
 
-<API id="Modding.enableMods" title="Modding.enableMods(handles, checkDependencies)">
+<API id="Modding.enableMods"><h3>Modding.enableMods(handles, checkDependencies)</h3>
 
 **说明**: 启用指定句柄的 Mod。
 
@@ -373,7 +373,7 @@ if (enabled) {
 
 </API>
 
-<API id="Modding.disableMods" title="Modding.disableMods(handles)">
+<API id="Modding.disableMods"><h3>Modding.disableMods(handles)</h3>
 
 **说明**: 禁用指定句柄的 Mod。
 
@@ -400,7 +400,7 @@ if (enabled) {
 
 </API>
 
-<API id="Modding.applyModsTemplate" title="Modding.applyModsTemplate(template)">
+<API id="Modding.applyModsTemplate"><h3>Modding.applyModsTemplate(template)</h3>
 
 **说明**: 应用预设的 Mod 配置模板，一键批量启用或禁用 Mod。
 
@@ -425,7 +425,7 @@ Modding.applyModsTemplate("disable-user");
 
 </API>
 
-<API id="Modding.isOfficialAge" title="Modding.isOfficialAge(age)">
+<API id="Modding.isOfficialAge"><h3>Modding.isOfficialAge(age)</h3>
 
 **说明**: 判断指定时代是否为官方时代。
 

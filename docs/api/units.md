@@ -238,7 +238,7 @@ const commanderType = player.Units?.getBuildUnit("UNIT_ARMY_COMMANDER");
 const units = player.Units.getUnitTypesUnlockedWithTag("UNIT_CLASS_RANGED", false);
 ```
 
-<API id="Units.get" title="Units.get(id)">
+<API id="Units.get"><h3>Units.get(id)</h3>
 
 **说明**: 根据单位 ID 获取单位对象，是最常用的入口方法。
 
@@ -263,7 +263,7 @@ if (unit != null) {
 
 </API>
 
-<API id="Units.restoreMovement" title="Units.restoreMovement(unitID)">
+<API id="Units.restoreMovement"><h3>Units.restoreMovement(unitID)</h3>
 
 **说明**: 恢复指定单位的所有移动力。
 
@@ -290,7 +290,7 @@ for (const unitId of player.Units.getUnitIds()) {
 
 </API>
 
-<API id="Units.changeDamage" title="Units.changeDamage(unitID, amount)">
+<API id="Units.changeDamage"><h3>Units.changeDamage(unitID, amount)</h3>
 
 **说明**: 改变单位的伤害值。正值为扣血，负值为治疗。
 
@@ -312,7 +312,7 @@ Units.changeDamage(unit.id, -25);
 
 </API>
 
-<API id="Units.setDamage" title="Units.setDamage(unitID, amount)">
+<API id="Units.setDamage"><h3>Units.setDamage(unitID, amount)</h3>
 
 **说明**: 直接设置单位的伤害值。
 
@@ -334,7 +334,7 @@ Units.setDamage(unit.id, unit.Health.maxDamage);
 
 </API>
 
-<API id="Units.changeExperience" title="Units.changeExperience(unitID, amount)">
+<API id="Units.changeExperience"><h3>Units.changeExperience(unitID, amount)</h3>
 
 **说明**: 改变单位的经验值。
 
@@ -355,7 +355,7 @@ Units.changeExperience(unit.id, 500);
 
 </API>
 
-<API id="Units.setActivity" title="Units.setActivity(unitID, activityType)">
+<API id="Units.setActivity"><h3>Units.setActivity(unitID, activityType)</h3>
 
 **说明**: 设置单位的活动状态，见[常用枚举](#常用枚举)。
 
@@ -378,7 +378,7 @@ Units.setActivity(unit.id, UnitActivityTypes.SENTRY);
 
 </API>
 
-<API id="Units.hasTag" title="Units.hasTag(unitID, tag)">
+<API id="Units.hasTag"><h3>Units.hasTag(unitID, tag)</h3>
 
 **说明**: 检查单位是否拥有指定标签。
 
@@ -399,7 +399,7 @@ const isSiege = Units.hasTag(unitId, "UNIT_CLASS_SIEGE");
 
 </API>
 
-<API id="Units.getReachableTargets" title="Units.getReachableTargets(unitID)">
+<API id="Units.getReachableTargets"><h3>Units.getReachableTargets(unitID)</h3>
 
 **说明**: 获取单位当前可到达的攻击目标地块列表。
 
@@ -419,7 +419,7 @@ const kAttackPlots = Units.getReachableTargets(unit.id);
 
 </API>
 
-<API id="Units.getPathTo" title="Units.getPathTo(unitID, target)">
+<API id="Units.getPathTo"><h3>Units.getPathTo(unitID, target)</h3>
 
 **说明**: 获取单位到目标位置的移动路径。
 
@@ -441,7 +441,7 @@ const result = Units.getPathTo(unit.id, destination);
 
 </API>
 
-<API id="Units.create" title="Units.create(playerID, params)">
+<API id="Units.create"><h3>Units.create(playerID, params)</h3>
 
 **说明**: 为指定玩家创建新单位。
 
@@ -470,7 +470,7 @@ Units.create(player.id, {
 
 </API>
 
-<API id="Units.setLocation" title="Units.setLocation(unitID, location)">
+<API id="Units.setLocation"><h3>Units.setLocation(unitID, location)</h3>
 
 **说明**: 设置单位的位置。
 
@@ -491,7 +491,7 @@ Units.setLocation(unitID, city.location);
 
 </API>
 
-<API id="Units.getReachableMovement" title="Units.getReachableMovement(unitID)">
+<API id="Units.getReachableMovement"><h3>Units.getReachableMovement(unitID)</h3>
 
 **说明**: 获取单位当前可到达的移动地块列表。
 
@@ -511,7 +511,7 @@ const movePlots = Units.getReachableMovement(unit.id);
 
 </API>
 
-<API id="Units.getReachableZonesOfControl" title="Units.getReachableZonesOfControl(unitID, excludeFriendly)">
+<API id="Units.getReachableZonesOfControl"><h3>Units.getReachableZonesOfControl(unitID, excludeFriendly)</h3>
 
 **说明**: 获取单位当前控制区（ZOC）范围内的地块列表。
 
@@ -532,7 +532,7 @@ const zocPlots = Units.getReachableZonesOfControl(unit.id, true);
 
 </API>
 
-<API id="Units.getCommandRadiusPlots" title="Units.getCommandRadiusPlots(unitID)">
+<API id="Units.getCommandRadiusPlots"><h3>Units.getCommandRadiusPlots(unitID)</h3>
 
 **说明**: 获取指挥官的指挥半径内地块。仅对指挥官单位有效。
 
@@ -554,7 +554,7 @@ if (unit.isCommanderUnit) {
 
 </API>
 
-<API id="Units.getQueuedOperationDestination" title="Units.getQueuedOperationDestination(unitID)">
+<API id="Units.getQueuedOperationDestination"><h3>Units.getQueuedOperationDestination(unitID)</h3>
 
 **说明**: 获取单位排队操作的目标位置。
 

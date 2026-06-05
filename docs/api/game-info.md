@@ -311,7 +311,7 @@ for (let i = 0; i < GameInfo.Yields.length; i++) {
 
 *来源：TunerPanels/Player.ltp、TunerPanels/Units.ltp、TunerPanels/Districts.ltp、TunerPanels/Players.ltp、TunerPanels/VictoriesDefeats.ltp、modules/base-standard/maps/map-utilities.js、modules/core/ui-next/screens/unlocks/civ-unlocks-model.js、modules/core/ui/utilities/utilities-core-textprovider.js*
 
-<API id="GameInfo.lookup" title="GameInfo.lookup(hashOrType)">
+<API id="GameInfo.lookup"><h3>GameInfo.lookup(hashOrType)</h3>
 
 **说明**: 通过哈希值（number）或类型字符串（string）查找数据表中的单条记录。这是 GameInfo 最常用的访问方法。
 
@@ -337,7 +337,7 @@ const currentAge = GameInfo.Ages.lookup(Game.age);
 
 </API>
 
-<API id="GameInfo.find" title="GameInfo.find(predicate)">
+<API id="GameInfo.find"><h3>GameInfo.find(predicate)</h3>
 
 **说明**: 按条件查找数据表中**第一条**匹配的记录。
 
@@ -367,7 +367,7 @@ const unitInfo = GameInfo.Units.find(
 
 </API>
 
-<API id="GameInfo.filter" title="GameInfo.filter(predicate)">
+<API id="GameInfo.filter"><h3>GameInfo.filter(predicate)</h3>
 
 **说明**: 按条件过滤数据表，返回**所有**匹配的记录组成的数组。
 
@@ -397,7 +397,7 @@ const replaceUnits = GameInfo.UnitReplaces.filter(
 
 </API>
 
-<API id="GameInfo.forEach" title="GameInfo.forEach(callback)">
+<API id="GameInfo.forEach"><h3>GameInfo.forEach(callback)</h3>
 
 **说明**: 遍历数据表中的所有记录，对每条记录执行回调。适用于需要遍历整张表的场景。
 
@@ -428,7 +428,7 @@ GameInfo.Legacies.forEach(u => {
 
 </API>
 
-<API id="GameInfo.count" title="GameInfo.count()">
+<API id="GameInfo.count"><h3>GameInfo.count()</h3>
 
 **说明**: 返回数据表中的记录总数。
 

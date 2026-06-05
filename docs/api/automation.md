@@ -66,7 +66,7 @@ Automation.sendTestComplete("PlayGame");
 |------|------|
 | `Benchmark.Automation` | 基准测试专用自动化子对象，提供 `Benchmark.Automation.start()` 和 `Benchmark.Automation.stop()` 用于图形/AI 基准测试 |
 
-<API id="Automation.log" title="Automation.log(message)">
+<API id="Automation.log"><h3>Automation.log(message)</h3>
 
 **说明**: 输出一条自动化日志，用于测试脚本的调试和状态跟踪。
 
@@ -87,7 +87,7 @@ Automation.log("Autoplay complete");
 
 </API>
 
-<API id="Automation.logDivider" title="Automation.logDivider()">
+<API id="Automation.logDivider"><h3>Automation.logDivider()</h3>
 
 **说明**: 输出一条日志分隔线，用于在日志中分隔不同的测试阶段。
 
@@ -105,7 +105,7 @@ Automation.log("Test info...");
 
 </API>
 
-<API id="Automation.getParameter" title="Automation.getParameter(context, name, defaultValue?)">
+<API id="Automation.getParameter"><h3>Automation.getParameter(context, name, defaultValue?)</h3>
 
 **说明**: 获取指定上下文中的测试参数值。通常用于读取自动化测试配置（如回合数、地图大小等）。
 
@@ -131,7 +131,7 @@ if (turnCount !== null) {
 
 </API>
 
-<API id="Automation.setParameter" title="Automation.setParameter(context, name, value)">
+<API id="Automation.setParameter"><h3>Automation.setParameter(context, name, value)</h3>
 
 **说明**: 设置指定上下文中的测试参数值。用于在测试脚本运行期间动态更新配置。
 
@@ -154,7 +154,7 @@ Automation.setParameter("CurrentTest", "HasStarted", 1);
 
 </API>
 
-<API id="Automation.getLocalParameter" title="Automation.getLocalParameter(name, defaultValue?)">
+<API id="Automation.getLocalParameter"><h3>Automation.getLocalParameter(name, defaultValue?)</h3>
 
 **说明**: 获取本地参数值。本地参数在脚本生命周期内持久，不随测试上下文重置。
 
@@ -177,7 +177,7 @@ if (Automation.getLocalParameter("loadGame_firstRun")) {
 
 </API>
 
-<API id="Automation.setLocalParameter" title="Automation.setLocalParameter(name, value)">
+<API id="Automation.setLocalParameter"><h3>Automation.setLocalParameter(name, value)</h3>
 
 **说明**: 设置本地参数值。用于在测试脚本中维护跨步骤的状态标记。
 
@@ -199,7 +199,7 @@ Automation.setLocalParameter("loadGame_firstRun", true);
 
 </API>
 
-<API id="Automation.start" title="Automation.start()">
+<API id="Automation.start"><h3>Automation.start()</h3>
 
 **说明**: 启动自动化流程。调用后自动化测试框架开始运行。
 
@@ -217,7 +217,7 @@ Loading.runWhenFinished(() => {
 
 </API>
 
-<API id="Automation.stop" title="Automation.stop()">
+<API id="Automation.stop"><h3>Automation.stop()</h3>
 
 **说明**: 停止自动化流程。调用后自动化测试框架停止运行并清理资源。此方法为 C++ 原生实现，通常由框架内部调用，不直接在测试脚本中使用。
 
@@ -234,7 +234,7 @@ Automation.setActive(false);
 
 </API>
 
-<API id="Automation.pause" title="Automation.pause(bPause, options?)">
+<API id="Automation.pause"><h3>Automation.pause(bPause, options?)</h3>
 
 **说明**: 暂停或恢复自动化流程。暂停时可指定等待事件或超时时间。
 
@@ -265,7 +265,7 @@ if (Automation.isActive && Automation.isPaused == true) {
 
 </API>
 
-<API id="Automation.sendTestComplete" title="Automation.sendTestComplete(name?)">
+<API id="Automation.sendTestComplete"><h3>Automation.sendTestComplete(name?)</h3>
 
 **说明**: 发送测试完成信号，通知自动化框架当前测试已结束。
 
@@ -289,7 +289,7 @@ Automation.sendTestComplete();
 
 </API>
 
-<API id="Automation.setScriptHasLoaded" title="Automation.setScriptHasLoaded(name)">
+<API id="Automation.setScriptHasLoaded"><h3>Automation.setScriptHasLoaded(name)</h3>
 
 **说明**: 标记当前自动化测试脚本已加载完成。通常在脚本文件末尾调用。
 
@@ -309,7 +309,7 @@ Automation.setScriptHasLoaded("automation-test-benchmark-graphics");
 
 </API>
 
-<API id="Automation.generateSaveName" title="Automation.generateSaveName()">
+<API id="Automation.generateSaveName"><h3>Automation.generateSaveName()</h3>
 
 **说明**: 生成一个自动化测试用的存档文件名。
 
@@ -328,7 +328,7 @@ Network.saveGame(saveGame);
 
 </API>
 
-<API id="Automation.getLastGeneratedSaveName" title="Automation.getLastGeneratedSaveName()">
+<API id="Automation.getLastGeneratedSaveName"><h3>Automation.getLastGeneratedSaveName()</h3>
 
 **说明**: 获取最后一次由 `generateSaveName` 生成的存档文件名。用于存档后重新加载场景。
 
@@ -348,7 +348,7 @@ Network.loadGame(loadGame, ServerType.SERVER_TYPE_NONE);
 
 </API>
 
-<API id="Automation.copyAutosave" title="Automation.copyAutosave(turn, fileName)">
+<API id="Automation.copyAutosave"><h3>Automation.copyAutosave(turn, fileName)</h3>
 
 **说明**: 复制指定回合的自动存档为新文件。用于时代转换等需要回溯存档的场景。
 
@@ -369,7 +369,7 @@ Automation.copyAutosave(Game.turn - 3, "AutomationTransitionSave.Civ7Save");
 
 </API>
 
-<API id="Automation.isActive" title="Automation.isActive">
+<API id="Automation.isActive"><h3>Automation.isActive</h3>
 
 **说明**: 布尔属性，指示自动化流程是否正在运行。常用于在游戏逻辑中跳过自动化模式下不需要的 UI 行为。
 
@@ -395,7 +395,7 @@ if (playerId == GameContext.localPlayerID && !Automation.isActive) {
 
 </API>
 
-<API id="Automation.isPaused" title="Automation.isPaused">
+<API id="Automation.isPaused"><h3>Automation.isPaused</h3>
 
 **说明**: 布尔属性，指示自动化流程是否处于暂停状态。
 

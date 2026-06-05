@@ -411,7 +411,7 @@ for (const armyId of pArmies.getArmyIds()) {
 | `GameInfo.Civilizations.lookup(hash)` | 查询文明信息 | Players.ltp |
 | `Configuration.getPlayer(playerId)` | 获取玩家配置 | automation-test-support.js |
 
-<API id="Players.get" title="Players.get(playerID)">
+<API id="Players.get"><h3>Players.get(playerID)</h3>
 
 **说明**: 根据玩家 ID 获取 PlayerLibrary 对象。这是最常用的 Players 方法，几乎所有玩家相关操作都从这里开始。如果 ID 无效，返回 `undefined`，建议使用可选链 `?.` 访问。
 
@@ -435,7 +435,7 @@ if (player) {
 
 </API>
 
-<API id="Players.getAlive" title="Players.getAlive()">
+<API id="Players.getAlive"><h3>Players.getAlive()</h3>
 
 **说明**: 获取当前所有存活的 PlayerLibrary 数组。常用于遍历所有活跃玩家。
 
@@ -458,7 +458,7 @@ for (const player of players) {
 
 </API>
 
-<API id="Players.getAliveIds" title="Players.getAliveIds()">
+<API id="Players.getAliveIds"><h3>Players.getAliveIds()</h3>
 
 **说明**: 获取当前所有存活玩家的 ID 数组（纯整数，不返回对象）。
 
@@ -479,7 +479,7 @@ for (const playerId of aPlayers) {
 
 </API>
 
-<API id="Players.getAliveMajorIds" title="Players.getAliveMajorIds()">
+<API id="Players.getAliveMajorIds"><h3>Players.getAliveMajorIds()</h3>
 
 **说明**: 仅返回主要文明（Major Civilization）的 ID，不包括城邦、蛮族等。常用于起始位置分配、胜利判定等需要忽略城邦的场景。
 
@@ -508,7 +508,7 @@ const iTotalPlayers = Players.getAliveMajorIds().length;
 
 </API>
 
-<API id="Players.getEverAlive" title="Players.getEverAlive()">
+<API id="Players.getEverAlive"><h3>Players.getEverAlive()</h3>
 
 **说明**: 获取所有曾经存活过的玩家数组，包含已死亡的玩家。适用于需要遍历完整玩家历史的场景。
 
@@ -533,7 +533,7 @@ if (Players.getEverAlive()[iPlay] && Players.getEverAlive()[iPlay].isHuman) {
 
 </API>
 
-<API id="Players.getNumAliveHumans" title="Players.getNumAliveHumans()">
+<API id="Players.getNumAliveHumans"><h3>Players.getNumAliveHumans()</h3>
 
 **说明**: 获取当前存活的人类玩家数量。用于判断是否需要显示特定 UI。
 
@@ -553,7 +553,7 @@ if (!player.isTurnActive && Players.getNumAliveHumans() > 0) {
 
 </API>
 
-<API id="Players.isAlive" title="Players.isAlive(playerID)">
+<API id="Players.isAlive"><h3>Players.isAlive(playerID)</h3>
 
 **说明**: 检查指定玩家是否存活。
 
@@ -581,7 +581,7 @@ if (Players.isAlive(param)) {
 
 </API>
 
-<API id="Players.isHuman" title="Players.isHuman(playerID)">
+<API id="Players.isHuman"><h3>Players.isHuman(playerID)</h3>
 
 **说明**: 检查指定玩家是否为人类。在起始位置分配中广泛用于区分人类和 AI。
 
@@ -605,7 +605,7 @@ if (Players.isHuman(aliveMajorIds[iMajorIndex])) {
 
 </API>
 
-<API id="Players.isAI" title="Players.isAI(playerID)">
+<API id="Players.isAI"><h3>Players.isAI(playerID)</h3>
 
 **说明**: 检查指定玩家是否为 AI。
 
@@ -630,7 +630,7 @@ for (const player of PlayerList) {
 
 </API>
 
-<API id="Players.isValid" title="Players.isValid(playerID)">
+<API id="Players.isValid"><h3>Players.isValid(playerID)</h3>
 
 **说明**: 检查玩家 ID 是否对应一个存在的玩家槽位。不同于 `isAlive`，即使玩家已死亡也会返回 `true`。
 
@@ -654,7 +654,7 @@ const player = Players.get(playerID);
 
 </API>
 
-<API id="Players.isParticipant" title="Players.isParticipant(playerID)">
+<API id="Players.isParticipant"><h3>Players.isParticipant(playerID)</h3>
 
 **说明**: 检查指定玩家是否为当前游戏的参与者（排除观战者等）。
 
@@ -676,7 +676,7 @@ if (!Players.isParticipant(GameContext.localPlayerID)) {
 
 </API>
 
-<API id="Players.getWasEverAliveMajorIds" title="Players.getWasEverAliveMajorIds()">
+<API id="Players.getWasEverAliveMajorIds"><h3>Players.getWasEverAliveMajorIds()</h3>
 
 **说明**: 获取所有曾经存活过的主要文明 ID（含已死亡的）。
 
@@ -696,7 +696,7 @@ for (const id of Players.getWasEverAliveMajorIds()) {
 
 </API>
 
-<API id="Players.getWasEverAliveIds" title="Players.getWasEverAliveIds()">
+<API id="Players.getWasEverAliveIds"><h3>Players.getWasEverAliveIds()</h3>
 
 **说明**: 获取所有曾经存活的玩家 ID，包含已死亡和非主要文明。
 
@@ -726,7 +726,7 @@ for (const id of Players.getWasEverAliveIds()) {
 
 </API>
 
-<API id="Players.getAliveMinorIds" title="Players.getAliveMinorIds()">
+<API id="Players.getAliveMinorIds"><h3>Players.getAliveMinorIds()</h3>
 
 **说明**: 获取当前存活的城邦/次要文明玩家 ID。
 
@@ -747,7 +747,7 @@ for (const id of Players.getAliveMinorIds()) {
 
 </API>
 
-<API id="Players.getNumWasEverAliveMajors" title="Players.getNumWasEverAliveMajors()">
+<API id="Players.getNumWasEverAliveMajors"><h3>Players.getNumWasEverAliveMajors()</h3>
 
 **说明**: 获取从游戏开始至今曾经存活过的主要文明数量。
 
@@ -768,7 +768,7 @@ for (const id of Players.getWasEverAliveIds()) {
 
 </API>
 
-<API id="Players.grantYield" title="Players.grantYield(playerID, yieldType, amount)">
+<API id="Players.grantYield"><h3>Players.grantYield(playerID, yieldType, amount)</h3>
 
 **说明**: 给指定玩家直接增加产出（金币、文化、科学、幸福度、影响力等）。用于调试或系统奖励。
 
@@ -799,7 +799,7 @@ Players.grantYield(player.id, YieldTypes.YIELD_SCIENCE, 100);
 
 </API>
 
-<API id="Players.grantGreatWork" title="Players.grantGreatWork(greatWorkIndex, playerID)">
+<API id="Players.grantGreatWork"><h3>Players.grantGreatWork(greatWorkIndex, playerID)</h3>
 
 **说明**: 给玩家授予指定巨作。
 
@@ -824,7 +824,7 @@ if (player && player.Cities) {
 
 </API>
 
-<API id="Players.grantCultureSlot" title="Players.grantCultureSlot(playerID, slotType, amount)">
+<API id="Players.grantCultureSlot"><h3>Players.grantCultureSlot(playerID, slotType, amount)</h3>
 
 **说明**: 给玩家授予文化槽位（政策槽或传统槽）。
 
@@ -852,7 +852,7 @@ Players.grantCultureSlot(player.id, CultureSlotTypes.TRADITION_CULTURE_SLOT, 1);
 
 </API>
 
-<API id="Players.increaseMaxTradeDistance" title="Players.increaseMaxTradeDistance(amount, playerID)">
+<API id="Players.increaseMaxTradeDistance"><h3>Players.increaseMaxTradeDistance(amount, playerID)</h3>
 
 **说明**: 增加玩家的最大贸易距离。
 
@@ -876,7 +876,7 @@ if (player) {
 
 </API>
 
-<API id="Players.restoreMaxTradeDistance" title="Players.restoreMaxTradeDistance(playerID)">
+<API id="Players.restoreMaxTradeDistance"><h3>Players.restoreMaxTradeDistance(playerID)</h3>
 
 **说明**: 将玩家的最大贸易距离恢复为默认值。
 

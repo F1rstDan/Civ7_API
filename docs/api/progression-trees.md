@@ -98,7 +98,7 @@ if (treeObject) {
 
 ---
 
-<API id="Game.ProgressionTrees.getNode" title="Game.ProgressionTrees.getNode(playerID, nodeType)">
+<API id="Game.ProgressionTrees.getNode"><h3>Game.ProgressionTrees.getNode(playerID, nodeType)</h3>
 
 **说明**: 获取指定玩家在指定节点上的运行时数据对象。
 
@@ -137,7 +137,7 @@ if (currentAge?.AgeType == "AGE_ANTIQUITY") {
 
 </API>
 
-<API id="Game.ProgressionTrees.getTree" title="Game.ProgressionTrees.getTree(playerID, treeType)">
+<API id="Game.ProgressionTrees.getTree"><h3>Game.ProgressionTrees.getTree(playerID, treeType)</h3>
 
 **说明**: 获取指定玩家在指定树上的完整运行时对象。
 
@@ -179,7 +179,7 @@ if (treeObject && treeObject.activeNodeIndex >= 0) {
 
 </API>
 
-<API id="Game.ProgressionTrees.getTreeStructure" title="Game.ProgressionTrees.getTreeStructure(treeType)">
+<API id="Game.ProgressionTrees.getTreeStructure"><h3>Game.ProgressionTrees.getTreeStructure(treeType)</h3>
 
 **说明**: 获取树的结构定义，返回所有节点的结构信息（含连接关系）。
 
@@ -205,7 +205,7 @@ const contentTreeStructureNodes = treeStructureNodes.filter((structureNodeData) 
 
 </API>
 
-<API id="Game.ProgressionTrees.getNodeState" title="Game.ProgressionTrees.getNodeState(playerID, nodeType)">
+<API id="Game.ProgressionTrees.getNodeState"><h3>Game.ProgressionTrees.getNodeState(playerID, nodeType)</h3>
 
 **说明**: 获取节点状态枚举值，用于判断节点是否可研究、已解锁等。
 
@@ -242,7 +242,7 @@ const card = {
 
 </API>
 
-<API id="Game.ProgressionTrees.canEverUnlock" title="Game.ProgressionTrees.canEverUnlock(playerID, nodeType)">
+<API id="Game.ProgressionTrees.canEverUnlock"><h3>Game.ProgressionTrees.canEverUnlock(playerID, nodeType)</h3>
 
 **说明**: 检查节点是否因传说路径等原因被永久锁定。
 
@@ -268,7 +268,7 @@ if (contentVal.isLocked) {
 
 </API>
 
-<API id="Game.ProgressionTrees.hasLegendUnlocked" title="Game.ProgressionTrees.hasLegendUnlocked(playerID, nodeType)">
+<API id="Game.ProgressionTrees.hasLegendUnlocked"><h3>Game.ProgressionTrees.hasLegendUnlocked(playerID, nodeType)</h3>
 
 **说明**: 检查节点是否因传说未解锁而处于锁定状态。
 
@@ -295,7 +295,7 @@ if (Game.ProgressionTrees.hasLegendUnlocked(this._player, structureNodeData.node
 
 </API>
 
-<API id="Game.ProgressionTrees.getLegendAttributeNodeLockedString" title="Game.ProgressionTrees.getLegendAttributeNodeLockedString(playerID, nodeType)">
+<API id="Game.ProgressionTrees.getLegendAttributeNodeLockedString"><h3>Game.ProgressionTrees.getLegendAttributeNodeLockedString(playerID, nodeType)</h3>
 
 **说明**: 获取因传说锁定而显示的本地化提示键。
 
@@ -320,7 +320,7 @@ const lockedReason = Locale.compose(
 
 </API>
 
-<API id="Game.ProgressionTrees.revealTree" title="Game.ProgressionTrees.revealTree(treeType, playerID)">
+<API id="Game.ProgressionTrees.revealTree"><h3>Game.ProgressionTrees.revealTree(treeType, playerID)</h3>
 
 **说明**: 对指定玩家揭示整棵科技/文化树（调试用，使所有节点可见）。
 
@@ -348,7 +348,7 @@ for (let eTree of GameInfo.ProgressionTrees) {
 
 </API>
 
-<API id="GameInfo.ProgressionTrees.lookup" title="GameInfo.ProgressionTrees.lookup(treeType)">
+<API id="GameInfo.ProgressionTrees.lookup"><h3>GameInfo.ProgressionTrees.lookup(treeType)</h3>
 
 **说明**: 按 `ProgressionTreeType` 查找静态树定义。
 
@@ -383,7 +383,7 @@ const progressionTree = GameInfo.ProgressionTrees.lookup(nodeInfo.ProgressionTre
 
 </API>
 
-<API id="GameInfo.ProgressionTrees.find" title="GameInfo.ProgressionTrees.find(predicate)">
+<API id="GameInfo.ProgressionTrees.find"><h3>GameInfo.ProgressionTrees.find(predicate)</h3>
 
 **说明**: 按条件查找静态树定义（如匹配属性树的 `ProgressionTreeType`）。
 
