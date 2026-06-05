@@ -74,18 +74,26 @@ doc_update: 2026-06-05
 当目标文档缺少代码示例时，主动搜索源码补全：
 
 ```powershell
-# API 搜索通用规则：始终用单词边界避免后缀误匹配
+# === 首选：固定字符串搜索（-F 字面量匹配）===
+# 简单可靠，不涉及正则引擎，搜索范围用 modules\ 子目录避免 -g 通配符在 Windows 上的路径差异
+rg -n -F "engine.synchronizeModels" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+rg -n -F "engine.registerBindingAttribute" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+
+# === 备选：正则 + --pcre2（需排除后缀误匹配时使用）===
+# ⚠️ 任何含 (?<  / (?= / (?<= / (?<! 等环视断言的正则必须加 --pcre2，否则 rg 静默失败并返回 exit code 1
+# ⚠️ 切勿在 PowerShell rg 命令中追加 2>$null —— 它会把 rg 的正则解析错误（regex parse error）静默吞掉
+#    导致明明有匹配结果却误认为「未找到」，排查时极难发觉
 # 例如搜 "Camera" 会误匹配 "ForegroundCamera"、"BackgroundCamera"
 # 用 (?<![A-Za-z0-9_$]) 确保 API_NAME 前面不是标识符字符
 
 # 在 .ltp 面板中搜索目标 API（优先，权威性最高）
-rg -n "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
+rg -n --pcre2 "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 
 # 在 .js 源码中搜索目标 API
-rg -n "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+rg -n --pcre2 "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
 
 # 搜索子系统用法（如 player.Treasury）
-rg -n "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
+rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 ```
 
 **后缀误匹配警示**：名称短的 API 容易被更长标识符的后缀命中。例如搜索 `Camera` 时，`ForegroundCamera`、`BackgroundCamera` 等也会被匹配。始终在搜索 API 名称时使用单词边界 (`(?<![A-Za-z0-9_$])`)，并在写入方法列表前确认完整接收者链（`ForegroundCamera.reset` 不等于 `Camera.reset`）。
@@ -103,10 +111,10 @@ rg -n "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -
 - 如果源码只出现 `A.B.method(...)`，没有出现独立的 `B.method(...)`，不得把它记录为 `B.method`。
 - 如果不能从源码确认完整接收者链，标注为“未验证前提”，不要写入方法列表。
 
-**搜索顺序**：
+**搜索顺序**：优先使用 `-F` 固定字符串搜索；仅在需要排除后缀误匹配时才加 `--pcre2`。
 ```powershell
 # 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup / ForegroundCamera.method 等误命中的情况
-rg -n "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+rg -n --pcre2 "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 2. 搜索同名方法的所有链条，确认是否只存在更长接收者
 rg -n "(\w+\.)+Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"

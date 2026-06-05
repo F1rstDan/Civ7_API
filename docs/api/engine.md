@@ -12,6 +12,8 @@ source:
   - modules/base-standard/maps/continents.js
   - modules/base-standard/ui/unit-promotion/model-unit-promotion.js
   - modules/base-standard/ui/tutorial/tutorial-manager.js
+  - modules/core/ui/cohtml.js
+  - modules/core/ui/component-support.js
 doc_update: 2026-06-05
 ---
 
@@ -228,7 +230,7 @@ UnitPromotion.updateCallback = updateModel;
 
 <API id="engine.synchronizeModels"><h3>engine.synchronizeModels()</h3>
 
-**说明**: 同步所有数据绑定模型。
+**说明**: 同步所有数据绑定模型。在 `createJSModel` + `updateWholeModel` 之后调用，将 JS 注册的模型推送到数据绑定层。
 
 **参数**: 无
 
@@ -237,16 +239,21 @@ UnitPromotion.updateCallback = updateModel;
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 同步所有数据绑定模型
-engine.synchronizeModels();
+// 来源 modules/base-standard/ui/culture-tree/model-culture-tree.js
+// 注册模型后同步到绑定层
+engine.whenReady.then(() => {
+  const updateModel = () => engine.updateWholeModel(CultureTree);
+  engine.createJSModel('g_CultureTree', CultureTree);
+  CultureTree.updateCallback = updateModel;
+  engine.synchronizeModels();
+});
 ```
 
 </API>
 
 <API id="engine.reloadLocalization"><h3>engine.reloadLocalization()</h3>
 
-**说明**: 重新加载本地化文本。
+**说明**: 重新加载本地化文本。在用户生成文本更新事件（`UserGeneratedTextUpdated`）触发后调用，通过 `requestAnimationFrame` 合并多次调用。
 
 **参数**: 无
 
@@ -255,16 +262,24 @@ engine.synchronizeModels();
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 重新加载本地化文本
-engine.reloadLocalization();
+// 来源 modules/core/ui/component-support.js
+// 用户文本更新后重新加载本地化
+let reloadQueuedHandle = 0;
+engine.on('UserGeneratedTextUpdated', () => {
+  if (reloadQueuedHandle == 0) {
+    reloadQueuedHandle = window.requestAnimationFrame(() => {
+      reloadQueuedHandle = 0;
+      engine.reloadLocalization();
+    });
+  }
+});
 ```
 
 </API>
 
 <API id="engine.BindingsReady"><h3>engine.BindingsReady</h3>
 
-**说明**: 数据绑定系统是否就绪（属性）。
+**说明**: 数据绑定系统就绪时引擎调用的初始化函数。并非供 Mod 直接调用的属性，而是数据绑定框架内部使用的就绪信号。引擎初始化完成后调用 `engine.BindingsReady(VERSION...)` 完成绑定初始化。
 
 **参数**: 无
 
@@ -273,11 +288,14 @@ engine.reloadLocalization();
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 检查数据绑定系统是否就绪
-if (engine.BindingsReady) {
-  engine.createJSModel('MyModel', myData);
-}
+// 来源 modules/core/ui/cohtml.js
+// 数据绑定框架内部定义 BindingsReady 回调
+engine.BindingsReady = function () {
+  engine._OnReady();
+};
+
+// 引擎初始化完成后触发绑定就绪
+engine.BindingsReady(VERSION[0], VERSION[1], VERSION[2], VERSION[3]);
 ```
 
 </API>
@@ -296,8 +314,9 @@ if (engine.BindingsReady) {
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 注册事件监听（等效于 engine.on）
+// 未在 .js/.ltp 源码中找到 engine.AddOnHandler 的直接调用
+// （源码中仅见 rigger.AddOnHandler，为 TunerPanels 调试面板的触发器对象，非 engine 的 API）
+// 以下为根据 API 签名补充的等效用法
 engine.AddOnHandler('TurnBegin', () => {
   console.log('回合开始');
 });
@@ -307,7 +326,7 @@ engine.AddOnHandler('TurnBegin', () => {
 
 <API id="engine.RemoveOnHandler"><h3>engine.RemoveOnHandler(event, handler)</h3>
 
-**说明**: engine.off 的别名，功能完全相同。
+**说明**: engine.off 的别名，功能完全相同。源码中的 `off` 实现在内部判断 `RemoveOnHandler` 是否存在来决定走旧版移除逻辑。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -319,16 +338,18 @@ engine.AddOnHandler('TurnBegin', () => {
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 移除事件监听（等效于 engine.off）
-engine.RemoveOnHandler('TurnBegin', myHandler);
+// 来源 modules/core/ui/cohtml.js
+// off 方法内部回退到 RemoveOnHandler
+if (engine.RemoveOnHandler !== undefined) {
+  engine.RemoveOnHandler(name, handler, context || engine);
+}
 ```
 
 </API>
 
 <API id="engine.addDataBindEventListner"><h3>engine.addDataBindEventListner(event, listener)</h3>
 
-**说明**: 添加数据绑定事件监听。
+**说明**: 添加数据绑定事件监听。由数据绑定框架内部调用，用于注册模型同步依赖的回调。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -340,18 +361,22 @@ engine.RemoveOnHandler('TurnBegin', myHandler);
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 添加数据绑定事件监听
-engine.addDataBindEventListner('modelUpdated', (model) => {
-  console.log('模型已更新', model);
-});
+// 来源 modules/core/ui/cohtml.js
+// 注册模型同步依赖的更新回调
+engine.addSynchronizationDependency = (first, second) => {
+  if (!engine.hasAttachedUpdateListner) {
+    engine.addDataBindEventListner('updateWholeModel', engine.onUpdateWholeModel);
+    engine.hasAttachedUpdateListner = true;
+  }
+  // ...
+};
 ```
 
 </API>
 
 <API id="engine.registerBindingAttribute"><h3>engine.registerBindingAttribute(name, handler)</h3>
 
-**说明**: 注册自定义绑定属性。
+**说明**: 注册自定义数据绑定属性。在引擎就绪后调用，将自定义属性绑定到数据绑定框架的处理器上。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -363,10 +388,12 @@ engine.addDataBindEventListner('modelUpdated', (model) => {
 **使用示例**:
 
 ```javascript
-// 未在 .js/.ltp 源码中找到直接调用示例，以下为根据 API 签名补充的用法
-// 注册自定义绑定属性
-engine.registerBindingAttribute('myCustomAttr', (element, value) => {
-  element.textContent = value;
+// 来源 modules/core/ui/component-support.js
+// 注册本地化和组件属性绑定处理器
+engine.whenReady.then(() => {
+  console.log('Registering custom data-bind-attributes handler.');
+  engine.registerBindingAttribute('l10n', LocalizationDataBoundAttributeHandler);
+  engine.registerBindingAttribute('attributes', ComponentDataBoundAttributeHandler);
 });
 ```
 
