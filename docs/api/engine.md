@@ -39,7 +39,7 @@ engine.on('CityAddedToMap', (data) => {
 engine.call('SetMapInitData', initParams);
 ```
 
-## 方法列表（共 14 个）
+## 方法列表（共 15 个）
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
@@ -53,8 +53,9 @@ engine.call('SetMapInitData', initParams);
 | <API>engine.synchronizeModels</API> | — | `void` | 同步所有数据绑定模型 |
 | <API>engine.reloadLocalization</API> | — | `void` | 重新加载本地化文本 |
 | <API>engine.BindingsReady</API> | — | `bool` | 数据绑定系统是否就绪（属性） |
-| <API>engine.AddOnHandler</API> | event, handler | `void` | engine.on 的别名 |
 | <API>engine.RemoveOnHandler</API> | event, handler | `void` | engine.off 的别名 |
+| <API>engine.AddOrRemoveOnHandler</API> | name, callback, context | `void` | 注册或移除事件处理器 |
+| <API>engine.addSynchronizationDependency</API> | first, second | `void` | 注册模型同步依赖 |
 | <API>engine.addDataBindEventListner</API> | event, listener | `void` | 添加数据绑定事件监听 |
 | <API>engine.registerBindingAttribute</API> | name, handler | `void` | 注册自定义绑定属性 |
 
@@ -300,30 +301,6 @@ engine.BindingsReady(VERSION[0], VERSION[1], VERSION[2], VERSION[3]);
 
 </API>
 
-<API id="engine.AddOnHandler"><h3>engine.AddOnHandler(event, handler)</h3>
-
-**说明**: engine.on 的别名，功能完全相同。
-
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| event | `string` | 事件名称 |
-| handler | `function` | 事件处理函数 |
-
-**返回值**: `void`
-
-**使用示例**:
-
-```javascript
-// 未在 .js/.ltp 源码中找到 engine.AddOnHandler 的直接调用
-// （源码中仅见 rigger.AddOnHandler，为 TunerPanels 调试面板的触发器对象，非 engine 的 API）
-// 以下为根据 API 签名补充的等效用法
-engine.AddOnHandler('TurnBegin', () => {
-  console.log('回合开始');
-});
-```
-
-</API>
-
 <API id="engine.RemoveOnHandler"><h3>engine.RemoveOnHandler(event, handler)</h3>
 
 **说明**: engine.off 的别名，功能完全相同。源码中的 `off` 实现在内部判断 `RemoveOnHandler` 是否存在来决定走旧版移除逻辑。
@@ -343,6 +320,64 @@ engine.AddOnHandler('TurnBegin', () => {
 if (engine.RemoveOnHandler !== undefined) {
   engine.RemoveOnHandler(name, handler, context || engine);
 }
+```
+
+</API>
+
+<API id="engine.AddOrRemoveOnHandler"><h3>engine.AddOrRemoveOnHandler(name, callback, context)</h3>
+
+**说明**: engine.on 的底层实现，向数据绑定引擎注册（或移除）事件处理器。被 `engine.on` 内部调用，参数 `context` 默认回退为 `engine` 自身。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| name | `string` | 事件名称 |
+| callback | `function` | 事件回调函数 |
+| context | `object` | 上下文对象，默认 `engine` |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/cohtml.js
+// engine.on 内部调用 AddOrRemoveOnHandler 完成注册
+engine.on = function (name, callback, context) {
+  if (!callback) {
+    console.error('No handler specified for engine.on');
+    return { clear: function () {} };
+  }
+  engine.AddOrRemoveOnHandler(name, callback, context || engine);
+  return { clear: this._createClear(this, name, callback, context) };
+};
+```
+
+</API>
+
+<API id="engine.addSynchronizationDependency"><h3>engine.addSynchronizationDependency(first, second)</h3>
+
+**说明**: 注册两个数据绑定模型之间的同步依赖关系。当依赖链中任意模型更新时，引擎自动触发回调同步。首次调用时自动附加 `updateWholeModel` 监听器。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| first | `object` | 第一个模型 |
+| second | `object` | 第二个模型 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/cohtml.js
+// 注册模型同步依赖，首次调用时附加 updateWholeModel 监听
+engine.addSynchronizationDependency = (first, second) => {
+  if (!engine.hasAttachedUpdateListner) {
+    engine.addDataBindEventListner('updateWholeModel', engine.onUpdateWholeModel);
+    engine.hasAttachedUpdateListner = true;
+  }
+  var deps = engine._synchronizationMap[first];
+  if (!deps) deps = engine._synchronizationMap[first] = [];
+  deps.push(second);
+};
 ```
 
 </API>
