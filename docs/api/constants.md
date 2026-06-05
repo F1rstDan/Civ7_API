@@ -5,7 +5,8 @@ summary: 从游戏源码自动提取的字符串常量、代码枚举和 GameInf
 primary_scope: []
 related_scope: []
 source:
-  - D:\Games Design\Civ7_mod\.官方变动\modules\
+  - modules\
+doc_update: 2026-06-02
 ---
 
 # Constants 常量与枚举

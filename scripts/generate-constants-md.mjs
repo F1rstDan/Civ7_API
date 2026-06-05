@@ -11,8 +11,9 @@ const meta = {
   primary_scope: [],
   related_scope: [],
   source: [
-    'D:\\Games Design\\Civ7_mod\\.官方变动\\modules\\',
+    'modules\\',
   ],
+  doc_update: data.meta.generatedAt,
 };
 
 function push(s = '') { lines.push(s); }
@@ -30,12 +31,13 @@ push('source:');
 for (const src of meta.source) {
   push('  - ' + src);
 }
+push('doc_update: ' + meta.doc_update);
 push('---');
 push('');
 push('# ' + meta.title);
 push('');
 push('> 从游戏源码中自动提取的常量字符串和枚举。共收录 **' + data.meta.totalStringConstants + '** 个字符串常量（' + data.categories.length + ' 个分类）、**' + data.objectEnums.length + '** 个代码枚举、**' + data.meta.totalGameInfoTables + '** 个 GameInfo 数据表。');
-push('> 生成时间：' + data.meta.generatedAt);
+push('> 生成时间：' + meta.doc_update);
 push('');
 
 // === String constants by category ===
