@@ -9,6 +9,7 @@ related_scope:
 source:
   - TunerPanels/Example.ltp
   - modules/base-standard/ui/example/example.js
+doc_update: 2026-06-05
 ---
 
 # 示例对象 对象名称

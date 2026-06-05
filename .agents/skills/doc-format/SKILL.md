@@ -39,6 +39,7 @@ related_scope:
 source:
   - TunerPanels/Units.ltp
   - modules/base-standard/scripts/age-transition-post-load.js
+doc_update: 2026-06-05
 ---
 ```
 
@@ -49,6 +50,7 @@ source:
 - `primary_scope`：本页主覆盖 API 范围，通常需要进入主方法列表并覆盖 `<API>` 弹窗。
 - `related_scope`：允许提及的相关 API 范围，通常放在 GameInfo 关联表、相关对象、子系统或示例中，默认不要求 `<API>` 弹窗。
 - `source`：统一记录来源文件，可包含 `.ltp`、`.js`、`.xml` 或其他来源路径。
+- `doc_update`：该文档上次更新日期，格式 `YYYY-MM-DD`。新建文档时填入创建日期；审查/整改后更新为当前日期。
 
 `doc_type` 策略：
 - `object-api`：单一对象页，如 `Units`、`Camera`、`Game`。主方法列表只放 `primary_scope`；`related_scope` 可以在后文提及，但不能混入主方法列表。
@@ -130,7 +132,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 ## 文档结构（必须按顺序）
 
 ```
-1. frontmatter（title、doc_type、summary、primary_scope、related_scope、source）
+1. frontmatter（title、doc_type、summary、primary_scope、related_scope、source、doc_update）
 2. H1 标题
 3. 一句话定位
 4. 快速示例
@@ -146,7 +148,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 
 ### 命名
 - 文件名：小写英文 + 连字符，如 `gameplay-map.md`
-- frontmatter：至少包含 `title`、`doc_type`、`summary`、`primary_scope`、`related_scope`、`source`
+- frontmatter：至少包含 `title`、`doc_type`、`summary`、`primary_scope`、`related_scope`、`source`、`doc_update`
 - H1：`# 英文名 中文名`
 
 ### 代码块
@@ -211,7 +213,7 @@ Camera.lookAtPlot(10, 20);
 审查或整改时逐项对照：
 
 - [ ] 有 frontmatter（title 字段）
-- [ ] 有 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`
+- [ ] 有 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`、`doc_update`
 - [ ] H1 格式正确（# 英文 中文）
 - [ ] 有一句话定位
 - [ ] 有快速示例代码块
@@ -239,7 +241,8 @@ Camera.lookAtPlot(10, 20);
 5. 复制模板为目标文件名
 6. 替换占位符，用搜索到的真实代码填充示例（精简到 3-8 行，突出核心 API）
 7. 按实际 API 填充方法表和内容块
-8. 运行脚本检查短写风险；脚本有警告时，回到源码确认归属后再输出
+8. 在 YAML 中添加 `doc_update` 字段，值为当前日期（格式 `YYYY-MM-DD`）
+9. 运行脚本检查短写风险；脚本有警告时，回到源码确认归属后再输出
 
 ## 审查/整改流程
 
@@ -250,9 +253,10 @@ Camera.lookAtPlot(10, 20);
 5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
 6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
 7. 如果 YAML `source` 字段缺失或不完整：搜索确认后补全
-8. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
-9. 输出问题列表（审查）或直接修复（整改）
-10. 整改时保持现有内容不变，只调整结构和格式
+8. 更新 `doc_update` 字段为当前日期（格式 `YYYY-MM-DD`）；若字段缺失则新增
+9. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
+10. 输出问题列表（审查）或直接修复（整改）
+11. 整改时保持现有内容不变，只调整结构和格式
 
 ## 全链路验证
 
