@@ -1,17 +1,28 @@
 ---
 title: Random Events 随机事件
+doc_type: object-api
+summary: 文明7的随机事件系统，包括自然灾害（火山喷发、洪水、风暴）、核武器（WMD）以及事件触发 API。
+primary_scope:
+  - Game.RandomEvents
+  - Game.Combat
+related_scope:
+  - MapFeatures
+  - MapRivers
+  - MapStorms
+  - GameInfo.RandomEvents
+  - GameInfo.WMDs
+source:
+  - TunerPanels/Random Events.ltp
 ---
 
 # Random Events 随机事件
 
 文明7的随机事件系统，包括自然灾害（火山喷发、洪水、风暴）、核武器（WMD）以及事件触发 API。
 
-> 来源：Random Events.ltp
-
 ## Game.RandomEvents 子系统
 
 ```javascript
-// 来源 Random Events.ltp
+// 来源 TunerPanels/Random Events.ltp
 // 触发随机事件
 let kEvent = {
   eventType: "RANDOM_EVENT_ERUPTION",    // 事件类型字符串
@@ -33,7 +44,7 @@ Game.RandomEvents.applyEvent(kEvent);
 ## Game.Combat 子系统
 
 ```javascript
-// 来源 Random Events.ltp
+// 来源 TunerPanels/Random Events.ltp
 // 引爆大规模杀伤性武器
 let plotCoord = GameplayMap.getLocationFromIndex(plotIndex);
 Game.Combat.detonateWMD(playerId, wmdType, plotCoord);
@@ -47,7 +58,8 @@ Game.Combat.detonateWMD(playerId, wmdType, plotCoord);
 ## GameInfo 关联表
 
 ```javascript
-// 来源 Random Events.ltp
+// 来源 TunerPanels/Random Events.ltp
+// 事件相关定义表
 GameInfo.RandomEvents;      // 随机事件定义表（RandomEventType, NaturalWonder, ...）
 GameInfo.WMDs;              // WMD 定义表（WeaponType）
 GameInfo.NamedRivers;       // 命名河流表（NamedRiverType）
@@ -58,7 +70,7 @@ GameInfo.Fertilities;       // 肥沃度定义表（FertilityType）
 ## 使用示例：触发火山喷发
 
 ```javascript
-// 来源 Random Events.ltp — "Apply Event" Action
+// 来源 TunerPanels/Random Events.ltp — "Apply Event" Action
 // 1. 找到目标火山
 let volcanoType = MapFeatures.getVolcanoTypeByIndex(0);
 let volcanoPlotIndex = MapFeatures.getVolcanoIDByType(volcanoType);
@@ -76,7 +88,8 @@ Game.RandomEvents.applyEvent(kEvent);
 ## 使用示例：引爆 WMD
 
 ```javascript
-// 来源 Random Events.ltp — "Detonate WMD" Action
+// 来源 TunerPanels/Random Events.ltp — "Detonate WMD" Action
+// 在指定地块引爆 WMD
 const plotCoord = GameplayMap.getLocationFromIndex(targetPlotIndex);
 Game.Combat.detonateWMD(-1, "WMD_ICBM", plotCoord);
 ```
@@ -101,7 +114,3 @@ Game.Combat.detonateWMD(-1, "WMD_ICBM", plotCoord);
 | VolcanoEruption | `isErupting` | boolean | 是否正在喷发 |
 | VolcanoEruption | `severity` | number | 喷发严重程度 |
 | VolcanoEruption | `turnsRemaining` | number | 剩余回合数 |
-
----
-
-*来源：Random Events.ltp*

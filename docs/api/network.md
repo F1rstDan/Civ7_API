@@ -1,5 +1,14 @@
 ---
 title: Network 网络
+doc_type: reference
+summary: 网络和多人游戏相关 API 参考，涵盖账号认证、连接管理、存档、多人游戏和聊天功能。
+primary_scope:
+  - Network
+related_scope:
+  - Social
+  - Modding
+source:
+  - 源码 Network 对象分析
 ---
 
 # Network 网络
@@ -7,6 +16,8 @@ title: Network 网络
 网络和多人游戏相关 API。涵盖账号、连接、存档、多人游戏管理等。
 
 ```javascript
+// 来源 源码 Network 对象
+// 检查登录状态和主机平台
 const loggedIn = Network.isLoggedIn();
 const platform = Network.getLocalHostingPlatform();
 ```

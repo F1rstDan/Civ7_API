@@ -81,8 +81,6 @@ GameInfo.OtherTable;   // 其他定义表
 |------|------|
 | OtherAPI.method() | 用途说明 |
 
----
-
 <API id="SomeAPI.get"><h3>SomeAPI.get(id)</h3>
 
 **说明**: 根据 ID 获取对象。ID 无效时返回 `undefined`。

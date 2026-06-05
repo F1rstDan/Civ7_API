@@ -1,10 +1,27 @@
 ---
 title: Audio & Debug 音频调试
+doc_type: reference
+summary: 音频和调试 API 参考，包括 Audio 音效播放、Sound 音量控制和 Debug 调试组件注册。
+primary_scope:
+  - Audio
+  - Sound
+  - Debug
+related_scope:
+  - UI
+source:
+  - 源码 Audio/Debug 对象分析
 ---
 
 # Audio & Debug 音频调试
 
 音频和调试 API。
+
+```javascript
+// 来源 源码 Audio/Debug 对象
+// 播放音效和注册调试组件
+Audio.playSound("sound_tag");
+Debug.registerWidget("myWidget", () => someValue);
+```
 
 ## Audio
 

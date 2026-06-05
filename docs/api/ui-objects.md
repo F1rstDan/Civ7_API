@@ -1,5 +1,17 @@
 ---
 title: UI Objects UI对象
+doc_type: ui-api
+summary: UI 框架组件和辅助对象，包括 UI.Player、UI、Databind、NavTray、DialogBoxManager、Icon 和 Layout 等。
+primary_scope:
+  - UI
+related_scope:
+  - UI.Player
+  - Databind
+  - NavTray
+  - DialogBoxManager
+  - Icon
+source:
+  - 源码 UI 层分析
 ---
 
 # UI Objects UI对象
@@ -22,6 +34,8 @@ UI 框架组件和辅助对象。从不通过 import 引入，引擎直接注入
 | `selectNextReadyUnit` | — | `void` | 选中下一个就绪单位 |
 
 ```javascript
+// 来源 源码 UI 层
+// 获取当前选中城市并查询
 const cityID = UI.Player.getHeadSelectedCity();
 if (cityID) {
   const city = Cities.get(cityID);

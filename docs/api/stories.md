@@ -1,17 +1,26 @@
-﻿---
+---
 title: Stories 故事系统
+doc_type: object-api
+summary: 文明7的故事系统管理叙事事件、任务和标签，通过 player.Stories 子系统访问。
+primary_scope:
+  - player.Stories
+  - player.Identity
+related_scope:
+  - GameInfo.NarrativeStories
+  - GameInfo.NarrativeTags
+source:
+  - TunerPanels/Player Stories.ltp
 ---
 
 # Stories 故事系统
 
 文明7的故事系统管理叙事事件、任务和标签。通过 `player.Stories` 子系统访问。
 
-> 来源：Player Stories.ltp
-
 ## player.Stories 子系统
 
 ```javascript
-// 来源 Player Stories.ltp
+// 来源 TunerPanels/Player Stories.ltp
+// 获取活动故事和已归档故事
 const playerStories = player.Stories;
 
 // 获取活动故事
@@ -43,7 +52,8 @@ playerStories.onRequirementsMet(storyId);
 ## player.Identity 子系统（叙事标签）
 
 ```javascript
-// 来源 Player Stories.ltp
+// 来源 TunerPanels/Player Stories.ltp
+// 叙事标签和属性点管理
 const identity = player.Identity;
 identity.getNarrativeTagPoints(tagIndex);        // 获取标签点数
 identity.changeNarrativeTagPoints(tagIndex, 5);  // 改变标签点数
@@ -53,10 +63,7 @@ identity.addWildcardAttributePoints(1);          // 增加通配属性点
 ## GameInfo 关联表
 
 ```javascript
+// 来源 源码 GameInfo 关联
 GameInfo.NarrativeStories;  // 叙事故事定义表
 GameInfo.NarrativeTags;     // 叙事标签定义表
 ```
-
----
-
-*来源：Player Stories.ltp*

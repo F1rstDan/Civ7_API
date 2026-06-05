@@ -1,5 +1,16 @@
 ---
 title: 全局工具对象
+doc_type: reference
+summary: 全局工具函数和辅助对象参考，包括 GameContext、Database、InterfaceMode、ComponentID 等。
+primary_scope:
+  - globals
+related_scope:
+  - GameContext
+  - Database
+  - InterfaceMode
+  - ComponentID
+source:
+  - 源码全局对象分析
 ---
 
 # 全局工具对象
@@ -14,6 +25,8 @@ title: 全局工具对象
 | `localObserverID` | `int` | 本地观察者 ID |
 
 ```javascript
+// 来源 源码全局对象
+// 获取本地玩家对象
 const player = Players.get(GameContext.localPlayerID);
 ```
 
@@ -25,6 +38,8 @@ const player = Players.get(GameContext.localPlayerID);
 | `query` | queryType, ...args | `array` | 执行数据库查询 |
 
 ```javascript
+// 来源 源码全局对象
+// 使用哈希值判断单位核心类别
 const HASH = Database.makeHash('CORE_CLASS_MILITARY');
 if (unit.coreClass == HASH) { /* 军事单位 */ }
 ```
@@ -40,6 +55,8 @@ if (unit.coreClass == HASH) { /* 军事单位 */ }
 | `switchToDefault` | — | `void` | 切换回默认模式 |
 
 ```javascript
+// 来源 源码全局对象
+// 检查当前界面模式
 if (InterfaceMode.getCurrent() == 'INTERFACEMODE_CITY_PRODUCTION') {
   // 在城市生产界面
 }

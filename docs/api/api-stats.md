@@ -1,5 +1,19 @@
 ---
 title: API 调用统计
+doc_type: reference
+summary: 文明7游戏源码中各全局工具对象和方法的静态分析调用频率统计，仅供开发参考。
+primary_scope:
+  - api-stats
+related_scope:
+  - Locale
+  - GameContext
+  - Database
+  - InterfaceMode
+  - Game
+  - ComponentID
+  - UI.Player
+source:
+  - 源码静态分析结果
 ---
 
 # API 调用统计
@@ -65,7 +79,7 @@ title: API 调用统计
 | `Notifications` | 133 |
 | `age` | 116 |
 | `AgeProgressManager` | 81 |
-| `CityOperations` | 53 |
+| `CityOperations` | 52 |
 | `UnitOperations` | 52 |
 | `turn` | 51 |
 | `UnitCommands` | 42 |

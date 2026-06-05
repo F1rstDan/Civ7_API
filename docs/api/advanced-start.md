@@ -1,17 +1,34 @@
-﻿---
+---
 title: AdvancedStart 高级开局
+doc_type: object-api
+summary: 高级开局子系统，管理卡牌获取、牌组操作、效果使用和放置状态。
+primary_scope:
+  - AdvancedStart
+related_scope:
+  - player.AdvancedStart
+source:
+  - TunerPanels/AdvancedStart.ltp
 ---
 
 # AdvancedStart 高级开局
 
 AdvancedStart 子系统管理文明7的高级开局阶段，包括卡牌系统和效果使用。
 
-> 来源：AdvancedStart.ltp
+```javascript
+// 快速示例：获取可用卡牌
+// 来源 AdvancedStart.ltp
+const advStart = player.AdvancedStart;
+let cards = advStart.getAvailableCards();
+for (const card of cards) {
+  console.log(card.name, card.effects);
+}
+```
 
 ## player.AdvancedStart 子系统
 
 ```javascript
 // 来源 AdvancedStart.ltp
+// 高级开局核心 API
 const advStart = player.AdvancedStart;
 
 // 获取可用卡牌
@@ -40,6 +57,7 @@ advStart.setPlacementComplete(true); // 设置放置完成
 
 ```javascript
 // 来源 AdvancedStart.ltp
+// 通过操作执行高级开局功能
 
 // 添加/移除卡牌
 let args = { Type: "ADD", ID: cardId };
@@ -57,7 +75,3 @@ Game.PlayerOperations.sendRequest(playerId, PlayerOperationTypes.ADVANCED_START_
 ```javascript
 GameInfo.AdvancedStartCardEffects;  // 高级开局卡牌效果表
 ```
-
----
-
-*来源：AdvancedStart.ltp*

@@ -1,17 +1,33 @@
 ---
 title: Unlocks 解锁系统
+doc_type: object-api
+summary: 解锁管理系统，控制玩家的科技、文化、文明能力解锁状态。
+primary_scope:
+  - Unlocks
+related_scope:
+  - GameInfo.Unlocks
+source:
+  - TunerPanels/Unlocks.ltp
 ---
 
 # Unlocks 解锁系统
 
 文明7的解锁管理系统，控制玩家的科技、文化、文明能力解锁状态。
 
-> 来源：Unlocks.ltp
+```javascript
+// 快速示例：检查解锁状态
+// 来源 Unlocks.ltp
+const isUnlocked = Game.Unlocks.isUnlockedForPlayer(unlockType, playerId);
+if (!isUnlocked) {
+  Game.Unlocks.setForceUnlockedForPlayer(unlockHash, playerId, true);
+}
+```
 
 ## Game.Unlocks 子系统
 
 ```javascript
 // 来源 Unlocks.ltp
+// 解锁管理核心方法
 Game.Unlocks.isUnlockedForPlayer(unlockType, playerId);              // 检查是否已解锁
 Game.Unlocks.setForceUnlockedForPlayer(unlockId, playerId, true);    // 强制解锁
 Game.Unlocks.clearForceUnlockedForPlayer(unlockId, playerId);        // 清除强制解锁
@@ -53,7 +69,3 @@ Game.Unlocks.setForceUnlockedForPlayer(unlockHash, playerId, true);
 // 清除强制解锁
 Game.Unlocks.clearForceUnlockedForPlayer(unlockHash, playerId);
 ```
-
----
-
-*来源：Unlocks.ltp*

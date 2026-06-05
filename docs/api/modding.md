@@ -1,5 +1,11 @@
 ---
 title: Modding 模组
+doc_type: reference
+summary: Mod 管理 API，用于查询和管理已安装的 Mod，包括启用/禁用、依赖检查、模板应用和过渡状态查询。
+primary_scope:
+  - Modding
+related_scope:
+  - GameInfo
 source:
   - TunerPanels/Modding.ltp
   - modules/core/ui/shell/mods-content/mods-content.js

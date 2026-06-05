@@ -1,10 +1,32 @@
 ---
 title: Map Builders 地图构建
+doc_type: system-topic
+summary: 地图构建系统 API，包括 TerrainBuilder、AreaBuilder、ResourceBuilder、FractalBuilder、StartPositioner 和 MapConstructibles。
+primary_scope:
+  - TerrainBuilder
+  - AreaBuilder
+  - ResourceBuilder
+  - FractalBuilder
+  - StartPositioner
+  - MapConstructibles
+related_scope:
+  - GameplayMap
+  - GameInfo
+source:
+  - 源码地图构建系统分析
 ---
 
 # Map Builders 地图构建
 
-地图构建 API。
+地图构建 API，用于程序化生成和配置文明7地图。
+
+```javascript
+// 来源 源码地图构建
+// 设置地形和标记地块
+TerrainBuilder.setTerrainType(x, y, "TERRAIN_GRASS");
+TerrainBuilder.setPlotTag(x, y, "PLOT_TAG_COASTAL");
+AreaBuilder.recalculateAreas();
+```
 
 ## TerrainBuilder
 

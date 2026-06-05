@@ -1,5 +1,28 @@
 ---
 title: GameInfo 数据表
+doc_type: system-topic
+summary: 游戏数据表访问的全局对象，包含 150+ 个数据表，提供 lookup/find/filter/forEach 等通用访问方法。
+primary_scope:
+  - GameInfo
+related_scope:
+  - GameInfo.Units
+  - GameInfo.Constructibles
+  - GameInfo.Ages
+  - GameInfo.Leaders
+  - GameInfo.Maps
+  - GameInfo.Yields
+  - GameInfo.Resources
+  - GameInfo.Civilizations
+source:
+  - TunerPanels/Player.ltp
+  - TunerPanels/Units.ltp
+  - TunerPanels/Districts.ltp
+  - TunerPanels/Players.ltp
+  - TunerPanels/VictoriesDefeats.ltp
+  - TunerPanels/Legacies.ltp
+  - modules/base-standard/maps/map-utilities.js
+  - modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+  - modules/core/ui/utilities/utilities-core-textprovider.js
 ---
 
 # GameInfo 数据表
@@ -309,7 +332,6 @@ for (let i = 0; i < GameInfo.Yields.length; i++) {
 | `GameInfo.Governments` | 6 | 政体定义 |
 | `GameInfo.Victories` | 10 | 胜利条件定义 |
 
-*来源：TunerPanels/Player.ltp、TunerPanels/Units.ltp、TunerPanels/Districts.ltp、TunerPanels/Players.ltp、TunerPanels/VictoriesDefeats.ltp、modules/base-standard/maps/map-utilities.js、modules/core/ui-next/screens/unlocks/civ-unlocks-model.js、modules/core/ui/utilities/utilities-core-textprovider.js*
 
 <API id="GameInfo.lookup"><h3>GameInfo.lookup(hashOrType)</h3>
 

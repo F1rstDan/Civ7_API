@@ -1,5 +1,15 @@
 ---
 title: Component 基类
+doc_type: ui-api
+summary: 所有 UI 组件的基类，定义生命周期、焦点管理、属性变更、音效播放和 ComponentRoot 根元素等核心功能。
+primary_scope:
+  - Component
+related_scope:
+  - ComponentRoot
+  - LiteEvent
+  - Subject
+source:
+  - modules/core/ui/component.js
 ---
 
 # Component 基类
@@ -7,6 +17,8 @@ title: Component 基类
 所有 UI 组件的基类。每个 UI 组件（面板、屏幕、弹窗等）都继承自 `Component`。
 
 ```javascript
+// 来源 modules/core/ui/component.js
+// 自定义组件继承 Component 基类
 class MyPanel extends Component {
   onInitialize() {
     // 组件首次初始化时调用（仅一次）

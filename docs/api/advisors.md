@@ -1,17 +1,23 @@
 ---
 title: Advisors 建议系统
+doc_type: reference
+summary: 文明7的游戏内建议（Advisor）系统，分为文化、经济、军事、科学四个类别，通过 globalThis.AdviceManager 全局对象访问。
+primary_scope:
+  - AdviceManager
+related_scope:
+  - globalThis
+source:
+  - TunerPanels/Advice.ltp
 ---
 
 # Advisors 建议系统
 
 文明7的游戏内建议（Advisor）系统，分为文化、经济、军事、科学四个类别。通过 `globalThis.AdviceManager` 全局对象访问。
 
-> 来源：Advice.ltp
-
 ## AdviceManager 全局对象
 
 ```javascript
-// 来源 Advice.ltp
+// 来源 TunerPanels/Advice.ltp
 // 获取所有建议 Bundle（调试用）
 let bundles = globalThis.AdviceManager.tunerGetBundles();
 // 返回数组，索引: [0]=Culture, [1]=Military, [2]=Economic, [3]=Science
@@ -59,7 +65,3 @@ globalThis.AdviceManager.tunerClearScienceMind();
 ::: warning 注意
 这些 API 以 `tuner` 前缀命名，表明它们是 Firaxis 为调试工具（Tuner）专门暴露的接口。在正式 Mod 开发中可能不完全可用，但可作为理解建议系统架构的参考。
 :::
-
----
-
-*来源：Advice.ltp*

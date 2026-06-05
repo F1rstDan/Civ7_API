@@ -1,5 +1,34 @@
 ---
 title: Players 玩家管理
+doc_type: object-api
+summary: 玩家数据访问的全局对象，提供玩家实例获取、状态查询、遍历等功能，以及 PlayerLibrary 子库体系。
+primary_scope:
+  - Players
+related_scope:
+  - GameContext
+  - GameInfo.Leaders
+  - GameInfo.Civilizations
+  - GameInfo.Yields
+  - player.Treasury
+  - player.DiplomacyTreasury
+  - player.Identity
+  - player.Workers
+  - player.Happiness
+  - player.Stats
+  - player.Victories
+  - player.Legacies
+  - player.Stories
+  - player.AdvancedStart
+  - player.Techs
+  - player.Culture
+  - player.Diplomacy
+  - player.Influence
+  - player.Trade
+  - player.Resources
+  - player.Modifiers
+  - player.Advisory
+  - player.Formations
+  - player.Armies
 source:
   - modules/base-standard/maps/assign-starting-plots.js
   - modules/base-standard/maps/map-utilities.js

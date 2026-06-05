@@ -1,5 +1,15 @@
 ---
 title: WorldUI 世界UI
+doc_type: ui-api
+summary: WorldUI 全局对象，用于在 3D 世界中创建标记、触发特效、管理模型组和调试绘制。
+primary_scope:
+  - WorldUI
+related_scope:
+  - GameplayMap
+  - Camera
+source:
+  - TunerPanels/WorldUI Models.ltp
+  - TunerPanels/Map_Regions.ltp
 ---
 
 # WorldUI 世界UI
@@ -25,7 +35,8 @@ WorldUI 全局对象，用于在 3D 世界中创建标记、触发特效、管�
 ## 调试绘制
 
 ```javascript
-// 来源 Map_Regions.ltp
+// 来源 TunerPanels/Map_Regions.ltp
+// 创建调试绘制组并添加线条
 let group = WorldUI.createDebugGroup("groupName");
 group.clear();
 let location = {plot: plotIndex, offset: {x: 0, y: 0, z: 0}};
@@ -35,7 +46,7 @@ group.addLine(location1, location2, colorHex);
 ## 模型组管理
 
 ```javascript
-// 来源 WorldUI Models.ltp
+// 来源 TunerPanels/WorldUI Models.ltp
 // 获取所有模型组 ID
 let aModelGroupIds = WorldUI.modelGroupIds;
 
@@ -50,7 +61,8 @@ let vfx = WorldUI.getVFXNames(filter);
 ### 模型组对象
 
 ```javascript
-// 来源 WorldUI Models.ltp
+// 来源 TunerPanels/WorldUI Models.ltp
+// 模型组基本属性和方法
 group.name;                      // 组名称
 group.modelCount;                // 组内模型数量
 group.vfxCount;                  // 组内 VFX 数量
@@ -62,7 +74,8 @@ group.clear();                   // 清除组内所有实例
 ### 模型对象
 
 ```javascript
-// 来源 WorldUI Models.ltp
+// 来源 TunerPanels/WorldUI Models.ltp
+// 模型对象属性和方法
 model.assetName;                 // 资源名称
 model.state;                     // 当前状态
 model.possibleStates;            // 可用状态列表
@@ -76,7 +89,8 @@ model.updateSelectionScriptParams(params);    // 更新选择脚本参数
 ### 使用示例：设置模型状态
 
 ```javascript
-// 来源 WorldUI Models.ltp — "Apply State" Action
+// 来源 TunerPanels/WorldUI Models.ltp — "Apply State" Action
+// 设置指定模型的状态
 let group = WorldUI.getModelGroupById(groupId);
 if (group) {
   const model = group.getModelByIndex(modelIndex);
@@ -89,7 +103,8 @@ if (group) {
 ### 使用示例：设置独立势力外观
 
 ```javascript
-// 来源 WorldUI Models.ltp — "Apply Independent" Action
+// 来源 TunerPanels/WorldUI Models.ltp — "Apply Independent" Action
+// 为独立势力设置模型外观
 let def = GameInfo.Independents.lookup(independentName);
 if (def) {
   let leaderName = "LEADER_INDEPENDENT_" + def.CityStateType;
@@ -98,7 +113,3 @@ if (def) {
   model.setSelectionScriptParams(params);
 }
 ```
-
----
-
-*来源：WorldUI Models.ltp、Map_Regions.ltp*

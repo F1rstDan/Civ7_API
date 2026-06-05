@@ -1,10 +1,27 @@
 ---
 title: Social 社交
+doc_type: reference
+summary: 社交功能 API 参考，包括好友管理、封禁、邀请、平台集成等功能。
+primary_scope:
+  - Social
+related_scope:
+  - Network
+source:
+  - 源码 Social 对象分析
 ---
 
 # Social 社交
 
 社交功能 API。
+
+```javascript
+// 来源 源码 Social 对象
+// 检查好友状态和发送请求
+const isFriend = Social.isUserFriend(userID);
+if (!isFriend) {
+  Social.sendFriendRequest(userID);
+}
+```
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|

@@ -1,17 +1,24 @@
-﻿---
+---
 title: Reflection 调试反射
+doc_type: reference
+summary: ReflectionArchives 是文明7的调试反射系统，允许检查游戏对象的内部状态。
+primary_scope:
+  - ReflectionArchives
+related_scope:
+  - Network
+  - UI
+source:
+  - TunerPanels/Reflection.ltp
 ---
 
 # Reflection 调试反射
 
 ReflectionArchives 是文明7的调试反射系统，允许检查游戏对象的内部状态。
 
-> 来源：Reflection.ltp
-
 ## ReflectionArchives 全局对象
 
 ```javascript
-// 来源 Reflection.ltp
+// 来源 TunerPanels/Reflection.ltp
 // 获取根级档案
 ReflectionArchives.getGame();           // 游戏档案
 ReflectionArchives.getMap();            // 地图档案
@@ -28,7 +35,8 @@ ReflectionArchives.setVerboseValues(true);
 ## 档案对象 API
 
 ```javascript
-// 来源 Reflection.ltp
+// 来源 TunerPanels/Reflection.ltp
+// 档案对象成员和子档案查询
 let archive = ReflectionArchives.getByComponentID(cityId);
 
 // 子档案
@@ -59,7 +67,8 @@ archive.setMemberToLogHash(memberId, true);
 ## Network 调试
 
 ```javascript
-// 来源 Reflection.ltp
+// 来源 TunerPanels/Reflection.ltp
+// 测试哈希同步
 Network.testHashing(0);     // 测试哈希
 Network.testHashing(1);     // 测试哈希（模式1）
 ```
@@ -67,10 +76,7 @@ Network.testHashing(1);     // 测试哈希（模式1）
 ## UI 调试
 
 ```javascript
-// 来源 Reflection.ltp
+// 来源 TunerPanels/Reflection.ltp
+// 复制文本到剪贴板
 UI.setClipboardText(str);   // 复制文本到剪贴板
 ```
-
----
-
-*来源：Reflection.ltp*

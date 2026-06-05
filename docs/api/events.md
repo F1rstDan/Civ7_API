@@ -1,5 +1,16 @@
 ---
 title: Events 事件参考
+doc_type: reference
+summary: 文明7引擎事件系统参考，通过 engine.on() 监听、engine.trigger() 触发，涵盖游戏流程、城市、单位、地图、外交、UI 等事件。
+primary_scope:
+  - engine
+related_scope:
+  - Game
+  - Cities
+  - Units
+  - GameplayMap
+source:
+  - 
 ---
 
 # Events 事件参考
@@ -7,6 +18,8 @@ title: Events 事件参考
 文明7引擎事件通过 `engine.on()` 监听，通过 `engine.trigger()` 触发。每个事件的回调参数中包含相关数据对象。
 
 ```javascript
+// 来源 源码事件系统
+// 监听城市添加到地图事件
 engine.on('CityAddedToMap', (data) => {
   console.log('城市添加到地图', data);
 }, this);
