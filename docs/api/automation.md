@@ -16,6 +16,7 @@ source:
   - modules/core/ui/shell/main-menu/main-menu.js
   - modules/core/ui/context-manager/context-manager.js
   - TunerPanels/Autoplay.ltp
+doc_update: 2026-06-05
 ---
 
 # Automation 自动化
@@ -203,6 +204,8 @@ Automation.setLocalParameter("loadGame_firstRun", true);
 
 **说明**: 启动自动化流程。调用后自动化测试框架开始运行。
 
+**参数**: 无
+
 **返回值**: `void`
 
 **使用示例**:
@@ -220,6 +223,8 @@ Loading.runWhenFinished(() => {
 <API id="Automation.stop"><h3>Automation.stop()</h3>
 
 **说明**: 停止自动化流程。调用后自动化测试框架停止运行并清理资源。此方法为 C++ 原生实现，通常由框架内部调用，不直接在测试脚本中使用。
+
+**参数**: 无
 
 **返回值**: `void`
 
@@ -313,6 +318,8 @@ Automation.setScriptHasLoaded("automation-test-benchmark-graphics");
 
 **说明**: 生成一个自动化测试用的存档文件名。
 
+**参数**: 无
+
 **返回值**: `string` — 生成的存档文件名
 
 **使用示例**:
@@ -331,6 +338,8 @@ Network.saveGame(saveGame);
 <API id="Automation.getLastGeneratedSaveName"><h3>Automation.getLastGeneratedSaveName()</h3>
 
 **说明**: 获取最后一次由 `generateSaveName` 生成的存档文件名。用于存档后重新加载场景。
+
+**参数**: 无
 
 **返回值**: `string` — 存档文件名
 

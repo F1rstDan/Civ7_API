@@ -142,14 +142,15 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 ```
 1. frontmatter（title、doc_type、summary、primary_scope、related_scope、source、doc_update）
 2. H1 标题
-3. 一句话定位
+3. 概述
 4. 快速示例
-5. H2 方法列表（表格 + <API> 触发器）
-6. H2 子对象/子系统（可选）
-7. H2 常用枚举（可选）
-8. H2 GameInfo 关联表（可选）
-9. H2 相关全局对象（可选）
-10. <API> 弹窗内容块（全部放页面最底部）
+5. H2 属性/方法列表（表格 + <API> 触发器）
+6. H2 实例实体，属性/方法列表（表格 + <API> 触发器）（可选）
+7. H2 子对象/子系统（可选）
+8. H2 常用枚举（可选）
+9. H2 GameInfo 关联表（可选）
+10. H2 相关全局对象（可选）
+11. <API> 弹窗内容块（全部放页面最底部）
 ```
 
 ## 格式规范
@@ -174,7 +175,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 - id 格式：优先使用完整接收者链，如 `Game.ProgressionTrees.getNode`、`GameInfo.Units.lookup`
 
 **内容块**（页面最底部）：
-````markdown
+````
 <API id="Camera.lookAtPlot"><h3>Camera.lookAtPlot(iX, iY)</h3>
 
 **说明**: 一句话说明。
@@ -197,7 +198,7 @@ Camera.lookAtPlot(10, 20);
 </API>
 ````
 
-内容块内部顺序：说明 → 参数表（无参数则写 `**参数**: 无`） → 返回值 → 使用示例（可选） → 来源（标注 .ltp 或 .js 出处）
+内容块内部顺序：说明 → 参数表（无参数则写 `**参数**: 无`） → 返回值 → 使用示例（可选；标注来源）
 
 **`<h3>` 标题说明**：
 - `<h3>` 必须紧贴 `<API>` 标签，或放在内部第一行
@@ -223,7 +224,7 @@ Camera.lookAtPlot(10, 20);
 - [ ] 有 frontmatter（title 字段）
 - [ ] 有 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`、`doc_update`
 - [ ] H1 格式正确（# 英文 中文）
-- [ ] 有一句话定位
+- [ ] 有概述
 - [ ] 有快速示例代码块
 - [ ] 方法表使用 `<API>` 触发器（非 backtick）
 - [ ] `<API>` 内无反引号
@@ -236,7 +237,7 @@ Camera.lookAtPlot(10, 20);
 - [ ] 代码块内有 `// 简要描述功能` 注释
 - [ ] 有代码示例（若缺失，搜索 .ltp / .js 源码补全）
 - [ ] `<API>` 内容块放在页面最底部
-- [ ] 内容块包含：说明、参数表、返回值、来源
+- [ ] 内容块包含：说明、参数表、返回值、代码示例
 - [ ] 大型文件（>350 行）是否需要拆分
 - [ ] 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
 

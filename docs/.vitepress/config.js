@@ -88,10 +88,10 @@ export default defineConfig({
       {
         text: '调试与其他',
         items: [
-          { text: 'Unlocks 解锁系统', link: '/api/unlocks' },
           { text: 'Automation 自动化', link: '/api/automation' },
-          { text: 'Reflection 调试反射', link: '/api/reflection' },
           { text: 'Autoplay 自动播放', link: '/api/autoplay' },
+          { text: 'Unlocks 解锁系统', link: '/api/unlocks' },
+          { text: 'Reflection 调试反射', link: '/api/reflection' },
           { text: 'Network 网络', link: '/api/network' },
           { text: 'Social 社交', link: '/api/social' },
           { text: 'Input 输入', link: '/api/input' },

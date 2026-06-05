@@ -20,19 +20,42 @@ doc_update: 2026-06-05
 // 快速示例：展示最常用的 1-3 个操作
 // 来源 xxx.ltp
 // 简要描述功能
+import { SomeAPI } from 'modules/base-standard/ui/example/example.js';
+
 const obj = SomeAPI.get(id);
 if (obj) {
   console.log(obj.name);
 }
 ```
 
-## 方法列表（共 N 个）
+## 属性与方法
 
-| 方法 | 参数 | 返回值 | 说明 |
+| 属性（共 N 个） | 类型 | 说明 |
+|------|------|------|
+| `SomeAPI.id` | `int` | 当前对象 ID |
+| `SomeAPI.isActive` | `bool` | 是否启用状态 |
+
+| 方法（共 N 个） | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>SomeAPI.get</API> | id | `Object` | 根据 ID 获取对象 |
 | <API>SomeAPI.forEach</API> | callback | `void` | 遍历所有对象 |
 | <API>SomeAPI.getHash</API> | — | `int` | 获取对象哈希值 |
+
+## [Object] 实例的属性与方法
+
+```javascript
+// 快速示例：展示如何获取实例，读取属性，调用方法
+const Object = SomeAPI.get(GameContext.localPlayerID);
+```
+
+| 属性（共 N 个） | 类型 | 说明 |
+|------|------|------|
+| `Object.id` | `int` | 当前对象 ID |
+| `Object.isActive` | `bool` | 是否启用状态 |
+
+| 方法（共 N 个） | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| <API>Object.getHash</API> | — | `int` | 获取对象哈希值 |
 
 ## 子对象/子系统
 
@@ -63,6 +86,8 @@ sub.methodC();
 ```
 
 ## 常用枚举
+
+**说明**: 枚举描述。
 
 | 枚举 | 说明 |
 |------|------|

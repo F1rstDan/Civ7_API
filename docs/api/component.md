@@ -9,7 +9,8 @@ related_scope:
   - LiteEvent
   - Subject
 source:
-  - modules/core/ui/component.js
+  - modules/core/ui/component-support.js
+doc_update: 2026-06-05
 ---
 
 # Component 基类
@@ -17,8 +18,8 @@ source:
 所有 UI 组件的基类。每个 UI 组件（面板、屏幕、弹窗等）都继承自 `Component`。
 
 ```javascript
-// 来源 modules/core/ui/component.js
-// 自定义组件继承 Component 基类
+// 来源 modules/core/ui/component-support.js
+// 自定义组件继承 Component 基类，实现生命周期方法
 class MyPanel extends Component {
   onInitialize() {
     // 组件首次初始化时调用（仅一次）
@@ -38,44 +39,26 @@ class MyPanel extends Component {
 }
 ```
 
-## 生命周期
+## 方法列表
 
-| 阶段 | 方法 | 说明 |
-|------|------|------|
-| 初始化 | `onInitialize()` | 组件首次创建时调用，仅执行一次 |
-| 挂载 | `onAttach()` | 组件挂载到 DOM 时调用，可多次触发 |
-| 挂载后 | `postOnAttach()` | `onAttach()` 之后立即调用，不要覆盖此方法 |
-| 卸载 | `onDetach()` | 组件从 DOM 移除时调用 |
-| 销毁 | `Destroy()` | 组件永久销毁，清理事件监听器并移除 DOM |
+| 方法 | 参数 | 返回值 | 说明 |
+|------|------|------|------|
+| <API>Component.onInitialize</API> | 无 | `void` | 组件首次创建时调用，仅执行一次 |
+| <API>Component.onAttach</API> | 无 | `void` | 组件挂载到 DOM 时调用，可多次触发 |
+| <API>Component.postOnAttach</API> | 无 | `void` | `onAttach()` 之后立即调用，不要覆盖此方法 |
+| <API>Component.onDetach</API> | 无 | `void` | 组件从 DOM 移除时调用 |
+| <API>Component.Destroy</API> | 无 | `void` | 组件永久销毁，清理事件监听器并移除 DOM |
+| <API>Component.Root</API> | — | `ComponentRoot` | 组件的根 DOM 元素（HTMLElement 子类） |
+| <API>Component.audioGroup</API> | — | `string` | 音频组名称，用于播放音效 |
+| <API>Component.onReceiveFocus</API> | 无 | `void` | 手柄焦点获取时调用 |
+| <API>Component.onLoseFocus</API> | 无 | `void` | 手柄焦点丢失时调用 |
+| <API>Component.onDeactivated</API> | 无 | `void` | 其他组件激活时被调用（需注册事件） |
+| <API>Component.onAttributeChanged</API> | name, oldValue, newValue | `void` | 属性变更回调（需在组件定义中声明属性） |
+| <API>Component.playSound</API> | id, idKeyAttr | `void` | 播放音效 |
 
-## 属性
+## 子对象/子系统
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `Root` | ComponentRoot | 组件的根 DOM 元素（HTMLElement 子类） |
-| `audioGroup` | string | 音频组名称，用于播放音效 |
-
-## 焦点方法
-
-| 方法 | 说明 |
-|------|------|
-| `onReceiveFocus()` | 手柄焦点获取时调用 |
-| `onLoseFocus()` | 手柄焦点丢失时调用 |
-| `onDeactivated()` | 其他组件激活时被调用（需注册事件） |
-
-## 属性变更
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `onAttributeChanged()` | name, oldValue, newValue | 属性变更回调（需在组件定义中声明属性） |
-
-## 音效
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `playSound()` | id, idKeyAttr | 播放音效 |
-
-## ComponentRoot（根元素）
+### ComponentRoot（根元素）
 
 `ComponentRoot` 继承自 `HTMLElement`，是每个组件的 DOM 根元素。
 
@@ -88,8 +71,6 @@ class MyPanel extends Component {
 | `listenForWindowEvent(name, cb, capture)` | 注册 window 事件，组件销毁时自动清理 |
 | `redirectChildrenToContent(el)` | 重定向子节点到指定元素（仅在 onAttach 中使用） |
 | `initialize()` | 初始化组件 |
-
-## 辅助工具
 
 ### LiteEvent
 
@@ -122,3 +103,237 @@ class MyPanel extends Component {
 | `waitForLayout(cb)` | cb: function | 等待布局完成后执行（默认延迟 2 帧） |
 | `waitUntilValue(f, maxFrames)` | f: function, maxFrames: int | 等待函数返回非空值 |
 | `removeAllChildren(container)` | container: HTMLElement | 清空容器所有子元素 |
+
+<API id="Component.onInitialize"><h3>Component.onInitialize()</h3>
+
+**说明**: 组件首次创建时调用，仅执行一次。适合进行一次性初始化，如 DOM 渲染、状态初始化等。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onAttach"><h3>Component.onAttach()</h3>
+
+**说明**: 组件挂载到 DOM 时调用，每次挂载都会触发。适合注册事件监听器、订阅引擎事件等。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-close-button.js
+// 挂载时注册引擎输入事件、窗口事件和鼠标事件
+onAttach() {
+  super.onAttach();
+  this.Root.addEventListener("mouseenter", this.playSound.bind(this, "data-audio-focus", "data-audio-focus-ref"));
+  window.addEventListener(ActiveDeviceTypeChangedEventName, this.activeDeviceTypeListener, true);
+  this.Root.addEventListener("engine-input", this.engineInputListener);
+}
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.postOnAttach"><h3>Component.postOnAttach()</h3>
+
+**说明**: `onAttach()` 之后立即调用，负责处理组件定义中声明的属性初始值。**此方法不应被子类覆盖**，覆盖时也必须调用 `super.postOnAttach()`。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onDetach"><h3>Component.onDetach()</h3>
+
+**说明**: 组件从 DOM 移除时调用，适合清理事件监听器和资源。组件可能后续重新挂载，不应在此处做永久销毁。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-radio-button.js
+// 卸载时移除注册的事件监听器
+onDetach() {
+  window.removeEventListener("radio-button-change", this.radioButtonChangeEventListener);
+  this.Root.removeEventListener("engine-input", this.engineInputEventListener);
+  this.Root.removeEventListener("mouseenter", this.mouseEnterEventListener);
+  super.onDetach();
+}
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.Destroy"><h3>Component.Destroy()</h3>
+
+**说明**: 组件永久销毁，清理事件监听器并从 DOM 中移除根元素。调用后组件不可再使用。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.Root"><h3>Component.Root</h3>
+
+**说明**: 组件的根 DOM 元素，类型为 `ComponentRoot`（继承自 `HTMLElement`）。在构造函数中由 `ComponentRoot` 传入，组件通过此属性访问和操作 DOM。
+
+**参数**: 无
+
+**返回值**: `ComponentRoot`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.audioGroup"><h3>Component.audioGroup</h3>
+
+**说明**: 音频组名称，用于 `playSound()` 方法查找对应的音效配置。可通过 `data-audio-group-ref` 属性指定，或自动从 `audio-{typeName}` 推断。
+
+**参数**: 无
+
+**返回值**: `string | null`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onReceiveFocus"><h3>Component.onReceiveFocus()</h3>
+
+**说明**: 手柄焦点获取时调用。默认实现为根元素添加 `trigger-nav-help` CSS 类。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
+// 获取焦点时做额外处理，然后调用父类方法
+onReceiveFocus() {
+  // 自定义焦点处理逻辑
+  super.onReceiveFocus();
+}
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onLoseFocus"><h3>Component.onLoseFocus()</h3>
+
+**说明**: 手柄焦点丢失时调用。默认实现为根元素移除 `trigger-nav-help` CSS 类。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onDeactivated"><h3>Component.onDeactivated()</h3>
+
+**说明**: 当另一个组件被激活时，在当前激活组件上调用。需要组件注册了 `set-activated-component` 事件才会被触发。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/context-manager/context-manager.js
+// 当其他组件激活时，通知上一个组件失活
+setLastActivatedComponent(component) {
+  if (this.lastActivatedComponent != component) {
+    if (this.lastActivatedComponent) {
+      this.lastActivatedComponent.onDeactivated();
+    }
+    this.lastActivatedComponent = component;
+  }
+}
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.onAttributeChanged"><h3>Component.onAttributeChanged(name, oldValue, newValue)</h3>
+
+**说明**: DOM 属性变更回调。只有在组件定义中通过 `attributes` 字段声明的属性才会触发此回调。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| name | `string` | 变更的属性名 |
+| oldValue | `string` | 变更前的值 |
+| newValue | `string` | 变更后的值 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-stateful-icon.js
+// 根据属性变更切换图标状态
+onAttributeChanged(name, oldValue, newValue) {
+  switch (name) {
+    case "data-state":
+      if (this.controller.isValidState(newValue)) {
+        this.controller.state = newValue;
+      }
+      break;
+    default:
+      super.onAttributeChanged(name, oldValue, newValue);
+  }
+  super.onAttributeChanged(name, oldValue, newValue);
+}
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>
+
+<API id="Component.playSound"><h3>Component.playSound(id, idKeyAttr)</h3>
+
+**说明**: 播放音效。根据当前组件的 `audioGroup` 查找对应的音效配置。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| id | `string` | 音效 ID，对应音频配置中的键名 |
+| idKeyAttr | `string` | 可选，从 DOM 属性读取音效 ID 的属性名 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-radio-button.js
+// 播放按下和激活音效
+playPressSound() {
+  this.playSound("data-audio-press", "data-audio-press-ref");
+}
+// 激活时播放
+this.playSound("data-audio-activate", "data-audio-activate-ref");
+```
+
+**来源**: `modules/core/ui/component-support.js`
+
+</API>

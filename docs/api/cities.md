@@ -4,6 +4,7 @@ doc_type: object-api
 summary: 城市管理的全局对象，提供城市的获取、创建、位置查询等功能，以及 City 对象子系统（BuildQueue、Districts、Yields 等）。
 primary_scope:
   - Cities
+  - city
 related_scope:
   - city.BuildQueue
   - city.FoodQueue
@@ -24,6 +25,7 @@ source:
   - TunerPanels/Trade.ltp
   - modules/base-standard/ui/city-details/model-city-details.js
   - modules/base-standard/ui/building-placement/building-placement-manager.js
+doc_update: 2026-06-05
 ---
 
 # Cities 城市
@@ -38,21 +40,48 @@ city.location;           // {x, y}
 city.name;               // 城市名称
 city.owner;              // 所有者玩家 ID
 city.isTown;             // 是否为城镇
-
-// 来源 modules/base-standard/ui/city-details/model-city-details.js
-// 根据位置获取城市
-const city = Cities.getAtLocation(plot.x, plot.y);
 ```
 
-## 方法列表（共 5 个）
+## 方法列表（共 1 个）
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>Cities.get</API> | id | `City` | 根据 ID 获取城市对象 |
 | <API>Cities.getAtLocation</API> | location | `City` | 获取指定位置的城市 |
-| <API>Cities.getCityIds</API> | playerID | `int[]` | 获取指定玩家的城市 ID 列表 |
-| <API>Cities.getCities</API> | playerID | `City[]` | 获取指定玩家的城市列表 |
-| <API>Cities.getCapital</API> | playerID | `City` | 获取指定玩家的首都 |
+
+## player.Cities 子系统
+
+`const player = Players.get(GameContext.localPlayerID);`
+
+`player.Cities` 提供了玩家城市集合的查询方法。以下方法通过 `player.Cities` 调用，而非全局 `Cities` 对象。
+
+| 方法 | 参数 | 返回值 | 说明 | 来源 |
+|------|------|--------|------|------|
+| `player.Cities.getCityIds` | 无 | `int[]` | 获取玩家城市 ID 列表 | tutorial-items-exploration.js |
+| `player.Cities.getCities` | 无 | `City[]` | 获取玩家城市对象数组 | panel-religion-picker.js |
+| `player.Cities.getCapital` | 无 | `City` | 获取玩家首都 | advice-items-antiquity-science.js |
+
+```javascript
+// 来源 modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
+// 遍历玩家所有城市
+for (let i = 0; i < player.Cities.getCityIds().length; i++) {
+  const thisCityInfo = Cities.get(player.Cities.getCityIds()[i]);
+}
+```
+
+```javascript
+// 来源 modules/base-standard/ui/panel-religion-picker/panel-religion-picker.js
+// 在玩家城市中查找
+const foundCity = this.playerObject.Cities.getCities().find((city) => {
+  // 匹配条件
+});
+```
+
+```javascript
+// 来源 modules/age-antiquity/ui/advice/advice-items-antiquity-science.js
+// 获取玩家首都
+const capital = player.Cities.getCapital();
+```
 
 ## City 对象子系统
 
@@ -156,6 +185,22 @@ cityReligion.urbanReligion;     // 城市宗教
 cityReligion.ruralReligion;     // 农村宗教
 ```
 
+### Trade 子系统
+
+```javascript
+// 来源 Trade.ltp
+// 获取城市贸易路线
+const routes = city.Trade.routes;
+```
+
+### Resources 子系统
+
+```javascript
+// 来源 Resources.ltp
+// 获取城市已分配资源
+const assignedResources = pCity.Resources.getAssignedResources();
+```
+
 ## Constructibles 全局对象
 
 ```javascript
@@ -250,76 +295,6 @@ if (city) {
 const city = Cities.getAtLocation(plot.x, plot.y);
 if (city) {
   // 使用城市对象
-}
-```
-
-</API>
-
-<API id="Cities.getCityIds"><h3>Cities.getCityIds(playerID)</h3>
-
-**说明**: 获取指定玩家拥有的所有城市 ID 列表。
-
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| playerID | `int` | 玩家 ID |
-
-**返回值**: `int[]` — 城市 ID 数组
-
-**使用示例**:
-
-```javascript
-// 来源 modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
-// 获取玩家所有城市 ID
-const cityIds = Cities.getCityIds(playerID);
-for (const cityId of cityIds) {
-  const city = Cities.get(cityId);
-  // 处理每个城市
-}
-```
-
-</API>
-
-<API id="Cities.getCities"><h3>Cities.getCities(playerID)</h3>
-
-**说明**: 获取指定玩家拥有的所有城市对象数组。
-
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| playerID | `int` | 玩家 ID |
-
-**返回值**: `City[]` — 城市对象数组
-
-**使用示例**:
-
-```javascript
-// 来源 modules/base-standard/ui/panel-religion-picker/panel-religion-picker.js
-// 获取玩家所有城市
-const cities = Cities.getCities(playerID);
-for (const city of cities) {
-  // 处理每个城市
-}
-```
-
-</API>
-
-<API id="Cities.getCapital"><h3>Cities.getCapital(playerID)</h3>
-
-**说明**: 获取指定玩家的首都城市对象。
-
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| playerID | `int` | 玩家 ID |
-
-**返回值**: `City` | `undefined`
-
-**使用示例**:
-
-```javascript
-// 来源 modules/age-antiquity/ui/advice/advice-items-antiquity-science.js
-// 获取玩家首都
-const capital = Cities.getCapital(playerID);
-if (capital) {
-  // 使用首都对象
 }
 ```
 

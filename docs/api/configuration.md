@@ -6,11 +6,14 @@ primary_scope:
   - Configuration
 related_scope:
   - GameContext
+  - GameSetup
 source:
+  - TunerPanels/Configuration.ltp
   - modules/base-standard/ui/tutorial/tutorial-manager.js
   - modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
   - modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
   - modules/base-standard/ui/unlocks/panel-player-rewards.js
+doc_update: 2026-06-05
 ---
 
 # Configuration 配置
@@ -36,16 +39,20 @@ const leaderName = playerConfig.leaderName;
 | <API>Configuration.getGame</API> | — | `GameConfiguration` | 获取游戏配置对象（游戏规则、模式设置） |
 | <API>Configuration.getUser</API> | — | `UserConfiguration` | 获取用户偏好配置（UI 设置、教程等级等） |
 | <API>Configuration.getPlayer</API> | playerID | `PlayerConfiguration` | 获取玩家槽位配置（领袖、文明名称等） |
-| <API>Configuration.getGameValue</API> | key | `any` | 获取游戏配置值（getGame().getValue 便捷方法） |
+| <API>Configuration.getGameValue</API> | key | `any` | 获取游戏配置值（getGame().getValue 便捷方法）⚠️ 未验证前提 |
 | <API>Configuration.getMap</API> | — | `MapConfiguration` | 获取地图配置对象 |
 | <API>Configuration.getMapValue</API> | key | `any` | 获取地图配置值 |
-| <API>Configuration.editGame</API> | key, value | `void` | 编辑游戏配置 |
-| <API>Configuration.editMap</API> | key, value | `void` | 编辑地图配置 |
-| <API>Configuration.editPlayer</API> | playerID, key, value | `void` | 编辑玩家槽位配置 |
+| <API>Configuration.editGame</API> | key, value | `void` | 编辑游戏配置 ⚠️ 未验证前提 |
+| <API>Configuration.editMap</API> | — | 可编辑对象 | 获取可编辑的地图配置对象 |
+| <API>Configuration.editPlayer</API> | playerID, key, value | `void` | 编辑玩家槽位配置 ⚠️ 未验证前提 |
 
-## GameConfiguration 常用属性
+## 子配置对象
 
-`Configuration.getGame()` 返回的对象常用属性：
+### GameConfiguration
+
+`Configuration.getGame()` 返回的对象，包含游戏规则、模式设置等大量布尔和数值属性。还支持 `getValue(key)` 方法读取自定义游戏设置。
+
+常用属性：
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
@@ -57,28 +64,12 @@ const leaderName = playerConfig.leaderName;
 | `previousAgeCount` | `int` | 已游玩的时代数量 |
 | `campaignStartAgeType` | `int` | 战役起始时代类型哈希 |
 | `skipStartButton` | `bool` | 是否跳过开始按钮 |
+| `possibleParticipatingPlayerIDs` | `int[]` | 可能参与游戏的玩家 ID 列表 |
+| `maxPlayers` | `int` | 最大玩家数 |
 | `getValue(key)` | `method` | 读取自定义游戏设置 |
-
-## UserConfiguration 常用属性
-
-`Configuration.getUser()` 返回的对象常用属性：
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `tutorialLevel` | `TutorialLevel` | 教程等级枚举 |
-| `edgePan` | `bool` | 边缘平移开关 |
-| `cameraPanningSpeed` | `number` | 相机平移速度 |
-| `isAutoUnitCycle` | `bool` | 自动切换单位 |
-| `isProductionPanelStayOpen` | `bool` | 生产面板保持打开 |
-| `plotTooltipDelay` | `number` | 地块提示延迟（毫秒） |
-| `textToSpeechOnHover` | `bool` | 悬停 TTS 开关 |
-| `debugUILowLevelLogging` | `number` | UI 调试日志级别 |
-
-## 详细说明
-
-### `getGame()`
-
-返回一个 GameConfiguration 对象，包含大量布尔和数值属性用于判断游戏模式。还支持 `getValue(key)` 方法读取自定义游戏设置。
+| `setNarrativeSiftingAmount(amount)` | `method` | 设置叙事筛选量 |
+| `setNarrativeSiftingType()` | `method` | 设置叙事筛选类型 |
+| `turnOffDiscoveries()` | `method` | 关闭发现 |
 
 ```javascript
 // 来源 TunerPanels/Configuration.ltp
@@ -93,34 +84,6 @@ if (ageCount == 0) {
 }
 ```
 
-### `getUser()`
-
-返回一个 UserConfiguration 对象，包含 UI 设置、教程等级、相机偏好等玩家个人设置。
-
-```javascript
-// 来源 TunerPanels/Configuration.ltp
-// 检查教程等级和相机平移速度
-if (Configuration.getUser().tutorialLevel == TutorialLevel.TutorialOn) {
-  // 启用教程逻辑
-}
-const panSpeed = Configuration.getUser().cameraPanningSpeed * panModifier;
-```
-
-### `getPlayer(playerID)`
-
-返回一个 PlayerConfiguration 对象，包含 `leaderName`、`slotName`、`hostIconStr` 等属性。不同于 `Players.get()` 返回的游戏内玩家数据，这里是玩家加入游戏时的配置信息。
-
-```javascript
-// 来源 TunerPanels/Configuration.ltp
-// 获取被击败玩家的领袖名称
-const playerConfig = Configuration.getPlayer(defeatedPlayer);
-if (playerConfig) {
-  const leaderName = playerConfig.leaderName ?? 'Unknown';
-}
-```
-
-### Configuration.getGame() 补充
-
 ```javascript
 // 来源 TunerPanels/Configuration.ltp
 // 游戏配置高级操作
@@ -132,7 +95,48 @@ gameConfig.setNarrativeSiftingType();
 gameConfig.turnOffDiscoveries();
 ```
 
-### Configuration.getMap() 补充
+### UserConfiguration
+
+`Configuration.getUser()` 返回的对象，包含 UI 设置、教程等级、相机偏好等玩家个人设置。
+
+常用属性：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `tutorialLevel` | `TutorialLevel` | 教程等级枚举 |
+| `edgePan` | `bool` | 边缘平移开关 |
+| `cameraPanningSpeed` | `number` | 相机平移速度 |
+| `isAutoUnitCycle` | `bool` | 自动切换单位 |
+| `isProductionPanelStayOpen` | `bool` | 生产面板保持打开 |
+| `plotTooltipDelay` | `number` | 地块提示延迟（毫秒） |
+| `textToSpeechOnHover` | `bool` | 悬停 TTS 开关 |
+| `debugUILowLevelLogging` | `number` | UI 调试日志级别 |
+| `productionPanelBuildingInfoType` | `number` | 生产面板建筑信息显示类型 |
+| `saveCheckpoint()` | `method` | 保存检查点 |
+
+```javascript
+// 来源 TunerPanels/Configuration.ltp
+// 检查教程等级和相机平移速度
+if (Configuration.getUser().tutorialLevel == TutorialLevel.TutorialOn) {
+  // 启用教程逻辑
+}
+const panSpeed = Configuration.getUser().cameraPanningSpeed * panModifier;
+```
+
+### MapConfiguration
+
+`Configuration.getMap()` 返回的对象，包含地图尺寸、种子、自然奇观等设置。
+
+常用属性：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `mapSizeTypeName` | `string` | 地图尺寸类型名 |
+| `mapSizeName` | `string` | 地图尺寸名称 |
+| `mapSize` | `int` | 地图尺寸数值 |
+| `mapSeed` | `int` | 地图种子 |
+| `maxMajorPlayers` | `int` | 最大主要玩家数 |
+| `getValue(key)` | `method` | 读取地图配置值 |
 
 ```javascript
 // 来源 TunerPanels/Configuration.ltp
@@ -143,7 +147,37 @@ mapConfig.getValue("RequestedNaturalWonders");
 Configuration.editMap().setValue("RequestedNaturalWonders", activeRequests);
 ```
 
-### Configuration.getPlayer() 补充
+### PlayerConfiguration
+
+`Configuration.getPlayer(playerID)` 返回的对象，包含 `leaderName`、`slotName`、`hostIconStr` 等属性。不同于 `Players.get()` 返回的游戏内玩家数据，这里是玩家加入游戏时的配置信息。
+
+常用属性：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `leaderName` | `string` | 领袖名称 |
+| `leaderTypeName` | `string` | 领袖类型名 |
+| `civilizationTypeName` | `string` | 文明类型名 |
+| `slotStatus` | `SlotStatus` | 槽位状态 |
+| `slotName` | `string` | 槽位名称 |
+| `hostIconStr` | `string` | 主机图标字符串 |
+| `isAlive` | `bool` | 是否存活 |
+| `isAI` | `bool` | 是否为 AI |
+| `startingPosition` | `{x, y}` | 起始位置坐标 |
+| `team` | `int` | 队伍编号 |
+| `previousCivilizationCount` | `int` | 之前游玩过的文明数量 |
+| `playerName` | `string` | 玩家名称 |
+| `getValue(key)` | `method` | 读取玩家配置值 |
+| `getPreviousCivilization(i)` | `method` | 获取第 i 个之前玩过的文明 |
+
+```javascript
+// 来源 TunerPanels/Configuration.ltp
+// 获取被击败玩家的领袖名称
+const playerConfig = Configuration.getPlayer(defeatedPlayer);
+if (playerConfig) {
+  const leaderName = playerConfig.leaderName ?? 'Unknown';
+}
+```
 
 ```javascript
 // 来源 TunerPanels/Configuration.ltp
@@ -157,16 +191,6 @@ playerConfig.startingPosition; // {x, y}
 playerConfig.team;
 ```
 
-### GameSetup API
-
-```javascript
-// 来源 TunerPanels/Configuration.ltp
-// 游戏设置中的玩家参数读写
-GameSetup.findPlayerParameter(player, "PlayerCivilization");
-GameSetup.findPlayerParameter(player, "PlayerLeader");
-GameSetup.setPlayerParameterValue(player, "PlayerCivilization", value);
-```
-
 ## 常用枚举
 
 | 枚举 | 说明 |
@@ -176,6 +200,20 @@ GameSetup.setPlayerParameterValue(player, "PlayerCivilization", value);
 | `SlotStatus.SS_COMPUTER` | AI 控制 |
 | `SlotStatus.SS_TAKEN` | 已被占用 |
 | `SlotStatus.SS_OBSERVER` | 观察者 |
+
+## 相关全局对象
+
+### GameSetup
+
+游戏设置中的玩家参数读写，与 `Configuration` 协同工作。
+
+```javascript
+// 来源 TunerPanels/Configuration.ltp
+// 游戏设置中的玩家参数读写
+GameSetup.findPlayerParameter(player, "PlayerCivilization");
+GameSetup.findPlayerParameter(player, "PlayerLeader");
+GameSetup.setPlayerParameterValue(player, "PlayerCivilization", value);
+```
 
 ---
 
@@ -249,7 +287,7 @@ const slotStatus = playerConfig.slotStatus;
 
 <API id="Configuration.getGameValue"><h3>Configuration.getGameValue(key)</h3>
 
-**说明**: `getGame().getValue(key)` 的便捷方法，直接读取游戏配置值。
+**说明**: `getGame().getValue(key)` 的便捷方法，直接读取游戏配置值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getGame().getValue(key)`。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -257,11 +295,19 @@ const slotStatus = playerConfig.slotStatus;
 
 **返回值**: `any`
 
+**使用示例**:
+
+```javascript
+// 未验证前提 — 源码中未找到直接调用
+// 等效写法
+const value = Configuration.getGame().getValue('NoCivilizationUnlocks');
+```
+
 </API>
 
 <API id="Configuration.getMap"><h3>Configuration.getMap()</h3>
 
-**说明**: 获取地图配置对象（MapConfiguration），包含地图尺寸、自然奇观等设置。
+**说明**: 获取地图配置对象（MapConfiguration），包含地图尺寸、种子、自然奇观等设置。
 
 **参数**: 无
 
@@ -289,11 +335,19 @@ const wonders = mapConfig.getValue("RequestedNaturalWonders");
 
 **返回值**: `any`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/maps/terra-incognita.js
+// 读取地图起始位置配置
+let startPosition = Configuration.getMapValue("StartPosition");
+```
+
 </API>
 
 <API id="Configuration.editGame"><h3>Configuration.editGame(key, value)</h3>
 
-**说明**: 编辑游戏配置中的指定键值。
+**说明**: 编辑游戏配置中的指定键值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getGame().setValue(key, value)` 或直接操作 `Configuration.getGame()` 对象。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -304,16 +358,13 @@ const wonders = mapConfig.getValue("RequestedNaturalWonders");
 
 </API>
 
-<API id="Configuration.editMap"><h3>Configuration.editMap(key, value)</h3>
+<API id="Configuration.editMap"><h3>Configuration.editMap()</h3>
 
-**说明**: 编辑地图配置中的指定键值。
+**说明**: 获取可编辑的地图配置对象，返回对象支持 `.setValue(key, value)` 方法写入。
 
-| 参数名 | 类型 | 说明 |
-|------|------|------|
-| key | `string` | 配置键名 |
-| value | `any` | 新值 |
+**参数**: 无
 
-**返回值**: `void`
+**返回值**: 可编辑的 MapConfiguration 对象
 
 **使用示例**:
 
@@ -328,7 +379,7 @@ Configuration.editMap().setValue("RequestedNaturalWonders", activeRequests);
 
 <API id="Configuration.editPlayer"><h3>Configuration.editPlayer(playerID, key, value)</h3>
 
-**说明**: 编辑指定玩家槽位配置中的键值。
+**说明**: 编辑指定玩家槽位配置中的键值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getPlayer(playerID).setValue(key, value)`。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|

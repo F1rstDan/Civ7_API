@@ -3,14 +3,23 @@ title: Culture 文化
 doc_type: system-topic
 summary: 文化系统 API，涵盖玩家文化进度、传承解锁、ProgressionTree 节点操作。
 primary_scope:
+  - Game.Culture
+  - Players.grantCultureSlot
   - player.Culture
   - Game.ProgressionTrees
-  - GameInfo.ProgressionTrees
 related_scope:
+  - GameInfo.ProgressionTrees
   - Game.PlayerOperations
   - Players
 source:
   - TunerPanels/Player.ltp
+  - modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+  - modules/base-standard/ui/policies/model-government.js
+  - modules/base-standard/ui/great-works/model-great-works.js
+  - modules/base-standard/ui/advice/advice-support.js
+  - modules/base-standard/ui/culture-tree/model-culture-tree.js
+  - modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+doc_update: 2026-06-05
 ---
 
 # Culture 文化
@@ -18,8 +27,9 @@ source:
 文化系统 API，管理玩家文化进度、传承解锁、政策与文化树节点操作。
 
 ```javascript
-// 快速示例：查询文化进度并解锁传承
 // 来源 Player.ltp
+// 快速示例：查询文化进度并解锁传承
+const player = Players.get(GameContext.localPlayerID);
 const playerCulture = player.Culture;
 if (playerCulture) {
   const researching = playerCulture.getResearching();
@@ -126,6 +136,8 @@ if (playerCulture) {
 ## GameInfo 关联表
 
 ```javascript
+// 来源 Player.ltp
+// GameInfo 文化相关数据表
 GameInfo.ProgressionTrees;       // 文化树定义表
 GameInfo.ProgressionTreeNodes;   // 文化树节点表
 GameInfo.Traditions;             // 传承定义表
@@ -254,6 +266,18 @@ if (playerCulture) {
 
 **返回值**: `string`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+// 获取玩家意识形态并查询定义
+const ideology = player.Culture?.getChosenIdeology();
+const ideologyDef = GameInfo.Ideologies.lookup(ideology);
+if (ideologyDef) {
+  console.log(ideologyDef.Name);
+}
+```
+
 </API>
 <API id="player.Culture.getGovernmentType"><h3>player.Culture.getGovernmentType(playerID)</h3>
 
@@ -264,6 +288,18 @@ if (playerCulture) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/policies/model-government.js
+// 获取政体类型并查询定义
+const governmentType = player.Culture?.getGovernmentType();
+const currentGovernment = GameInfo.Governments.lookup(governmentType);
+if (currentGovernment) {
+  console.log(Locale.compose(currentGovernment.Name));
+}
+```
 
 </API>
 <API id="player.Culture.getGreatWorkType"><h3>player.Culture.getGreatWorkType(greatWorkID)</h3>
@@ -276,6 +312,16 @@ if (playerCulture) {
 
 **返回值**: `string`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/great-works/model-great-works.js
+// 通过大作品索引获取类型并查询定义
+const gwType = Game.Culture.getGreatWorkType(greatWorkIndex);
+const greatWork = GameInfo.GreatWorks.lookup(gwType);
+console.log(greatWork?.GreatWorkObjectType);
+```
+
 </API>
 <API id="player.Culture.get"><h3>player.Culture.get(playerID)</h3>
 
@@ -286,6 +332,17 @@ if (playerCulture) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `object`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 通过全局 Players.Culture 获取玩家文化对象
+const culture = Players.Culture.get(GameContext.localPlayerID);
+if (culture) {
+  console.log(culture.getTurnsLeft());
+}
+```
 
 </API>
 <API id="player.Culture.isNodeUnlocked"><h3>player.Culture.isNodeUnlocked(playerID, nodeID)</h3>
@@ -299,6 +356,19 @@ if (playerCulture) {
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/advice/advice-support.js
+// 检查文化节点是否已解锁
+const playerCulture = player.Culture;
+if (playerCulture) {
+  if (playerCulture.isNodeUnlocked("NODE_CIVIC_AQ_MAIN_CHIEFDOM")) {
+    console.log("Chiefdom 文化节点已解锁");
+  }
+}
+```
+
 </API>
 <API id="player.Culture.getTurnsForNode"><h3>player.Culture.getTurnsForNode(playerID, nodeID)</h3>
 
@@ -311,6 +381,18 @@ if (playerCulture) {
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/culture-tree/model-culture-tree.js
+// 获取文化节点所需回合数
+const playerCulture = player.Culture;
+if (playerCulture) {
+  const turnsLeft = playerCulture.getTurnsForNode(nodeType);
+  console.log("剩余回合: " + turnsLeft);
+}
+```
+
 </API>
 <API id="player.Culture.getNumWorksInArchive"><h3>player.Culture.getNumWorksInArchive(playerID)</h3>
 
@@ -321,6 +403,18 @@ if (playerCulture) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/great-works/model-great-works.js
+// 获取档案中的大作品数量
+const playerCulture = player.Culture;
+if (playerCulture) {
+  const numWorks = playerCulture.getNumWorksInArchive();
+  console.log("档案大作品数: " + numWorks);
+}
+```
 
 </API>
 <API id="player.Culture.getArchivedGreatWork"><h3>player.Culture.getArchivedGreatWork(playerID, index)</h3>
@@ -333,6 +427,21 @@ if (playerCulture) {
 | index | `int` | 大作品索引 |
 
 **返回值**: `object`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/great-works/model-great-works.js
+// 遍历档案中的大作品
+const playerCulture = player.Culture;
+if (playerCulture) {
+  const numWorks = playerCulture.getNumWorksInArchive();
+  for (let i = 0; i < numWorks; i++) {
+    const greatWorkIndex = playerCulture.getArchivedGreatWork(i);
+    console.log("大作品索引: " + greatWorkIndex);
+  }
+}
+```
 
 </API>
 <API id="Game.ProgressionTrees.revealTree"><h3>Game.ProgressionTrees.revealTree(treeType, playerID)</h3>

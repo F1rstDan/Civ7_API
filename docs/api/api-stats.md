@@ -13,12 +13,36 @@ related_scope:
   - ComponentID
   - UI.Player
 source:
-  - 源码静态分析结果
+  - modules/base-standard/scripts/
+  - modules/base-standard/ui/
+  - modules/core/ui/
+  - TunerPanels/
+doc_update: 2026-06-05
 ---
 
-# API 调用统计
+# API Stats API 调用统计
 
-以下统计数据来自对文明7游戏源码的静态分析，反映了各全局工具对象和方法在源码中的相对使用频率。仅供开发参考，不代表 API 重要性排序。
+基于文明7游戏源码（modules/ + TunerPanels/）的静态分析，反映各全局工具对象和方法在源码中的相对使用频率。仅供开发参考，不代表 API 重要性排序。
+
+```javascript
+// 来源 TunerPanels/Notifications.ltp
+// 典型用法：Locale.compose 翻译游戏内文本，GameContext.localPlayerID 获取本地玩家
+const player = Players.get(GameContext.localPlayerID);
+const playerName = Locale.compose(player.civilizationFullName);
+if (playerName && playerName.length > 0) {
+    console.log(playerName);
+}
+
+// 来源 modules/base-standard/ui/diplomacy/diplomacy-manager.js
+// InterfaceMode.isInInterfaceMode 检查当前界面模式
+const isAlreadyInDialog = InterfaceMode.isInInterfaceMode("INTERFACEMODE_DIPLOMACY_DIALOG");
+
+// 来源 TunerPanels/Random Events.ltp
+// Database.makeHash 将字符串转为哈希值
+const volcanoType = {
+    collection: Database.makeHash(GameInfo.NamedVolcanoes.tableName)
+};
+```
 
 ## 全局工具对象一览
 
