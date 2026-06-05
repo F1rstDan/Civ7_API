@@ -134,7 +134,7 @@ Benchmark 自动化测试中使用的 Game 子对象。源码中仅以 `Benchmar
 | <API>Benchmark.Game.getBenchmarkType</API> | — | `string` | 获取基准测试类型 |
 | <API>Benchmark.Game.setLightweightGraphPosition</API> | rect | `void` | 设置轻量图表位置 |
 
-<API id="Game.getHash" title="Game.getHash()">
+<API id="Game.getHash"><h3>Game.getHash()</h3>
 
 **说明**: 获取当前游戏的哈希值，用于唯一标识游戏状态。
 
@@ -154,7 +154,7 @@ args.Type = Game.getHash(sel);
 
 </API>
 
-<API id="Game.getTurnDate" title="Game.getTurnDate()">
+<API id="Game.getTurnDate"><h3>Game.getTurnDate()</h3>
 
 **说明**: 获取当前回合对应的日期/年份字符串，用于 UI 显示。
 
@@ -178,7 +178,7 @@ const subtitle = Game.getTurnDate();
 
 </API>
 
-<API id="Game.isIDMatch" title="Game.isIDMatch(a, b)">
+<API id="Game.isIDMatch"><h3>Game.isIDMatch(a, b)</h3>
 
 **说明**: 比较两个 ID 是否匹配，用于在 Tuner 面板中判断选中项是否与列表项一致。
 
@@ -203,7 +203,7 @@ if (Game.isIDMatch(g_TunerState.WorldUnitsPanel.selectedUnit, unitId) == false) 
 
 </API>
 
-<API id="Benchmark.Game.randomRange" title="Benchmark.Game.randomRange(min, max)">
+<API id="Benchmark.Game.randomRange"><h3>Benchmark.Game.randomRange(min, max)</h3>
 
 **说明**: 生成指定范围内的随机整数（含 min、max）。Benchmark 模式下通过 `Benchmark.Game.randomRange()` 调用。
 
@@ -230,7 +230,7 @@ const y = Benchmark.Game.randomRange(Y_PADDING, gridHeight - Y_PADDING - 1);
 
 </API>
 
-<API id="Benchmark.Game.isRunning" title="Benchmark.Game.isRunning()">
+<API id="Benchmark.Game.isRunning"><h3>Benchmark.Game.isRunning()</h3>
 
 **说明**: 检查游戏是否正在运行。Benchmark 模式下通过 `Benchmark.Game.isRunning()` 调用。
 
@@ -252,7 +252,7 @@ if (Benchmark.Game.isRunning()) {
 
 </API>
 
-<API id="Benchmark.Game.cancel" title="Benchmark.Game.cancel()">
+<API id="Benchmark.Game.cancel"><h3>Benchmark.Game.cancel()</h3>
 
 **说明**: 取消当前正在执行的 Benchmark 操作。通过 `Benchmark.Game.cancel()` 调用。
 
@@ -274,7 +274,7 @@ if (Benchmark.Game.isRunning()) {
 
 </API>
 
-<API id="Benchmark.Game.start" title="Benchmark.Game.start(startParameters)">
+<API id="Benchmark.Game.start"><h3>Benchmark.Game.start(startParameters)</h3>
 
 **说明**: 启动 Benchmark 游戏。通过 `Benchmark.Game.start(startParameters)` 调用。
 
@@ -297,7 +297,7 @@ ViewManager.isWorldInputAllowed = false;
 
 </API>
 
-<API id="Benchmark.Game.setDebugUiVisiblity" title="Benchmark.Game.setDebugUiVisiblity(visible)">
+<API id="Benchmark.Game.setDebugUiVisiblity"><h3>Benchmark.Game.setDebugUiVisiblity(visible)</h3>
 
 **说明**: 设置调试 UI 的可见性。实际通过 `Benchmark.Game.setDebugUiVisiblity()` 调用。
 
@@ -319,7 +319,7 @@ Benchmark.Game.setDebugUiVisiblity(false);
 
 </API>
 
-<API id="Benchmark.Game.getDebugUiVisiblity" title="Benchmark.Game.getDebugUiVisiblity()">
+<API id="Benchmark.Game.getDebugUiVisiblity"><h3>Benchmark.Game.getDebugUiVisiblity()</h3>
 
 **说明**: 获取调试 UI 的当前可见性。实际通过 `Benchmark.Game.getDebugUiVisiblity()` 调用。
 
@@ -341,7 +341,7 @@ if (!Benchmark.Game.getDebugUiVisiblity() && openBenchmarkScreen == void 0) {
 
 </API>
 
-<API id="Benchmark.Game.getBenchmarkType" title="Benchmark.Game.getBenchmarkType()">
+<API id="Benchmark.Game.getBenchmarkType"><h3>Benchmark.Game.getBenchmarkType()</h3>
 
 **说明**: 获取当前基准测试类型。实际通过 `Benchmark.Game.getBenchmarkType()` 调用。
 
@@ -361,7 +361,7 @@ isGraphicsBenchmark = Benchmark.Game.getBenchmarkType() == GameBenchmarkType.GRA
 
 </API>
 
-<API id="Benchmark.Game.setLightweightGraphPosition" title="Benchmark.Game.setLightweightGraphPosition(rect)">
+<API id="Benchmark.Game.setLightweightGraphPosition"><h3>Benchmark.Game.setLightweightGraphPosition(rect)</h3>
 
 **说明**: 设置轻量图（Benchmark 图表）的显示位置。实际通过 `Benchmark.Game.setLightweightGraphPosition()` 调用。
 

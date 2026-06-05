@@ -1,6 +1,6 @@
 <template>
   <span
-    v-if="isTrigger"
+    v-if="!isContentBlock"
     ref="triggerRef"
     class="api-trigger"
     @click="handleClick"
@@ -24,8 +24,7 @@ const props = defineProps({
 const triggerRef = ref(null)
 const contentRef = ref(null)
 
-const hasTitle = computed(() => !!props.title)
-const isTrigger = computed(() => !hasTitle.value)
+const isContentBlock = computed(() => !!props.id)
 
 function getTriggerId() {
   if (props.id) return props.id
@@ -45,11 +44,24 @@ function handleClick() {
 }
 
 onMounted(() => {
-  if (!isTrigger.value && contentRef.value) {
+  if (isContentBlock.value && contentRef.value) {
     const id = props.id || ''
-    const title = props.title || id
-    if (id && contentRef.value.innerHTML) {
-      modalStore.register(id, title, contentRef.value.innerHTML)
+    let title = props.title
+    let html = contentRef.value.innerHTML
+
+    // Extract title from first h3 in slot if not explicitly provided
+    if (!title) {
+      const h3 = contentRef.value.querySelector('h3')
+      if (h3) {
+        title = h3.textContent.trim()
+        h3.remove()
+        html = contentRef.value.innerHTML
+      }
+    }
+
+    title = title || id
+    if (id && html) {
+      modalStore.register(id, title, html)
     }
   }
 })

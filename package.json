@@ -14,5 +14,8 @@
   "type": "module",
   "devDependencies": {
     "vitepress": "^1.6.4"
+  },
+  "dependencies": {
+    "playwright": "^1.60.0"
   }
 }
