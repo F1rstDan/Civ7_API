@@ -83,7 +83,7 @@ GameInfo.OtherTable;   // 其他定义表
 
 ---
 
-<API id="SomeAPI.get" title="SomeAPI.get(id)">
+<API id="SomeAPI.get"><h3>SomeAPI.get(id)</h3>
 
 **说明**: 根据 ID 获取对象。ID 无效时返回 `undefined`。
 
@@ -105,7 +105,7 @@ if (obj) {
 ```
 
 </API>
-<API id="SomeAPI.getHash" title="SomeAPI.getHash()">
+<API id="SomeAPI.getHash"><h3>SomeAPI.getHash()</h3>
 
 **说明**: 获取游戏哈希值。
 

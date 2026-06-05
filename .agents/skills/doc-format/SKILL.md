@@ -165,7 +165,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 
 **内容块**（页面最底部）：
 ````markdown
-<API id="Camera.lookAtPlot" title="Camera.lookAtPlot(iX, iY)">
+<API id="Camera.lookAtPlot"><h3>Camera.lookAtPlot(iX, iY)</h3>
 
 **说明**: 一句话说明。
 
@@ -188,6 +188,12 @@ Camera.lookAtPlot(10, 20);
 ````
 
 内容块内部顺序：说明 → 参数表（无参数则写 `**参数**: 无`） → 返回值 → 使用示例（可选） → 来源（标注 .ltp 或 .js 出处）
+
+**`<h3>` 标题说明**：
+- `<h3>` 必须紧贴 `<API>` 标签，或放在内部第一行
+- 该 `<h3>` 在 VitePress 中随 `display:none` 自动隐藏，在 GitHub / VS Code 等通用 MD 浏览器中正常显示
+- 弹窗标题自动从中提取，无需 `title` 属性；弹窗正文不会重复出现标题
+- 若确需覆盖弹窗标题（如 id 与显示名不同），仍可显式传入 `title` prop
 
 
 ## 大型对象拆分策略
