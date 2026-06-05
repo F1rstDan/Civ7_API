@@ -19,7 +19,6 @@ export default defineConfig({
         text: '核心引擎',
         items: [
           { text: 'Game 核心对象', link: '/api/game' },
-          { text: 'GameInfo 数据表', link: '/api/game-info' },
           { text: 'Engine 引擎', link: '/api/engine' },
           { text: 'Players 玩家管理', link: '/api/players' },
           { text: 'Configuration 配置', link: '/api/configuration' },
@@ -78,9 +77,10 @@ export default defineConfig({
         ]
       },
       {
-        text: '常量与事件',
+        text: '数据|常量|事件',
         items: [
-          { text: '常量总览', link: '/api/constants' },
+          { text: 'GameInfo 数据表', link: '/api/game-info' },
+          { text: 'constants 常量总览', link: '/api/constants' },
           { text: 'Events 事件列表', link: '/api/events' },
         ]
       },

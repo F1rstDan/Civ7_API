@@ -1,6 +1,6 @@
 ---
 title: Legacies 传承系统
-doc_type: object-api
+doc_type: system
 summary: 文明7的传承系统包括 player.Legacies（传承触发和进度）和 player.LegacyPaths（传承路径和奖励）。
 primary_scope:
   - player.Legacies

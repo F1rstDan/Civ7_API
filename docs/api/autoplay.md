@@ -1,6 +1,6 @@
 ---
 title: Autoplay 自动播放
-doc_type: object-api
+doc_type: other
 summary: Autoplay 全局对象控制文明7的自动播放/观察模式，支持状态查询、玩家切换和 AI 控制。
 primary_scope:
   - Autoplay

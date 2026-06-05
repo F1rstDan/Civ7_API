@@ -1,6 +1,6 @@
 ---
 title: GameInfo 数据表
-doc_type: system-topic
+doc_type: data
 summary: 游戏数据表访问的全局对象，包含 150+ 个数据表，提供 lookup/find/filter/forEach 等通用访问方法。
 primary_scope:
   - GameInfo

@@ -1,6 +1,6 @@
 ---
 title: Advisors 建议系统
-doc_type: object-api
+doc_type: object
 summary: 文明7的游戏内建议（Advisor）系统，分为文化、经济、军事、科学四个类别，通过 globalThis.AdviceManager 全局对象访问。包含 Tuner 调试 API 和运行时 Mod 可用 API。
 primary_scope:
   - AdviceManager

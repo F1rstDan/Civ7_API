@@ -29,7 +29,7 @@ Civ7 API 文档统一排版规范。模板文件在 `assets/api-page-template.md
 ```yaml
 ---
 title: Units 单位
-doc_type: object-api
+doc_type: object
 summary: 单位全局对象，负责单位获取、创建、位置、状态和属性修改。
 primary_scope:
   - Units
@@ -45,19 +45,34 @@ doc_update: 2026-06-05
 
 字段含义：
 - `title`：页面标题，必填。
-- `doc_type`：文档类型，必填。常用值：`object-api`、`system-topic`、`reference`、`ui-api`。
+- `doc_type`：文档类型，必填。常用值：`object`、`system`、`data`、`other`、`generated`。
 - `summary`：一句话说明本页内容边界，后续更新时用来判断是否跑题。
 - `primary_scope`：本页主覆盖 API 范围，通常需要进入主方法列表并覆盖 `<API>` 弹窗。
-- `related_scope`：允许提及的相关 API 范围，通常放在 GameInfo 关联表、相关对象、子系统或示例中，默认不要求 `<API>` 弹窗。
+- `related_scope`：允许提及的相关 API 范围，通常放在 GameInfo 关联表、相关对象、子系统或示例中，默认不要求 `<API>` 弹窗。（可选）
 - `source`：统一记录来源文件，可包含 `.ltp`、`.js`、`.xml` 或其他来源路径。
 - `doc_update`：该文档上次更新日期，格式 `YYYY-MM-DD`。新建文档时填入创建日期；审查/整改后更新为当前日期。
 
-`doc_type` 策略：
-- `object-api`：单一对象页，如 `Units`、`Camera`、`Game`。主方法列表只放 `primary_scope`；`related_scope` 可以在后文提及，但不能混入主方法列表。
-- `system-topic`：系统专题页，如科技文化树、贸易、文化。允许多个 `primary_scope`，主方法列表可按 H3 分组收录这些 scope。
-- `reference`：常量、事件、全局说明、统计类文档。不要强制方法列表和 `<API>` 覆盖率，重点检查结构、来源和示例。
-- `ui-api`：UI 层对象、组件、世界 UI 等。允许对象、类、实例方法混合，但必须在标题或表格中标明所属层级。
-- `generated-reference`：由脚本自动生成的参考文档（如 `constants.md`）。默认跳过审查和整改，除非用户明确指名该文件。不可手动编辑，应通过生成脚本更新。
+`doc_type` 分类决策树：
+
+| 问题 | 是 → 类型 | 特征 |
+|------|----------|------|
+| 展示一个全局对象的方法和属性？ | `object` | 单一入口对象，可含 Entity 实例层和子系统 |
+| 解释一个跨多个对象的游戏系统？ | `system` | 按概念逻辑组织，允许多个 `primary_scope` |
+| 纯数据/事件列表/常量/枚举？ | `data` | 静态参考，重点是"有什么、是什么" |
+| 非游戏内系统（UI、音频、调试等）？ | `other` | 与游戏本体逻辑无关，允许混合层级 |
+| 脚本自动生成？ | `generated` | 不可手动编辑，默认跳过审查和整改 |
+
+`object` 型按复杂度细分：
+- **简单型**：仅 Manager（如 `Camera`）
+- **标准型**：Manager + Entity，实例通过 `get()` 获取（如 `Cities` + `city`）
+- **复杂型**：Manager + Entity + 子系统需拆分（如 `Players` + `player`）
+
+各类型校验规则：
+- `object`：主方法列表只放 `primary_scope`；`related_scope` 可在后文提及，不能混入主方法列表。
+- `system`：允许多个 `primary_scope`，主方法列表可按 H3 分组。
+- `data`：不强制方法列表和 `<API>` 覆盖率，重点检查结构、来源和示例。
+- `other`：允许对象、类、实例方法混合，但必须在标题或表格中标明所属层级。
+- `generated`：默认跳过审查和整改，除非用户明确指名该文件。
 
 ## 来源与代码示例查找
 
@@ -104,7 +119,7 @@ rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerP
 
 **判定规则**：
 - 主方法列表只收录 `primary_scope`。例如 `units.md` 的主方法列表只放 `Units.get`、`Units.restoreMovement` 等；`GameInfo.Units.lookup` 和 `player.Units.getUnitIds` 可放在 GameInfo 关联表、相关对象、子系统或示例中。
-- `system-topic` 可以有多个 `primary_scope`。例如 `progression-trees.md` 可同时收录 `Game.ProgressionTrees` 与 `GameInfo.ProgressionTrees`，但 `<API>` id 应尽量使用完整链条。
+- `system` 可以有多个 `primary_scope`。例如 `progression-trees.md` 可同时收录 `Game.ProgressionTrees` 与 `GameInfo.ProgressionTrees`，但 `<API>` id 应尽量使用完整链条。
 - `related_scope` 默认不进入主方法列表，也不要求 `<API>` 弹窗；除非该页明确把它升级为 `primary_scope`。
 - 实例对象或子系统要写完整归属，如 `unit.Experience.getAllPromotions`、`player.Units.getUnitIds`，不要缩短成 `Experience.getAllPromotions` 或 `Units.getUnitIds`。
 - `GameInfo.<Table>.lookup/find/forEach` 属于 `GameInfo` 表接口，不属于 `<Table>` 全局对象；例如 `GameInfo.Units.lookup` 不应写成 `Units.lookup`。
@@ -157,7 +172,7 @@ rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官�
 
 ### 命名
 - 文件名：小写英文 + 连字符，如 `gameplay-map.md`
-- frontmatter：至少包含 `title`、`doc_type`、`summary`、`primary_scope`、`related_scope`、`source`、`doc_update`
+- frontmatter：至少包含 `title`、`doc_type`、`summary`、`primary_scope`、`source`、`doc_update`
 - H1：`# 英文名 中文名`
 
 ### 代码块
@@ -222,7 +237,7 @@ Camera.lookAtPlot(10, 20);
 审查或整改时逐项对照：
 
 - [ ] 有 frontmatter（title 字段）
-- [ ] 有 `doc_type`、`summary`、`primary_scope`、`related_scope`、`source`、`doc_update`
+- [ ] 有 `doc_type`、`summary`、`primary_scope`、`source`、`doc_update`
 - [ ] H1 格式正确（# 英文 中文）
 - [ ] 有概述
 - [ ] 有快速示例代码块
@@ -257,7 +272,7 @@ Camera.lookAtPlot(10, 20);
 
 1. 读取目标文件
 2. 先读 YAML，确认 `doc_type`、`primary_scope`、`related_scope`
-3. 如果 `doc_type` 为 `generated-reference`：确认是自动生成文件，跳过后续所有检查；用户指名时才进入手动审查
+3. 如果 `doc_type` 为 `generated`：确认是自动生成文件，跳过后续所有检查；用户指名时才进入手动审查
 4. 逐项对照检查清单
 5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
 6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
@@ -277,4 +292,4 @@ Camera.lookAtPlot(10, 20);
 输出：方法数量、标题、源码引用、弹窗 id 是否一致。
 上下游影响：被移出方法表的相关 API 是否仍在合适章节保留，链接和 `<API>` 触发器是否不再误导弹窗系统。
 - [ ] 有 frontmatter（title、doc_type、summary 字段）
-- [ ] `doc_type` 为 `generated-reference` 时仅验证 YAML 完整性，跳过方法列表和 `<API>` 校验
+- [ ] `doc_type` 为 `generated` 时仅验证 YAML 完整性，跳过方法列表和 `<API>` 校验

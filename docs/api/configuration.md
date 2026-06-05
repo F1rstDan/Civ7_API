@@ -1,6 +1,6 @@
 ---
 title: Configuration 配置
-doc_type: object-api
+doc_type: other
 summary: 游戏配置访问的全局对象，分为 Game、User、Player 三个子配置，支持读取和编辑游戏设置。
 primary_scope:
   - Configuration

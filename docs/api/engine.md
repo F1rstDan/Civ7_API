@@ -1,6 +1,6 @@
 ---
 title: Engine 引擎
-doc_type: object-api
+doc_type: object
 summary: 引擎核心对象，提供事件系统（on/off/trigger）、数据绑定（createJSModel/updateWholeModel）、引擎就绪检测（whenReady）等功能。
 primary_scope:
   - engine

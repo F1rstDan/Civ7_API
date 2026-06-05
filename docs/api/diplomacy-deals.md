@@ -1,6 +1,6 @@
 ---
 title: DiplomacyDeals 外交交易
-doc_type: system-topic
+doc_type: system
 summary: 外交交易管理 API，涵盖交易的创建、修改、发送和查询。
 primary_scope:
   - Game.DiplomacyDeals

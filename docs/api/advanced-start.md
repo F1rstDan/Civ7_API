@@ -1,6 +1,6 @@
 ---
 title: AdvancedStart 高级开局
-doc_type: object-api
+doc_type: object
 summary: 高级开局 UI 模型对象，管理卡牌获取、牌组操作、效果使用和放置状态。
 primary_scope:
   - AdvancedStart

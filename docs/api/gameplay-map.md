@@ -1,6 +1,6 @@
 ---
 title: GameplayMap 地图操作
-doc_type: object-api
+doc_type: object
 summary: 地图操作的全局对象，负责地图尺寸、地块坐标、地形、资源、区域、河流等地理信息的查询。
 primary_scope:
   - GameplayMap

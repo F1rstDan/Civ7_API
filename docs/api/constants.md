@@ -1,6 +1,6 @@
 ---
 title: Constants 常量与枚举
-doc_type: generated-reference
+doc_type: generated
 summary: 从游戏源码自动提取的字符串常量、代码枚举和 GameInfo 数据表索引。
 primary_scope: []
 related_scope: []

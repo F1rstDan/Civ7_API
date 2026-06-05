@@ -1,6 +1,6 @@
 ---
 title: IndependentPowers 独立势力
-doc_type: object-api
+doc_type: object
 summary: 独立势力管理，包括城邦、蛮族等非主要文明的查询、关系和敌意系统。
 primary_scope:
   - Game.IndependentPowers

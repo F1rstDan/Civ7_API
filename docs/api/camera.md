@@ -1,6 +1,6 @@
 ---
 title: Camera 镜头
-doc_type: object-api
+doc_type: other
 summary: 相机控制的全局对象，负责视角移动、缩放、旋转、动画以及鼠标交互控制。
 primary_scope:
   - Camera

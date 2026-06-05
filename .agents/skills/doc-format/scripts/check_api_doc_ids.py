@@ -108,7 +108,7 @@ def related_tail_collision(api_id: str, scopes: list[str], text: str) -> tuple[s
 
 def is_generated_doc(path: Path, frontmatter: dict[str, object], text: str) -> bool:
     doc_type = str(frontmatter.get("doc_type", "")).strip()
-    if doc_type in {"generated-reference", "generated-constants"}:
+    if doc_type in {"generated", "generated-constants"}:
         return True
     if path.name.lower() == "constants.md" and "自动提取" in text[:500]:
         return True

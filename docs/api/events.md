@@ -1,6 +1,6 @@
 ---
 title: Events 事件参考
-doc_type: reference
+doc_type: data
 summary: 文明7引擎事件系统参考，通过 engine.on() 监听、engine.trigger() 触发，涵盖游戏流程、城市、单位、地图、外交、UI 等事件。
 primary_scope:
   - engine

@@ -1,6 +1,6 @@
 ---
 title: 全局工具对象
-doc_type: reference
+doc_type: data
 summary: 全局工具函数和辅助对象参考，包括 GameContext、Database、InterfaceMode、ComponentID 等。
 primary_scope:
   - globals

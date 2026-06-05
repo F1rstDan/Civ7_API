@@ -1,6 +1,6 @@
 ---
 title: Component 基类
-doc_type: ui-api
+doc_type: other
 summary: 所有 UI 组件的基类，定义生命周期、焦点管理、属性变更、音效播放和 ComponentRoot 根元素等核心功能。
 primary_scope:
   - Component

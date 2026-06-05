@@ -1,6 +1,6 @@
 ---
 title: GameEffects 效果系统
-doc_type: system-topic
+doc_type: system
 summary: GameEffects 是 Modifier（修改器）和 Requirement（需求）系统的核心 API，管理游戏中所有活动的效果、需求集和需求。
 primary_scope:
   - GameEffects

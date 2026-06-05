@@ -1,6 +1,6 @@
 ---
 title: Automation 自动化
-doc_type: object-api
+doc_type: other
 summary: 游戏自动化测试框架全局对象，负责测试参数管理、日志输出、自动化生命周期控制以及存档操作。
 primary_scope:
   - Automation

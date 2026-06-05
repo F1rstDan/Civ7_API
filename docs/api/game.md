@@ -1,6 +1,6 @@
 ---
 title: Game 核心对象
-doc_type: object-api
+doc_type: object
 summary: 游戏核心状态对象，提供当前游戏的运行时信息和管理功能，包含 Benchmark 子系统的入口。
 primary_scope:
   - Game

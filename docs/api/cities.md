@@ -1,6 +1,6 @@
 ---
 title: Cities 城市
-doc_type: object-api
+doc_type: object
 summary: 城市管理的全局对象，提供城市的获取、创建、位置查询等功能，以及 City 对象子系统（BuildQueue、Districts、Yields 等）。
 primary_scope:
   - Cities

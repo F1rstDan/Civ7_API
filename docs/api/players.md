@@ -1,9 +1,10 @@
 ---
 title: Players 玩家管理
-doc_type: object-api
+doc_type: object
 summary: 玩家数据访问的全局对象，提供玩家实例获取、状态查询、遍历等功能，以及 PlayerLibrary 子库体系。
 primary_scope:
   - Players
+  - player
 related_scope:
   - GameContext
   - GameInfo.Leaders
@@ -54,6 +55,7 @@ source:
   - TunerPanels/Units.ltp
   - TunerPanels/Player Legacy Path.ltp
   - TunerPanels/VictoriesDefeats.ltp
+doc_update: 2026-06-05
 ---
 
 # Players 玩家管理

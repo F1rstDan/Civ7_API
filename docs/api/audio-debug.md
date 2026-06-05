@@ -1,6 +1,6 @@
 ---
 title: Audio & Debug 音频调试
-doc_type: system-topic
+doc_type: other
 summary: 音频和调试 API 参考，包括 Audio 音效播放、Sound 音量控制和 UI.Debug 调试组件注册。
 primary_scope:
   - Audio

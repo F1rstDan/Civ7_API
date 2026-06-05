@@ -1,9 +1,10 @@
 ---
 title: Districts 区域
-doc_type: object-api
+doc_type: object
 summary: 城区管理全局对象，负责区域获取、建造物查询、位置管理。
 primary_scope:
   - Districts
+  - district
 related_scope:
   - GameInfo.Districts
   - player.Districts

@@ -1,6 +1,6 @@
 ---
 title: Diplomacy 外交
-doc_type: system-topic
+doc_type: system
 summary: 外交系统 API，涵盖玩家外交关系、外交事件、外交会话、外交令牌和交易操作。
 primary_scope:
   - Diplomacy

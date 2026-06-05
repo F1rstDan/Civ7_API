@@ -1,6 +1,6 @@
 ---
 title: 示例 对象名称
-doc_type: object-api
+doc_type: object
 summary: 一句话说明该文档覆盖的 API 范围。
 primary_scope:
   - SomeAPI

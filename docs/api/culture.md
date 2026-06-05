@@ -1,6 +1,6 @@
 ---
 title: Culture 文化
-doc_type: system-topic
+doc_type: system
 summary: 文化系统 API，涵盖玩家文化进度、传承解锁、ProgressionTree 节点操作。
 primary_scope:
   - Game.Culture

@@ -1,6 +1,6 @@
 ---
 title: API 调用统计
-doc_type: reference
+doc_type: data
 summary: 文明7游戏源码中各全局工具对象和方法的静态分析调用频率统计，仅供开发参考。
 primary_scope:
   - api-stats
