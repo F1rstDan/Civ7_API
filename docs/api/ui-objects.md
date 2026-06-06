@@ -27,7 +27,7 @@ source:
   - modules/core/ui/utilities/utilities-databinding.js
   - modules/core/ui/components/fxs-flipbook.js
   - modules/base-standard/ui/city-banners/city-banners.js
-doc_update: 2026-06-06
+doc_update: 2026-06-07
 ---
 
 # UI Objects UI对象
@@ -37,7 +37,6 @@ UI 框架全局对象和辅助对象。引擎直接注入，无需手动 import�
 ```javascript
 // 快速示例：检查游戏状态并获取当前选中城市
 // 来源 modules/core/ui/component-support.js
-// 简要描述功能
 if (UI.isInGame()) {
   const cityID = UI.Player.getHeadSelectedCity();
   if (cityID) {
@@ -57,8 +56,8 @@ if (UI.isInGame()) {
 | <API>UI.isInGame</API> | — | `bool` | 是否在游戏中 |
 | <API>UI.getIcon</API> | iconName | `string` | 获取图标 |
 | <API>UI.setCursorByType</API> | type | `void` | 按类型设置光标 |
-| <API>UI.getOption</API> | key | `any` | 获取选项值 |
-| <API>UI.setOption</API> | key, value | `void` | 设置选项值 |
+| <API>UI.getOption</API> | optionSet, optionType, optionName | `any` | 获取选项值 |
+| <API>UI.setOption</API> | optionSet, optionType, optionName, value | `void` | 设置选项值 |
 | <API>UI.isInShell</API> | — | `bool` | 是否在主菜单 |
 | <API>UI.getGameLoadingState</API> | — | `string` | 获取游戏加载状态 |
 | <API>UI.lockCursor</API> | locked | `void` | 锁定/解锁光标 |
@@ -80,18 +79,24 @@ UI.Player.selectCity(cityID);
 UI.Player.deselectAllUnits();
 ```
 
-| 方法(10) | 参数 | 返回值 | 说明 |
+| 方法(16) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>UI.Player.getHeadSelectedCity</API> | — | `int` | 获取选中的城市 ID |
 | <API>UI.Player.getHeadSelectedUnit</API> | — | `int` | 获取选中的单位 ID |
+| <API>UI.Player.getFirstReadyUnit</API> | — | `int` | 获取第一个就绪单位 ID |
 | <API>UI.Player.getPrimaryColorValueAsString</API> | playerID | `string` | 玩家主颜色字符串 |
 | <API>UI.Player.getPrimaryColorValueAsHex</API> | playerID | `string` | 玩家主颜色十六进制 |
+| <API>UI.Player.getPrimaryColorValue</API> | playerID | `object` | 玩家主颜色 RGBA 对象 |
+| <API>UI.Player.getSecondaryColorValueAsString</API> | playerID | `string` | 玩家副颜色字符串 |
+| <API>UI.Player.getSecondaryColorValueAsHex</API> | playerID | `string` | 玩家副颜色十六进制 |
 | <API>UI.Player.lookAtID</API> | id | `void` | 相机移动到对象 |
 | <API>UI.Player.selectCity</API> | cityID | `void` | 选中城市 |
 | <API>UI.Player.selectUnit</API> | unitID | `void` | 选中单位 |
+| <API>UI.Player.selectNextUnit</API> | — | `void` | 选中下一个单位 |
+| <API>UI.Player.selectPreviousUnit</API> | — | `void` | 选中上一个单位 |
+| <API>UI.Player.selectNextReadyUnit</API> | — | `void` | 选中下一个就绪单位 |
 | <API>UI.Player.deselectAllUnits</API> | — | `void` | 取消所有单位选中 |
 | <API>UI.Player.deselectAllCities</API> | — | `void` | 取消所有城市选中 |
-| <API>UI.Player.selectNextReadyUnit</API> | — | `void` | 选中下一个就绪单位 |
 
 ## Databind — 数据绑定
 
@@ -106,7 +111,7 @@ Databind.locText(caption, "item.description");
 Databind.classToggle(button, "hidden", "g_NavTray.isTrayRequired");
 ```
 
-| 方法(7) | 参数 | 返回值 | 说明 |
+| 方法(10) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>Databind.attribute</API> | name, value | `void` | 绑定属性 |
 | <API>Databind.classToggle</API> | className, condition | `void` | 切换 CSS 类 |
@@ -115,6 +120,9 @@ Databind.classToggle(button, "hidden", "g_NavTray.isTrayRequired");
 | <API>Databind.locText</API> | key | `void` | 绑定本地化文本 |
 | <API>Databind.tooltip</API> | key | `void` | 绑定工具提示 |
 | <API>Databind.value</API> | getter, setter | `void` | 绑定值 |
+| <API>Databind.bgImg</API> | element, binding | `void` | 绑定背景图片 |
+| <API>Databind.html</API> | element, binding | `void` | 绑定 HTML 内容 |
+| <API>Databind.style</API> | element, property, binding | `void` | 绑定样式属性 |
 
 ## InterfaceMode — 界面模式
 
@@ -381,13 +389,15 @@ UI.setCursorByType(UIHTMLCursorTypes.Text);
 ```
 
 </API>
-<API id="UI.getOption"><h3>UI.getOption(key)</h3>
+<API id="UI.getOption"><h3>UI.getOption(optionSet, optionType, optionName)</h3>
 
-**说明**: 获取选项配置值。选项按三级结构分类：set、type、name。
+**说明**: 获取选项配置值。选项按三级结构分类：optionSet、optionType、optionName。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
-| key | `string` | 选项集（optionSet） |
+| optionSet | `string` | 选项集（如 `"user"`、`"game"`） |
+| optionType | `string` | 选项类型（如 `"Accessibility"`、`"Gameplay"`） |
+| optionName | `string` | 选项名称（如 `"LongPressDelay"`） |
 
 **返回值**: `any`
 
@@ -395,18 +405,20 @@ UI.setCursorByType(UIHTMLCursorTypes.Text);
 
 ```javascript
 // 来源 modules/core/ui/options/options.js
-// 简要描述功能
+// 获取辅助功能选项中的长按延迟值
 const value = UI.getOption("user", "Accessibility", "LongPressDelay");
 ```
 
 </API>
-<API id="UI.setOption"><h3>UI.setOption(key, value)</h3>
+<API id="UI.setOption"><h3>UI.setOption(optionSet, optionType, optionName, value)</h3>
 
-**说明**: 设置选项配置值。
+**说明**: 设置选项配置值。选项按三级结构分类：optionSet、optionType、optionName。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
-| key | `string` | 选项集（optionSet） |
+| optionSet | `string` | 选项集（如 `"user"`、`"game"`） |
+| optionType | `string` | 选项类型（如 `"Accessibility"`、`"Gameplay"`） |
+| optionName | `string` | 选项名称（如 `"LongPressDelay"`） |
 | value | `any` | 选项值 |
 
 **返回值**: `void`
@@ -415,7 +427,7 @@ const value = UI.getOption("user", "Accessibility", "LongPressDelay");
 
 ```javascript
 // 来源 modules/core/ui/options/options.js
-// 简要描述功能
+// 设置辅助功能选项中的长按延迟值
 UI.setOption("user", "Accessibility", "LongPressDelay", value);
 ```
 
@@ -547,7 +559,7 @@ const seed = UI.randomInt(0, 1e3);
 
 ```javascript
 // 来源 modules/base-standard/ui/loading/root-loading.js
-// 简要描述功能
+// 通知引擎 UI 已就绪
 UI.notifyUIReady();
 ```
 
@@ -733,8 +745,123 @@ UI.Player.deselectAllCities();
 
 ```javascript
 // 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
-// 简要描述功能
+// 选中下一个就绪单位
 UI.Player.selectNextReadyUnit();
+```
+
+</API>
+<API id="UI.Player.getFirstReadyUnit"><h3>UI.Player.getFirstReadyUnit()</h3>
+
+**说明**: 获取第一个就绪（有剩余行动力）的单位 ID，无就绪单位时返回 `undefined`。
+
+**参数**: 无
+
+**返回值**: `int` | `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/action/panel-action.js
+// 获取第一个就绪单位
+const nextReadyUnitID = UI.Player.getFirstReadyUnit();
+if (nextReadyUnitID) {
+  UI.Player.lookAtID(nextReadyUnitID);
+}
+```
+
+</API>
+<API id="UI.Player.getPrimaryColorValue"><h3>UI.Player.getPrimaryColorValue(playerID)</h3>
+
+**说明**: 获取指定玩家的主颜色 RGBA 对象。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| playerID | `int` | 玩家 ID |
+
+**返回值**: `object` — 包含 `r`、`g`、`b`、`a` 属性的 RGBA 颜色对象
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/victories/victories-screen-model.js
+// 获取玩家主颜色用于计算颜色距离
+const ourPrimary = UI.Player.getPrimaryColorValue(player.id);
+```
+
+</API>
+<API id="UI.Player.getSecondaryColorValueAsString"><h3>UI.Player.getSecondaryColorValueAsString(playerID)</h3>
+
+**说明**: 获取指定玩家的副颜色字符串表示。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| playerID | `int` | 玩家 ID |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/unit-flags/unit-flags.js
+// 获取玩家副颜色用于单位标记
+const playerColorSec = UI.Player.getSecondaryColorValueAsString(this.componentID.owner);
+```
+
+</API>
+<API id="UI.Player.getSecondaryColorValueAsHex"><h3>UI.Player.getSecondaryColorValueAsHex(playerID)</h3>
+
+**说明**: 获取指定玩家的副颜色十六进制字符串。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| playerID | `int` | 玩家 ID |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/diplomacy/leader-model-manager.js
+// 获取玩家副颜色十六进制值
+const p1ColorSecondary = UI.Player.getSecondaryColorValueAsHex(playerID1);
+```
+
+</API>
+<API id="UI.Player.selectNextUnit"><h3>UI.Player.selectNextUnit()</h3>
+
+**说明**: 选中下一个单位（循环切换）。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/unit-selection/unit-selection.js
+// 循环切换到下一个单位
+case "cycle-next":
+  UI.Player.selectNextUnit();
+  return;
+```
+
+</API>
+<API id="UI.Player.selectPreviousUnit"><h3>UI.Player.selectPreviousUnit()</h3>
+
+**说明**: 选中上一个单位（循环切换）。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/unit-selection/unit-selection.js
+// 循环切换到上一个单位
+case "cycle-prev":
+  UI.Player.selectPreviousUnit();
+  return;
 ```
 
 </API>
@@ -871,8 +998,69 @@ Databind.tooltip(playerContainer, player.playerName);
 
 ```javascript
 // 来源 modules/core/ui/utilities/utilities-databinding.js
-// 简要描述功能
+// 绑定值到元素，支持双向绑定
 Databind.value(() => model.value, (v) => model.value = v);
+```
+
+</API>
+<API id="Databind.bgImg"><h3>Databind.bgImg(element, binding)</h3>
+
+**说明**: 将元素的背景图片绑定到数据模型。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| element | `HTMLElement` | 目标元素 |
+| binding | `string` | 数据绑定表达式，如 `"item.icon"` |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 绑定导航栏按钮的背景图标
+Databind.bgImg(icon, "item.icon");
+```
+
+</API>
+<API id="Databind.html"><h3>Databind.html(element, binding)</h3>
+
+**说明**: 将元素的 HTML 内容绑定到数据模型。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| element | `HTMLElement` | 目标元素 |
+| binding | `string` | 数据绑定表达式，如 `"${attribute}.wildCardLabel"` |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/attribute-trees/screen-attribute-trees.js
+// 绑定属性树的通配符标签 HTML
+Databind.html(wildcardElement, `${attribute}.wildCardLabel`);
+```
+
+</API>
+<API id="Databind.style"><h3>Databind.style(element, property, binding)</h3>
+
+**说明**: 将元素的样式属性绑定到数据模型。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| element | `HTMLElement` | 目标元素 |
+| property | `string` | CSS 属性名，如 `"height"` |
+| binding | `string` | 数据绑定表达式，如 `"item.percentComplete + '%'"` 用于进度条高度 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/build-queue/panel-build-queue.js
+// 绑定进度条高度（模板表达式使用双花括号包裹 item.percentComplete）
+Databind.style(progressBarFill, "height", "item.percentComplete + '%'");
 ```
 
 </API>

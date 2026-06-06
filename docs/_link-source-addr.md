@@ -8,9 +8,9 @@
 
 | 子目录 | 文件数 | 说明 |
 |--------|--------|------|
-| `modules\` | 6,816 | 游戏模块源码（JS/TS、XML、CSS、视频、字体等） |
-| `TunerPanels\` | 37 | Firaxis 内部 Live Tuner 调试面板定义（`.ltp` XML） |
-| **合计** | **6,853** | |
+| `modules\` | 6,816 | **符号链接目录**，指向实际游戏模块源码（JS/TS、XML、CSS、视频、字体等） |
+| `TunerPanels\` | 37 | **符号链接目录**，指向 Firaxis 内部 Live Tuner 调试面板定义（`.ltp` XML） |
+| **合计** | **6,853** | **⚠️ 注意**：由于是符号链接，上级扫描时须特别配置追踪参数，详见第四部分。 |
 
 ---
 
@@ -104,19 +104,7 @@ Firaxis 内部 Live Tuner 调试面板定义文件。格式为 XML，内部嵌�
 
 ## 三、Git 版本历史
 
-源码目录已通过 Git 管理，记录了自 2025.08 至 2026.05 的主要版本更新（共 20 个提交）：
-
-| 提交版本 | 说明 |
-|------|------|
-| 最新 | 添加 TunerPanels 调试面板文件 |
-| `1.4.0` | 大型更新「岁月洗礼」— 2026.05.20 |
-| `1.3.2` Patch 2 | — 2026.04.16 |
-| `1.3.2` Patch 1 | — 2026.03.03 |
-| `1.3.2` | — 2026.02.03 |
-| `1.3.1` | — 2025.12.09 |
-| `1.3.0` | — 2025.11.04 |
-| `1.2.5` | — 2025.09.30 |
-| `1.2.4` Patch 1 | — 2025.08.27 |
+源码目录已通过 Git 管理，记录了自 2025.08 至 2026.05 的主要版本更新。
 
 **更新检查命令**：
 
@@ -132,19 +120,30 @@ git diff --name-status HEAD~1
 
 ## 四、扫描注意事项
 
-### 4.1 推荐扫描工具
+### 4.1 推荐扫描工具与避坑（必读）
 
 - **首选 `rg`（ripgrep）**：速度快、支持正则、自动跳过 `.gitignore` 和二进制文件。适合在 ~1,400 个 JS 文件中搜索 API 调用模式。
 - 备选 `Select-String`（PowerShell 原生）：`rg` 不可用时使用，速度约慢 5-10 倍。
 
+> [!IMPORTANT]
+> **⚠️ 符号链接扫描规则**：
+> 因为 `modules\` 和 `TunerPanels\` 在根目录下是**符号链接**，`rg` 默认不追踪符号链接。
+> - **如果搜索路径为根目录** `D:\Games Design\Civ7_mod\.官方变动`，**必须**使用 `-L`（`--follow`）参数，否则扫描结果为空。
+> - **如果直接指定了子目录**（如 `D:\Games Design\Civ7_mod\.官方变动\modules`），则无需加 `-L`。
+> - 在 PowerShell 下执行 `rg` 时**绝对不要追加 `2>$null`**（这会吞掉正则解析错误，导致原本存在的 API 漏匹配）。
+> - 如果使用正则中的环视断言，**必须添加 `--pcre2` 参数**，否则 `rg` 会静默失败返回 1。
+
 ```powershell
-# 示例：搜索 GameplayMap 的所有方法调用
+# 示例：搜索 GameplayMap 的所有方法调用（指定直接子目录，无需 -L）
 rg -n "GameplayMap\.\w+" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js" --no-heading
 
-# 示例：搜索 engine 事件注册
-rg -n 'engine\.on\("[A-Za-z]+' "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+# 示例：搜索 engine 事件注册（指定根目录，必须加上 -L 以追踪符号链接）
+rg -n -L 'engine\.on\("[A-Za-z]+' "D:\Games Design\Civ7_mod\.官方变动" -g "*.js"
 
-# 示例：限定搜索某个模块子目录
+# 示例：使用环视正则排除后缀误匹配（必须加 --pcre2 参数，否则报错或静默失败）
+rg -n -L --pcre2 "(?<![A-Za-z0-9_$])Units\." "D:\Games Design\Civ7_mod\.官方变动" -g "*.js"
+
+# 示例：限定搜索某个模块子目录（不经过符号链接，性能最佳）
 rg -n "GameInfo\.\w+" "D:\Games Design\Civ7_mod\.官方变动\modules\base-standard\scripts"
 ```
 
