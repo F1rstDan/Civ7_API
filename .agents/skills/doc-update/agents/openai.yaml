@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doc Update 文档更新与网站维护"
+  short_description: "全面整改、格式刷排版、API 校验、API 查漏补缺、新建页面及网站维护。"
+  default_prompt: "全面整改 docs/api/units.md，修复其格式并校验补全其中的 API 与示例"

@@ -1,7 +1,7 @@
 ---
 title: Combat 战斗系统
 doc_type: system
-summary: 战斗系统，覆盖全局战斗模拟（Game.Combat）、单位战斗属性（unit.Combat）、指挥官军队（player.Armies / Armies）和编队（player.Formations / Formations）。
+summary: 战斗系统，覆盖全局战斗模拟（Game.Combat）、单位战斗属性（unit.Combat）、指挥官军队（player.Armies / Armies）、编队（player.Formations / Formations）、战斗事件（SimulateCombatResult / Combat）和远程攻击 UI 处理器（RangeAttackHandler）。
 primary_scope:
   - Game.Combat
   - unit.Combat
@@ -12,6 +12,10 @@ primary_scope:
 related_scope:
   - CombatTypes
   - CombatStrengthTypes
+  - UnitActionHandlers
+  - UnitOperationTypes
+  - OperationPlotModifiers
+  - WorldUI
   - Game.UnitOperations
   - GameplayMap
 source:
@@ -24,13 +28,17 @@ source:
   - modules/base-standard/ui/unit-flags/army-commander-flags.js
   - modules/base-standard/ui/interface-modes/support-unit-map-decoration.js
   - modules/base-standard/ui/interface-modes/interface-mode-ranged-attack.js
+  - modules/base-standard/ui/interface-modes/interface-mode-air-attack.js
+  - modules/base-standard/ui/interface-modes/interface-mode-naval-attack.js
   - modules/base-standard/ui/interface-modes/interface-mode-move-to.js
+  - modules/base-standard/ui/unit-interact/unit-action-handlers.js
+  - modules/base-standard/ui/unit-actions/unit-actions.js
 doc_update: 2026-06-06
 ---
 
 # Combat 战斗系统
 
-提供战斗预演、攻击判定、军队编队管理和指挥官增援等战斗相关功能。`Game.Combat` 为全局战斗管理器，`unit.Combat` 提供单位战斗属性，`player.Armies` / `player.Formations` 管理军队和编队。
+提供战斗预演、攻击判定、军队编队管理和指挥官增援等战斗相关功能。`Game.Combat` 为全局战斗管理器，`unit.Combat` 提供单位战斗属性，`player.Armies` / `player.Formations` 管理军队和编队。战斗操作通过 `Game.UnitOperations` 发起，结果通过 `SimulateCombatResult` 和 `Combat` 事件返回。
 
 ## 快速示例
 
@@ -60,6 +68,15 @@ if (attackingUnitCombat?.isCombat && attackingUnitCombat?.canAttack) {
     const targetID = Game.Combat.getBestDefender(location, selectedUnitID);
     const args = { Location: location, CombatType: CombatTypes.COMBAT_MELEE };
     const queryID = Game.Combat.simulateAttackAsync(attackingUnit.id, args);
+}
+```
+
+```javascript
+// 来源 interface-mode-ranged-attack.js
+// 远程攻击：检查操作可行性，发送操作请求
+const result = Game.UnitOperations.canStart(context.UnitID, UnitOperationTypes.RANGE_ATTACK, args, false);
+if (result.Success) {
+    Game.UnitOperations.sendRequest(context.UnitID, UnitOperationTypes.RANGE_ATTACK, args);
 }
 ```
 
@@ -100,6 +117,122 @@ if (combat?.isCombat && combat?.canAttack) {
 | 方法(1) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>unit.Combat.getMeleeStrength</API> | isAttacking (bool) | `int` | 获取近战战斗力 |
+
+## 战斗操作处理器
+
+`UnitActionHandlers` 管理单位操作的 UI 交互模式切换。以下为战斗相关的处理器。
+
+### RangeAttackHandler 远程攻击处理器
+
+对应 `UNITOPERATION_RANGE_ATTACK`，切换到 `INTERFACEMODE_RANGE_ATTACK` 交互模式。
+
+```javascript
+// 来源 unit-action-handlers.js
+// RangeAttackHandler 注册为远程攻击的 UI 处理器
+class RangeAttackHandler {
+  isTargetPlotOperation() {
+    return true;           // 需要选择目标地块
+  }
+  useHandlerWithGamepad() {
+    return true;           // 支持手柄操作
+  }
+  switchTo(context) {
+    InterfaceMode.switchTo("INTERFACEMODE_RANGE_ATTACK", context);
+  }
+}
+UnitActionHandlers.setUnitActionHandler("UNITOPERATION_RANGE_ATTACK", new RangeAttackHandler());
+```
+
+### UnitActionHandlers 方法
+
+| 方法(5) | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| <API>UnitActionHandlers.setUnitActionHandler</API> | actionType, handler | `void` | 注册操作类型对应的处理器 |
+| <API>UnitActionHandlers.doesActionHaveHandler</API> | actionType | `bool` | 检查操作类型是否有处理器 |
+| <API>UnitActionHandlers.switchToActionInterfaceMode</API> | actionType, context | `void` | 切换到操作对应的交互模式 |
+| <API>UnitActionHandlers.doesActionRequireTargetPlot</API> | actionType | `bool` | 检查操作是否需要选择目标地块 |
+| <API>UnitActionHandlers.useHandlerWithGamepad</API> | actionType | `bool` | 检查处理器是否支持手柄 |
+
+### 战斗相关操作类型
+
+| 操作类型 | 处理器类 | 说明 |
+|------|------|------|
+| `UNITOPERATION_RANGE_ATTACK` | `RangeAttackHandler` | 远程攻击 |
+| `UNITOPERATION_AIR_ATTACK` | `AirAttackInterfaceMode` | 空袭攻击 |
+| `UNITOPERATION_NAVAL_ATTACK` | `NavalAttackInterfaceMode` | 海军攻击 |
+| `UNITOPERATION_WMD_STRIKE` | — | WMD 打击 |
+| `UNITOPERATION_COASTAL_RAID` | `CoastalRaidHandler` | 海岸劫掠 |
+| `UNITOPERATION_PILLAGE` | `PillageLandHandler` | 掠夺 |
+
+> 操作触发方法 `Game.UnitOperations.canStart()` / `Game.UnitOperations.sendRequest()` 详见 [operations-commands.md](operations-commands.md)。
+
+## 战斗事件
+
+### SimulateCombatResult 事件
+
+`Game.Combat.simulateAttackAsync()` 的异步结果通过此事件返回。
+
+| 事件名 | 触发时机 | 说明 |
+|------|------|------|
+| `SimulateCombatResult` | 异步模拟战斗完成后 | 返回战斗双方属性、修正值、伤害等详细数据 |
+
+**事件 payload 结构**:
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `results.QueryToken` | `ComponentID` | 与 `simulateAttackAsync` 返回值匹配的查询令牌 |
+| `results.Attacker.ID` | `ComponentID` | 攻击方单位 ID |
+| `results.Attacker.CombatStrength` | `int` | 攻击方基础战斗力 |
+| `results.Attacker.StrengthModifier` | `int` | 攻击方战斗力修正值 |
+| `results.Attacker.DamageTo` | `int` | 攻击方受到的伤害 |
+| `results.Attacker.CombatStrengthType` | `CombatStrengthTypes` | 攻击方战斗力类型 |
+| `results.Attacker.MaxHitPoints` | `int` | 攻击方最大生命值 |
+| `results.Defender.ID` | `ComponentID` | 防守方单位/区域 ID |
+| `results.Defender.MaxHitPoints` | `int` | 防守方最大生命值 |
+| `results.Defender.DamageTo` | `int` | 防守方受到的伤害 |
+| `results.Defender.CombatStrengthType` | `CombatStrengthTypes` | 防守方战斗力类型 |
+| `results.CombatType` | `CombatTypes` | 战斗类型 |
+| `results.Location` | `Location` | 战斗发生位置 |
+
+```javascript
+// 来源 panel-unit-combat-preview.js
+// 监听 SimulateCombatResult 事件，处理战斗预演结果
+engine.on("SimulateCombatResult", this.onSimulateCombatResult, this);
+
+onSimulateCombatResult(results) {
+    if (ComponentID.isMatch(results?.QueryToken, this.queryCombatID) == false) return;
+    if (results?.Attacker == void 0) {
+        this.removeCombatPreview();
+        return;
+    }
+    const attackingUnit = Units.get(results.Attacker.ID);
+    const totalStrength = results.Attacker.CombatStrength + results.Attacker.StrengthModifier;
+    const attackerDamage = results.Attacker.DamageTo;
+    const defenderDamage = results.Defender.DamageTo;
+}
+```
+
+### Combat 事件
+
+实际战斗发生时的全局事件。
+
+| 事件名 | 触发时机 | 说明 |
+|------|------|------|
+| `Combat` | 实际战斗发生时 | 通知 UI 更新战斗结果展示 |
+
+```javascript
+// 来源 panel-unit-combat-preview.js
+// 监听 Combat 事件
+engine.on("Combat", this.onCombat, this);
+```
+
+### 窗口自定义事件
+
+| 事件名 | 触发时机 | 说明 |
+|------|------|------|
+| `ranged-attack-started` | 远程攻击模式启动时 | `window.dispatchEvent` 广播 |
+| `ranged-attack-finished` | 远程攻击模式结束时 | `window.dispatchEvent` 广播 |
+| `combat-preview-hidden` | 战斗预演面板隐藏时 | `window.dispatchEvent` 广播 |
 
 ## player.Armies 玩家军队管理
 
@@ -176,6 +309,35 @@ for (const formationId of pFormations.getFormationIds()) {
 | <API>Formations.get</API> | formationId | `Formation` | 根据 ID 获取编队实例 |
 | `formation.getUnitIds` | — | `ComponentID[]` | 获取编队内所有单位 ID |
 
+## 战斗 UI 辅助
+
+### WorldUI.getPlotLocation
+
+获取地块在 3D 世界空间中的坐标，常用于战斗预览 VFX 的起止位置计算。
+
+| 方法 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| `WorldUI.getPlotLocation` | plotCoord, offset?, placementMode? | `{x, y, z}` | 获取地块 3D 世界坐标 |
+
+```javascript
+// 来源 interface-mode-ranged-attack.js
+// 获取攻击方和目标方的 3D 世界坐标，用于战斗预览 VFX
+const target_position = WorldUI.getPlotLocation(plotCoord, { x: 0, y: 0, z: 0 }, PlacementMode.TERRAIN);
+const source_position = WorldUI.getPlotLocation(unit.location, { x: 0, y: 0, z: 0 }, PlacementMode.TERRAIN);
+modelGroup.addVFXAtPlot(
+    "VFX_3DUI_Ranged_Attack_Preview",
+    { i: plotCoord.x, j: plotCoord.y },
+    { x: 0, y: 0, z: 0 },
+    {
+        angle: 0,
+        constants: {
+            target_position: [target_position.x, target_position.y, target_position.z],
+            source_position: [source_position.x, source_position.y, source_position.z]
+        }
+    }
+);
+```
+
 ## 常用枚举
 
 | 枚举 | 说明 |
@@ -186,6 +348,7 @@ for (const formationId of pFormations.getFormationIds()) {
 | `CombatStrengthTypes.STRENGTH_MELEE` | 近战强度类型 |
 | `CombatStrengthTypes.STRENGTH_RANGED` | 远程强度类型 |
 | `CombatStrengthTypes.STRENGTH_BOMBARD` | 轰炸强度类型 |
+| `OperationPlotModifiers.NONE` | 无操作地块修正 |
 
 ## 相关全局对象
 
@@ -194,6 +357,7 @@ for (const formationId of pFormations.getFormationIds()) {
 | `Game.UnitOperations` | 单位操作（发起攻击等），见 operations-commands.md |
 | `GameplayMap` | 地图对象，用于坐标转换，见 gameplay-map.md |
 | `Units` | 单位管理，见 units.md |
+| `WorldUI` | 世界 UI 对象，用于 3D 坐标获取，见 world-ui.md |
 
 <API id="Game.Combat.testAttackInto"><h3>Game.Combat.testAttackInto(unitId, parameters)</h3>
 
@@ -328,6 +492,109 @@ const attackingUnitCombat = unit.Combat;
 if (attackingUnitCombat.getMeleeStrength(false) > 0) {
     // 有近战能力
 }
+```
+
+</API>
+<API id="UnitActionHandlers.setUnitActionHandler"><h3>UnitActionHandlers.setUnitActionHandler(actionType, handler)</h3>
+
+**说明**: 注册一个操作类型对应的 UI 交互处理器。重复注册同一类型会被忽略。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionType | `string` | 操作类型标识符（如 `"UNITOPERATION_RANGE_ATTACK"`） |
+| handler | `Object` | 处理器对象，需实现 `isTargetPlotOperation()`、`switchTo()` 等方法 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 unit-action-handlers.js
+// 注册远程攻击处理器
+class RangeAttackHandler {
+  isTargetPlotOperation() { return true; }
+  switchTo(context) { InterfaceMode.switchTo("INTERFACEMODE_RANGE_ATTACK", context); }
+}
+UnitActionHandlers.setUnitActionHandler("UNITOPERATION_RANGE_ATTACK", new RangeAttackHandler());
+```
+
+</API>
+<API id="UnitActionHandlers.doesActionHaveHandler"><h3>UnitActionHandlers.doesActionHaveHandler(actionType)</h3>
+
+**说明**: 检查指定操作类型是否已注册 UI 处理器。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionType | `string` | 操作类型标识符 |
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 model-commander-interact.js
+// 检查操作类型是否有处理器，决定是否显示操作按钮
+if (UnitActionHandlers.doesActionHaveHandler(operation.OperationType)) {
+    UnitActionHandlers.switchToActionInterfaceMode(operation.OperationType, { UnitID: unit.id });
+}
+```
+
+</API>
+<API id="UnitActionHandlers.switchToActionInterfaceMode"><h3>UnitActionHandlers.switchToActionInterfaceMode(actionType, context)</h3>
+
+**说明**: 切换到指定操作类型对应的 UI 交互模式（如远程攻击模式、移动模式等）。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionType | `string` | 操作类型标识符 |
+| context | `Object` | 上下文对象，包含 `UnitID` 等信息 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 army-panel.js
+// 切换到操作对应的交互模式
+UnitActionHandlers.switchToActionInterfaceMode(operation.OperationType, { UnitID: unit.id });
+```
+
+</API>
+<API id="UnitActionHandlers.doesActionRequireTargetPlot"><h3>UnitActionHandlers.doesActionRequireTargetPlot(actionType)</h3>
+
+**说明**: 检查指定操作是否需要选择目标地块（如远程攻击需要选择目标）。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionType | `string` | 操作类型标识符 |
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 model-commander-interact.js
+// 判断操作是否需要目标地块
+const requiresTarget = UnitActionHandlers.doesActionRequireTargetPlot(type.toString());
+```
+
+</API>
+<API id="UnitActionHandlers.useHandlerWithGamepad"><h3>UnitActionHandlers.useHandlerWithGamepad(actionType)</h3>
+
+**说明**: 检查指定操作的处理器是否支持手柄操作。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionType | `string` | 操作类型标识符 |
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 unit-action-handlers.js
+// 内部调用：检查处理器是否支持手柄
+const supportsGamepad = UnitActionHandlers.useHandlerWithGamepad("UNITOPERATION_RANGE_ATTACK");
 ```
 
 </API>
