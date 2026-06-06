@@ -1,28 +1,37 @@
 ---
 title: UI Objects UI对象
 doc_type: other
-summary: UI 框架组件和辅助对象，包括 UI、UI.Player、Databind、NavTray、DialogBoxManager、Icon 和 Layout 等。
+summary: UI 框架全局对象和辅助对象，包括 UI、UI.Player、Databind、NavTray、DialogBoxManager、Icon 和 Layout 等。引擎直接注入，无需 import。
 primary_scope:
   - UI
-related_scope:
   - UI.Player
   - Databind
-  - NavTray
+  - InterfaceMode
+  - Layout
   - DialogBoxManager
   - Icon
+  - NavTray
+related_scope:
+  - Component
 source:
   - modules/core/ui/panel-support.js
-  - modules/core/ui/options/options.js
   - modules/core/ui/component-support.js
+  - modules/core/ui/options/options.js
   - modules/core/ui/audio-base/audio-support.js
   - modules/core/ui/utilities/utilities-image.js
   - modules/core/ui/shell/main-menu/main-menu.js
-doc_update: 2026-06-05
+  - modules/core/ui/navigation-tray/navigation-tray.js
+  - modules/core/ui/navigation-tray/model-navigation-tray.js
+  - modules/core/ui/dialog-box/manager-dialog-box.js
+  - modules/core/ui/utilities/utilities-databinding.js
+  - modules/core/ui/components/fxs-flipbook.js
+  - modules/base-standard/ui/city-banners/city-banners.js
+doc_update: 2026-06-06
 ---
 
 # UI Objects UI对象
 
-UI 框架组件和辅助对象。从不通过 import 引入，引擎直接注入。
+UI 框架全局对象和辅助对象。引擎直接注入，无需手动 import。
 
 ```javascript
 // 快速示例：检查游戏状态并获取当前选中城市
@@ -38,7 +47,7 @@ if (UI.isInGame()) {
 
 ## UI 对象 — 属性与方法
 
-| 方法 | 参数 | 返回值 | 说明 |
+| 方法(16) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | <API>UI.sendAudioEvent</API> | event | `void` | 发送音频事件 |
 | <API>UI.getIconURL</API> | iconName | `string` | 获取图标 URL |
@@ -59,79 +68,152 @@ if (UI.isInGame()) {
 
 ## UI.Player — UI 层玩家操作
 
-| 方法 | 参数 | 返回值 | 说明 |
-|------|------|--------|------|
-| `getHeadSelectedCity` | — | `int` | 获取选中的城市 ID |
-| `getHeadSelectedUnit` | — | `int` | 获取选中的单位 ID |
-| `getPrimaryColorValueAsString` | playerID | `string` | 玩家主颜色字符串 |
-| `getPrimaryColorValueAsHex` | playerID | `string` | 玩家主颜色十六进制 |
-| `lookAtID` | id | `void` | 相机移动到对象 |
-| `selectCity` | cityID | `void` | 选中城市 |
-| `selectUnit` | unitID | `void` | 选中单位 |
-| `deselectAllUnits` | — | `void` | 取消所有单位选中 |
-| `deselectAllCities` | — | `void` | 取消所有城市选中 |
-| `selectNextReadyUnit` | — | `void` | 选中下一个就绪单位 |
+`UI.Player` 是 UI 层玩家操作对象，负责选中、取消选中、相机移动等操作。
 
 ```javascript
 // 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
 // 简要描述功能
 const cityID = UI.Player.getHeadSelectedCity();
-if (cityID) {
-  const city = Cities.get(cityID);
-}
+const unitID = UI.Player.getHeadSelectedUnit();
+UI.Player.selectCity(cityID);
+UI.Player.deselectAllUnits();
 ```
 
-## Databind
-
-| 方法 | 参数 | 返回值 | 说明 |
+| 方法(10) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `attribute` | name, value | `void` | 绑定属性 |
-| `classToggle` | className, condition | `void` | 切换 CSS 类 |
-| `if` | condition, template | `void` | 条件渲染 |
-| `for` | items, template | `void` | 列表渲染 |
-| `locText` | key | `void` | 绑定本地化文本 |
-| `tooltip` | key | `void` | 绑定工具提示 |
-| `value` | getter, setter | `void` | 绑定值 |
+| <API>UI.Player.getHeadSelectedCity</API> | — | `int` | 获取选中的城市 ID |
+| <API>UI.Player.getHeadSelectedUnit</API> | — | `int` | 获取选中的单位 ID |
+| <API>UI.Player.getPrimaryColorValueAsString</API> | playerID | `string` | 玩家主颜色字符串 |
+| <API>UI.Player.getPrimaryColorValueAsHex</API> | playerID | `string` | 玩家主颜色十六进制 |
+| <API>UI.Player.lookAtID</API> | id | `void` | 相机移动到对象 |
+| <API>UI.Player.selectCity</API> | cityID | `void` | 选中城市 |
+| <API>UI.Player.selectUnit</API> | unitID | `void` | 选中单位 |
+| <API>UI.Player.deselectAllUnits</API> | — | `void` | 取消所有单位选中 |
+| <API>UI.Player.deselectAllCities</API> | — | `void` | 取消所有城市选中 |
+| <API>UI.Player.selectNextReadyUnit</API> | — | `void` | 选中下一个就绪单位 |
 
-## NavTray
+## Databind — 数据绑定
 
-| 方法 | 参数 | 返回值 | 说明 |
+`Databind` 是数据绑定全局对象，用于将 UI 元素与数据模型绑定，实现声明式 UI 更新。
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 简要描述功能
+Databind.if(container, "g_NavTray.isTrayActive");
+Databind.for(item, "g_NavTray.entries", "item");
+Databind.locText(caption, "item.description");
+Databind.classToggle(button, "hidden", "g_NavTray.isTrayRequired");
+```
+
+| 方法(7) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `clear` | — | `void` | 清除导航栏 |
-| `addOrUpdateGenericBack` | callback | `void` | 添加/更新返回按钮 |
-| `addOrUpdateShellAction1` | label, callback | `void` | 添加/更新操作按钮 1 |
-| `addOrUpdateAccept` | label, callback | `void` | 添加/更新接受按钮 |
-| `addOrUpdateCancel` | label, callback | `void` | 添加/更新取消按钮 |
+| <API>Databind.attribute</API> | name, value | `void` | 绑定属性 |
+| <API>Databind.classToggle</API> | className, condition | `void` | 切换 CSS 类 |
+| <API>Databind.if</API> | condition, template | `void` | 条件渲染 |
+| <API>Databind.for</API> | items, template | `void` | 列表渲染 |
+| <API>Databind.locText</API> | key | `void` | 绑定本地化文本 |
+| <API>Databind.tooltip</API> | key | `void` | 绑定工具提示 |
+| <API>Databind.value</API> | getter, setter | `void` | 绑定值 |
 
-## DialogBoxManager
+## NavTray — 导航托盘
 
-| 方法 | 参数 | 返回值 | 说明 |
+`NavTray` 是手柄导航托盘全局对象，管理底部导航栏的按钮显示和操作。
+
+```javascript
+// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
+// 简要描述功能
+NavTray.clear();
+NavTray.addOrUpdateGenericBack();
+NavTray.addOrUpdateAccept("LOC_UI_QUEUE_MOVE_UP");
+NavTray.addOrUpdateShellAction1("LOC_UI_QUEUE_DELETE_ITEM");
+NavTray.addOrUpdateCancel("LOC_GENERIC_CANCEL");
+```
+
+| 方法(5) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `createDialog_Confirm` | options | `void` | 创建确认对话框 |
-| `createDialog_ConfirmCancel` | options | `void` | 创建确认/取消对话框 |
-| `createDialog_MultiOption` | options | `void` | 创建多选项对话框 |
-| `closeDialogBox` | id | `void` | 关闭对话框 |
-| `clear` | — | `void` | 清除所有对话框 |
+| <API>NavTray.clear</API> | — | `void` | 清除导航栏 |
+| <API>NavTray.addOrUpdateGenericBack</API> | callback | `void` | 添加/更新返回按钮 |
+| <API>NavTray.addOrUpdateShellAction1</API> | label, callback | `void` | 添加/更新操作按钮 1 |
+| <API>NavTray.addOrUpdateAccept</API> | label, callback | `void` | 添加/更新接受按钮 |
+| <API>NavTray.addOrUpdateCancel</API> | label, callback | `void` | 添加/更新取消按钮 |
 
-## Icon
+## DialogBoxManager — 对话框管理器
 
-| 方法 | 参数 | 返回值 | 说明 |
+`DialogBoxManager` 用于创建和管理对话框（确认框、确认/取消框、多选项框等）。
+
+```javascript
+// 来源 modules/core/ui/options/screen-options.js
+// 简要描述功能
+DialogBoxManager.createDialog_Confirm({
+  title: "LOC_OPTIONS_RESET_TITLE",
+  message: "LOC_OPTIONS_RESET_MESSAGE",
+  onConfirm: () => { /* 重置逻辑 */ }
+});
+
+DialogBoxManager.createDialog_ConfirmCancel({
+  title: "LOC_OPTIONS_APPLY_TITLE",
+  message: "LOC_OPTIONS_APPLY_MESSAGE",
+  onConfirm: () => { /* 确认逻辑 */ },
+  onCancel: () => { /* 取消逻辑 */ }
+});
+```
+
+| 方法(5) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `getLeaderPortraitIcon` | leaderType | `string` | 获取领袖头像图标 |
-| `getCivSymbolFromCivilizationType` | civType | `string` | 获取文明符号 |
-| `getIconFromActionName` | actionName | `string` | 从动作名获取图标 |
-| `getNotificationIconFromID` | notifID | `string` | 从通知 ID 获取图标 |
-| `getUnitIconFromDefinition` | unitDef | `string` | 从单位定义获取图标 |
-| `getYieldIcon` | yieldType | `string` | 获取产出图标 |
-| `getVictoryIcon` | victoryType | `string` | 获取胜利图标 |
+| <API>DialogBoxManager.createDialog_Confirm</API> | options | `void` | 创建确认对话框 |
+| <API>DialogBoxManager.createDialog_ConfirmCancel</API> | options | `void` | 创建确认/取消对话框 |
+| <API>DialogBoxManager.createDialog_MultiOption</API> | options | `void` | 创建多选项对话框 |
+| <API>DialogBoxManager.closeDialogBox</API> | id | `void` | 关闭对话框 |
+| <API>DialogBoxManager.clear</API> | — | `void` | 清除所有对话框 |
 
-## Layout & CSS
+## Icon — 图标辅助
 
-| 方法 | 参数 | 返回值 | 说明 |
+`Icon` 是图标辅助全局对象，提供各类游戏图标（领袖头像、文明符号、产出图标、胜利图标等）的获取函数。
+
+```javascript
+// 来源 modules/base-standard/ui/city-banners/city-banners.js
+// 简要描述功能
+const icon = Icon.getLeaderPortraitIcon(leaderType);
+const civSymbol = Icon.getCivSymbolCSSFromPlayer(playerID);
+const yieldIcon = Icon.getYieldIcon(yieldType);
+```
+
+| 方法(7) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `pixelsToScreenPixels` | px | `float` | 像素转屏幕像素 |
-| `pixels` | px | `float` | 像素值转换 |
-| `isCompact` | — | `bool` | 是否为紧凑布局 |
+| <API>Icon.getLeaderPortraitIcon</API> | leaderType | `string` | 获取领袖头像图标 |
+| <API>Icon.getCivSymbolFromCivilizationType</API> | civType | `string` | 获取文明符号 |
+| <API>Icon.getIconFromActionName</API> | actionName | `string` | 从动作名获取图标 |
+| <API>Icon.getNotificationIconFromID</API> | notifID | `string` | 从通知 ID 获取图标 |
+| <API>Icon.getUnitIconFromDefinition</API> | unitDef | `string` | 从单位定义获取图标 |
+| <API>Icon.getYieldIcon</API> | yieldType | `string` | 获取产出图标 |
+| <API>Icon.getVictoryIcon</API> | victoryType | `string` | 获取胜利图标 |
+
+## Layout — 布局与 CSS
+
+`Layout` 是布局辅助全局对象，提供像素转换和紧凑布局检测。
+
+```javascript
+// 来源 modules/core/ui/components/fxs-flipbook.js
+// 简要描述功能
+this.Root.style.width = Layout.pixels(sprite.width);
+this.Root.style.height = Layout.pixels(sprite.height);
+
+// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
+// 简要描述功能
+const isCompact = Layout.isCompact();
+```
+
+| 方法(3) | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| <API>Layout.pixelsToScreenPixels</API> | px | `float` | 像素转屏幕像素 |
+| <API>Layout.pixels</API> | px | `float` | 像素值转换 |
+| <API>Layout.isCompact</API> | — | `bool` | 是否为紧凑布局 |
+
+## 相关全局对象
+
+| 对象 | 说明 |
+|------|------|
+| [Component](component.md) | 所有 UI 组件的基类，定义生命周期、焦点管理、属性变更、音效播放等核心功能 |
 
 <API id="UI.sendAudioEvent"><h3>UI.sendAudioEvent(event)</h3>
 
@@ -432,6 +514,726 @@ const seed = UI.randomInt(0, 1e3);
 // 来源 modules/base-standard/ui/loading/root-loading.js
 // 简要描述功能
 UI.notifyUIReady();
+```
+
+</API>
+<API id="UI.Player.getHeadSelectedCity"><h3>UI.Player.getHeadSelectedCity()</h3>
+
+**说明**: 获取当前玩家选中的城市 ID，无选中时返回 `undefined`。
+
+**参数**: 无
+
+**返回值**: `int` | `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+const cityID = UI.Player.getHeadSelectedCity();
+if (cityID) {
+  const city = Cities.get(cityID);
+}
+```
+
+</API>
+<API id="UI.Player.getHeadSelectedUnit"><h3>UI.Player.getHeadSelectedUnit()</h3>
+
+**说明**: 获取当前玩家选中的单位 ID，无选中时返回 `undefined`。
+
+**参数**: 无
+
+**返回值**: `int` | `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+const unitID = UI.Player.getHeadSelectedUnit();
+if (unitID) {
+  const unit = Units.get(unitID);
+}
+```
+
+</API>
+<API id="UI.Player.getPrimaryColorValueAsString"><h3>UI.Player.getPrimaryColorValueAsString(playerID)</h3>
+
+**说明**: 获取指定玩家的主颜色字符串表示。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| playerID | `int` | 玩家 ID |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/panel-support.js
+// 简要描述功能
+const colorStr = UI.Player.getPrimaryColorValueAsString(playerID);
+```
+
+</API>
+<API id="UI.Player.getPrimaryColorValueAsHex"><h3>UI.Player.getPrimaryColorValueAsHex(playerID)</h3>
+
+**说明**: 获取指定玩家的主颜色十六进制字符串。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| playerID | `int` | 玩家 ID |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/panel-support.js
+// 简要描述功能
+const hexColor = UI.Player.getPrimaryColorValueAsHex(playerID);
+```
+
+</API>
+<API id="UI.Player.lookAtID"><h3>UI.Player.lookAtID(id)</h3>
+
+**说明**: 将相机移动到指定对象位置。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| id | `int` | 目标对象 ID（城市、单位等） |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+UI.Player.lookAtID(cityID);
+```
+
+</API>
+<API id="UI.Player.selectCity"><h3>UI.Player.selectCity(cityID)</h3>
+
+**说明**: 选中指定城市。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| cityID | `int` | 城市 ID |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+UI.Player.selectCity(cityID);
+```
+
+</API>
+<API id="UI.Player.selectUnit"><h3>UI.Player.selectUnit(unitID)</h3>
+
+**说明**: 选中指定单位。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| unitID | `int` | 单位 ID |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+UI.Player.selectUnit(unit.id);
+```
+
+</API>
+<API id="UI.Player.deselectAllUnits"><h3>UI.Player.deselectAllUnits()</h3>
+
+**说明**: 取消所有单位的选中状态。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+UI.Player.deselectAllUnits();
+```
+
+</API>
+<API id="UI.Player.deselectAllCities"><h3>UI.Player.deselectAllCities()</h3>
+
+**说明**: 取消所有城市的选中状态。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/panel-support.js
+// 简要描述功能
+UI.Player.deselectAllCities();
+```
+
+</API>
+<API id="UI.Player.selectNextReadyUnit"><h3>UI.Player.selectNextReadyUnit()</h3>
+
+**说明**: 选中下一个就绪（有剩余行动力）的单位。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 简要描述功能
+UI.Player.selectNextReadyUnit();
+```
+
+</API>
+<API id="Databind.attribute"><h3>Databind.attribute(name, value)</h3>
+
+**说明**: 将 DOM 属性绑定到数据模型。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| name | `string` | 属性名 |
+| value | `any` | 属性值 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/utilities/utilities-databinding.js
+// 简要描述功能
+Databind.attribute(target, "componentid", `${baseComponentID}`, verbose);
+```
+
+</API>
+<API id="Databind.classToggle"><h3>Databind.classToggle(className, condition)</h3>
+
+**说明**: 根据条件切换 CSS 类名。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| className | `string` | CSS 类名 |
+| condition | `string` | 条件表达式，如 `"g_NavTray.isTrayRequired"` |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 简要描述功能
+Databind.classToggle(button, "hidden", "g_NavTray.isTrayRequired");
+```
+
+</API>
+<API id="Databind.if"><h3>Databind.if(condition, template)</h3>
+
+**说明**: 根据条件渲染元素。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| condition | `string` | 条件表达式 |
+| template | `string` | 模板名称 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 简要描述功能
+Databind.if(container, "g_NavTray.isTrayActive");
+```
+
+</API>
+<API id="Databind.for"><h3>Databind.for(items, template)</h3>
+
+**说明**: 根据数据列表循环渲染元素。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| items | `string` | 数据列表表达式 |
+| template | `string` | 模板名称 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 简要描述功能
+Databind.for(item, "g_NavTray.entries", "item");
+```
+
+</API>
+<API id="Databind.locText"><h3>Databind.locText(key)</h3>
+
+**说明**: 绑定本地化文本到元素。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| key | `string` | 本地化键名 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/navigation-tray.js
+// 简要描述功能
+Databind.locText(caption, "item.description");
+```
+
+</API>
+<API id="Databind.tooltip"><h3>Databind.tooltip(key)</h3>
+
+**说明**: 绑定工具提示到元素。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| key | `string` | 工具提示键名 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/age-rankings/panel-age-rankings.js
+// 简要描述功能
+Databind.tooltip(playerContainer, player.playerName);
+```
+
+</API>
+<API id="Databind.value"><h3>Databind.value(getter, setter)</h3>
+
+**说明**: 绑定值到元素，支持双向绑定。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| getter | `function` | 获取值的函数 |
+| setter | `function` | 设置值的函数 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/utilities/utilities-databinding.js
+// 简要描述功能
+Databind.value(() => model.value, (v) => model.value = v);
+```
+
+</API>
+<API id="NavTray.clear"><h3>NavTray.clear()</h3>
+
+**说明**: 清除导航栏所有按钮。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
+// 简要描述功能
+NavTray.clear();
+```
+
+</API>
+<API id="NavTray.addOrUpdateGenericBack"><h3>NavTray.addOrUpdateGenericBack(callback)</h3>
+
+**说明**: 添加或更新通用返回按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| callback | `function` | 点击回调函数 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
+// 简要描述功能
+NavTray.addOrUpdateGenericBack();
+```
+
+</API>
+<API id="NavTray.addOrUpdateShellAction1"><h3>NavTray.addOrUpdateShellAction1(label, callback)</h3>
+
+**说明**: 添加或更新第一个操作按钮（通常是 Y 键）。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| label | `string` | 按钮标签（本地化键） |
+| callback | `function` | 点击回调函数 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
+// 简要描述功能
+NavTray.addOrUpdateShellAction1("LOC_ADVANCED_FORCE_COMPLETE_DECK");
+```
+
+</API>
+<API id="NavTray.addOrUpdateAccept"><h3>NavTray.addOrUpdateAccept(label, callback)</h3>
+
+**说明**: 添加或更新接受按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| label | `string` | 按钮标签（本地化键） |
+| callback | `function` | 点击回调函数 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/build-queue/panel-build-queue.js
+// 简要描述功能
+NavTray.addOrUpdateAccept("LOC_UI_QUEUE_MOVE_UP");
+```
+
+</API>
+<API id="NavTray.addOrUpdateCancel"><h3>NavTray.addOrUpdateCancel(label, callback)</h3>
+
+**说明**: 添加或更新取消按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| label | `string` | 按钮标签（本地化键） |
+| callback | `function` | 点击回调函数 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/navigation-tray/model-navigation-tray.js
+// 简要描述功能
+NavTray.addOrUpdateCancel("LOC_GENERIC_CANCEL");
+```
+
+</API>
+<API id="DialogBoxManager.createDialog_Confirm"><h3>DialogBoxManager.createDialog_Confirm(options)</h3>
+
+**说明**: 创建确认对话框，仅有一个确认按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| options | `object` | 对话框配置对象，包含 `title`、`message`、`onConfirm` 等字段 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/options/screen-options.js
+// 简要描述功能
+DialogBoxManager.createDialog_Confirm({
+  title: "LOC_OPTIONS_RESET_TITLE",
+  message: "LOC_OPTIONS_RESET_MESSAGE",
+  onConfirm: () => { /* 重置逻辑 */ }
+});
+```
+
+</API>
+<API id="DialogBoxManager.createDialog_ConfirmCancel"><h3>DialogBoxManager.createDialog_ConfirmCancel(options)</h3>
+
+**说明**: 创建确认/取消对话框，有确认和取消两个按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| options | `object` | 对话框配置对象，包含 `title`、`message`、`onConfirm`、`onCancel` 等字段 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/options/screen-options.js
+// 简要描述功能
+DialogBoxManager.createDialog_ConfirmCancel({
+  title: "LOC_OPTIONS_APPLY_TITLE",
+  message: "LOC_OPTIONS_APPLY_MESSAGE",
+  onConfirm: () => { /* 确认逻辑 */ },
+  onCancel: () => { /* 取消逻辑 */ }
+});
+```
+
+</API>
+<API id="DialogBoxManager.createDialog_MultiOption"><h3>DialogBoxManager.createDialog_MultiOption(options)</h3>
+
+**说明**: 创建多选项对话框，支持多个自定义按钮。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| options | `object` | 对话框配置对象，包含 `title`、`message`、`options`（按钮数组）等字段 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/options/options-helpers.js
+// 简要描述功能
+DialogBoxManager.createDialog_MultiOption({
+  title: "LOC_OPTIONS_CHOOSE_TITLE",
+  message: "LOC_OPTIONS_CHOOSE_MESSAGE",
+  options: [
+    { label: "LOC_OPTION_A", callback: () => {} },
+    { label: "LOC_OPTION_B", callback: () => {} }
+  ]
+});
+```
+
+</API>
+<API id="DialogBoxManager.closeDialogBox"><h3>DialogBoxManager.closeDialogBox(id)</h3>
+
+**说明**: 关闭指定 ID 的对话框。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| id | `int` | 对话框 ID |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/dialog-box/screen-dialog-box.js
+// 简要描述功能
+DialogBoxManager.closeDialogBox(this.dialogId);
+```
+
+</API>
+<API id="DialogBoxManager.clear"><h3>DialogBoxManager.clear()</h3>
+
+**说明**: 清除所有对话框。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/context-manager/context-manager.js
+// 简要描述功能
+DialogBoxManager.clear();
+```
+
+</API>
+<API id="Icon.getLeaderPortraitIcon"><h3>Icon.getLeaderPortraitIcon(leaderType)</h3>
+
+**说明**: 获取指定领袖类型的头像图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| leaderType | `string` | 领袖类型名称 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/city-banners/city-banners.js
+// 简要描述功能
+const icon = Icon.getLeaderPortraitIcon(leaderType);
+```
+
+</API>
+<API id="Icon.getCivSymbolFromCivilizationType"><h3>Icon.getCivSymbolFromCivilizationType(civType)</h3>
+
+**说明**: 获取指定文明类型的符号图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| civType | `string` | 文明类型名称 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/tooltips/plot-tooltip/player-portrait.js
+// 简要描述功能
+setCivSymbol(Icon.getCivSymbolFromCivilizationType(player.civilizationType));
+```
+
+</API>
+<API id="Icon.getIconFromActionName"><h3>Icon.getIconFromActionName(actionName)</h3>
+
+**说明**: 从动作名称获取对应的图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| actionName | `string` | 动作名称 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-hold-to-confirm.js
+// 简要描述功能
+const imagePath = Icon.getIconFromActionName(actionName) ?? "";
+```
+
+</API>
+<API id="Icon.getNotificationIconFromID"><h3>Icon.getNotificationIconFromID(notifID)</h3>
+
+**说明**: 从通知 ID 获取对应的通知图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| notifID | `int` | 通知 ID |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/notification-train/panel-notification-train.js
+// 简要描述功能
+icon.src = Icon.getNotificationIconFromID(notificationID);
+```
+
+</API>
+<API id="Icon.getUnitIconFromDefinition"><h3>Icon.getUnitIconFromDefinition(unitDef)</h3>
+
+**说明**: 从单位定义获取单位图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| unitDef | `object` | 单位定义对象 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/choosers/helpers.js
+// 简要描述功能
+return Icon.getUnitIconFromDefinition(unitInfo);
+```
+
+</API>
+<API id="Icon.getYieldIcon"><h3>Icon.getYieldIcon(yieldType)</h3>
+
+**说明**: 获取指定产出类型的图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| yieldType | `string` | 产出类型名称 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/commerce/commerce-screen-model.js
+// 简要描述功能
+iconSrc: `url(${Icon.getYieldIcon(yieldDefinition.YieldType)})`
+```
+
+</API>
+<API id="Icon.getVictoryIcon"><h3>Icon.getVictoryIcon(victoryType)</h3>
+
+**说明**: 获取指定胜利类型的图标路径。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| victoryType | `string` | 胜利类型名称 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/victories/victories-screen-model.js
+// 简要描述功能
+const victoryIcon = Icon.getVictoryIcon(victoryType);
+```
+
+</API>
+<API id="Layout.pixelsToScreenPixels"><h3>Layout.pixelsToScreenPixels(px)</h3>
+
+**说明**: 将像素值转换为屏幕像素值，用于响应式布局计算。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| px | `float` | 像素值 |
+
+**返回值**: `float`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/diplo-ribbon/panel-diplo-ribbon.js
+// 简要描述功能
+if (window.innerWidth >= Layout.pixelsToScreenPixels(1919) && !isMobileViewExperience) {
+  // 大屏布局
+}
+```
+
+</API>
+<API id="Layout.pixels"><h3>Layout.pixels(px)</h3>
+
+**说明**: 将像素值转换为 CSS 像素字符串，用于设置元素样式。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| px | `float` | 像素值 |
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/components/fxs-flipbook.js
+// 简要描述功能
+this.Root.style.width = Layout.pixels(sprite.width);
+this.Root.style.height = Layout.pixels(sprite.height);
+```
+
+</API>
+<API id="Layout.isCompact"><h3>Layout.isCompact()</h3>
+
+**说明**: 检查当前是否为紧凑布局（窄屏/移动端）。
+
+**参数**: 无
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
+// 简要描述功能
+const isCompact = Layout.isCompact();
 ```
 
 </API>

@@ -9,11 +9,15 @@ primary_scope:
 related_scope:
   - GameInfo.Religions
 source:
+  - TunerPanels/Cities.ltp
+  - TunerPanels/Units.ltp
   - modules/base-standard/ui/panel-belief-picker/panel-belief-picker.js
   - modules/base-standard/ui/panel-religion-picker/panel-religion-picker.js
   - modules/base-standard/ui/sub-system-dock/panel-sub-system-dock.js
   - modules/base-standard/ui/pantheon-chooser/panel-religion-chooser.js
-doc_update: 2026-06-05
+  - modules/base-standard/ui/pantheon-chooser/screen-pantheon-chooser.js
+  - modules/base-standard/ui/pantheon-complete/panel-pantheon-complete.js
+doc_update: 2026-06-06
 ---
 
 # Religion 宗教
@@ -58,13 +62,59 @@ if (!pReligion) {
 | <API>player.Religion.canCreateReligion</API> | — | `bool` | 是否可以创建宗教 |
 | <API>player.Religion.hasCreatedReligion</API> | — | `bool` | 玩家是否已创建宗教 |
 | <API>player.Religion.getPantheons</API> | — | `array` | 获取万神殿列表 |
+| <API>player.Religion.getNumPantheons</API> | — | `int` | 获取万神殿数量 |
+| <API>player.Religion.getNumPantheonsUnlocked</API> | — | `int` | 获取已解锁的万神殿数量 |
 | <API>player.Religion.getReligionName</API> | — | `string` | 获取宗教名称 |
 | <API>player.Religion.getReligionType</API> | — | `string` | 获取宗教类型 |
+| <API>player.Religion.getHolyCityName</API> | — | `string` | 获取圣城名称 |
+| <API>player.Religion.getBeliefs</API> | — | `array` | 获取已选信仰列表 |
+| <API>player.Religion.getNumBeliefsEarned</API> | — | `int` | 获取已获得的信仰数量 |
+
+## 城市宗教实例（city.Religion）
+
+城市对象上的宗教子系统，为只读属性，用于查询城市中各宗教的分布情况。
+
+```javascript
+// 快速示例：查看城市宗教信息
+// 来源 TunerPanels/Cities.ltp
+// 获取城市的三种宗教类型
+const cityReligion = city.Religion;
+const majorityType = cityReligion.majorityReligion;  // 主流宗教
+const urbanType = cityReligion.urbanReligion;        // 城市宗教
+const ruralType = cityReligion.ruralReligion;        // 乡村宗教
+```
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `city.Religion.majorityReligion` | `int` | 主流宗教类型（信仰人数最多的宗教） |
+| `city.Religion.urbanReligion` | `int` | 城市区域宗教类型 |
+| `city.Religion.ruralReligion` | `int` | 乡村区域宗教类型 |
+
+```javascript
+// 示例：检查城市是否信仰指定宗教
+// 来源 panel-religion-chooser.js
+// 遍历玩家城镇，统计信仰某宗教的城镇数量
+if (_city.isTown && _city.Religion?.majorityReligion == currentReligion?.getReligionType()) {
+  townsInReligion++;
+}
+```
 
 ## GameInfo 关联表
 
 ```javascript
-GameInfo.Religions;    // 宗教定义表
+// 来源 panel-belief-picker.js
+// 遍历所有宗教定义，查询已创立的宗教
+for (const religion of GameInfo.Religions) {
+  if (Game.Religion.hasBeenFounded(religion.ReligionType)) {
+    const religionDef = GameInfo.Religions.lookup(religion.ReligionType);
+  }
+}
+```
+
+```javascript
+// 来源 panel-religion-chooser.js
+// 通过宗教类型查宗教定义，获取图标
+const religionData = GameInfo.Religions.lookup(player.Religion.getReligionType());
 ```
 
 ---
@@ -161,11 +211,22 @@ const isLocked = !Game.Religion.isBeliefClaimable(belief.$index) || this.beliefs
 </API>
 <API id="player.Religion.get"><h3>player.Religion.get()</h3>
 
-**说明**: 获取宗教对象（返回万神殿）。注意：`Player.Religion.get()` 返回的是万神殿对象。
+**说明**: 获取宗教对象（返回万神殿）。注意：`Players.Religion.get()` 返回的是万神殿对象。
 
 **参数**: 无
 
 **返回值**: `object`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-religion-chooser.js
+// 通过管理器获取玩家宗教对象（带 playerID 参数）
+const currentReligion = Players.Religion?.get(player.id);
+if (currentReligion == null) {
+  return;
+}
+```
 
 </API>
 <API id="player.Religion.canCreateReligion"><h3>player.Religion.canCreateReligion()</h3>
@@ -226,6 +287,48 @@ if (playerPantheons.length > 0) {
 ```
 
 </API>
+<API id="player.Religion.getNumPantheons"><h3>player.Religion.getNumPantheons()</h3>
+
+**说明**: 获取玩家已拥有的万神殿数量。
+
+**参数**: 无
+
+**返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-pantheon-complete.js
+// 根据万神殿数量显示文案
+if (playerReligion.getPantheons().length == 0) {
+  this.yourPantheonText.innerHTML = Locale.stylize("LOC_UI_PANTHEON_EMPTY");
+} else {
+  this.yourPantheonText.innerHTML = Locale.compose(
+    "LOC_UI_PANTHEON_YOUR_PANTHEON",
+    playerReligion.getNumPantheons()
+  );
+}
+```
+
+</API>
+<API id="player.Religion.getNumPantheonsUnlocked"><h3>player.Religion.getNumPantheonsUnlocked()</h3>
+
+**说明**: 获取已解锁的万神殿数量。
+
+**参数**: 无
+
+**返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 screen-pantheon-chooser.js
+// 获取已解锁万神殿数量，用于显示副标题
+const playerReligion = player.Religion;
+this.numPantheonsToAdd = playerReligion.getNumPantheonsUnlocked();
+```
+
+</API>
 <API id="player.Religion.getReligionName"><h3>player.Religion.getReligionName()</h3>
 
 **说明**: 获取指定宗教的名称。
@@ -259,6 +362,78 @@ religionName = playerReligion.getReligionName();
 // 来源 panel-religion-chooser.js
 // 获取玩家宗教类型并查询定义
 const religionData = GameInfo.Religions.lookup(player.Religion.getReligionType());
+```
+
+</API>
+<API id="player.Religion.getHolyCityName"><h3>player.Religion.getHolyCityName()</h3>
+
+**说明**: 获取宗教的圣城名称。
+
+**参数**: 无
+
+**返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-belief-picker.js
+// 显示宗教圣城名称
+beliefReligionHolyCity.setAttribute(
+  "data-l10n-id",
+  Locale.compose("LOC_UI_ESTABLISH_RELIGION_HOLY_CITY", viewingReligion.getHolyCityName())
+);
+```
+
+</API>
+<API id="player.Religion.getBeliefs"><h3>player.Religion.getBeliefs()</h3>
+
+**说明**: 获取玩家宗教已选择的信仰列表。
+
+**参数**: 无
+
+**返回值**: `array`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-religion-chooser.js
+// 遍历已选信仰，查找增强信条
+const beliefs = currentReligion.getBeliefs();
+if (beliefs) {
+  beliefs.forEach((belief) => {
+    const beliefDef = GameInfo.Beliefs.lookup(belief);
+    if (beliefDef?.BeliefClassType == "BELIEF_CLASS_ENHANCER") {
+      // 处理增强信条
+    }
+  });
+}
+```
+
+</API>
+<API id="player.Religion.getNumBeliefsEarned"><h3>player.Religion.getNumBeliefsEarned()</h3>
+
+**说明**: 获取已获得的信仰数量（用于决定创始人信条槽位数量）。
+
+**参数**: 无
+
+**返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-belief-picker.js
+// 根据已获得信仰数量决定创始人信条槽位
+const numBeliefsEarned = viewingReligion.getNumBeliefsEarned();
+switch (numBeliefsEarned) {
+  case 1:
+  case 2:
+  case 3:
+    return 1;
+  case 4:
+    return 2;
+  case 5:
+    return 3;
+}
 ```
 
 </API>

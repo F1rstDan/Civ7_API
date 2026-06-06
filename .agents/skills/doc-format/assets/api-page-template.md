@@ -57,7 +57,7 @@ const Object = SomeAPI.get(GameContext.localPlayerID);
 |------|------|--------|------|
 | <API>Object.getHash</API> | — | `int` | 获取对象哈希值 |
 
-## 子对象/子系统
+## 子系统
 
 对象内部包含以下子系统：
 

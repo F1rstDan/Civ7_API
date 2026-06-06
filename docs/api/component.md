@@ -4,13 +4,22 @@ doc_type: other
 summary: 所有 UI 组件的基类，定义生命周期、焦点管理、属性变更、音效播放和 ComponentRoot 根元素等核心功能。
 primary_scope:
   - Component
-related_scope:
   - ComponentRoot
+  - ComponentID
+related_scope:
   - LiteEvent
   - Subject
+  - asyncLoad
+  - delayByFrame
+  - waitForLayout
+  - waitUntilValue
+  - removeAllChildren
 source:
   - modules/core/ui/component-support.js
-doc_update: 2026-06-05
+  - modules/core/ui/panel-support.js
+  - modules/core/ui/components/fxs-radio-button.js
+  - modules/core/ui/components/fxs-close-button.js
+doc_update: 2026-06-06
 ---
 
 # Component 基类
@@ -112,7 +121,18 @@ class MyPanel extends Component {
 
 **返回值**: `void`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/mp-additional-content/mp-additional-content.js
+// 初始化时查询 DOM 子元素并设置音频组
+onInitialize() {
+  this.titleText = MustGetElement(".font-title", this.Root);
+  this.frame = MustGetElement("fxs-modal-frame", this.Root);
+  this.closeButton = MustGetElement(".mp-additional-content__close-button", this.Root);
+  this.Root.setAttribute("data-audio-group-ref", "audio-mp-additional-content");
+}
+```
 
 </API>
 
@@ -137,8 +157,6 @@ onAttach() {
 }
 ```
 
-**来源**: `modules/core/ui/component-support.js`
-
 </API>
 
 <API id="Component.postOnAttach"><h3>Component.postOnAttach()</h3>
@@ -149,7 +167,16 @@ onAttach() {
 
 **返回值**: `void`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/panel-support.js
+// Panel 的 postOnAttach 标志 attach 完成
+postOnAttach() {
+  super.postOnAttach();
+  this.inAttach = false;
+}
+```
 
 </API>
 
@@ -174,8 +201,6 @@ onDetach() {
 }
 ```
 
-**来源**: `modules/core/ui/component-support.js`
-
 </API>
 
 <API id="Component.Destroy"><h3>Component.Destroy()</h3>
@@ -186,7 +211,15 @@ onDetach() {
 
 **返回值**: `void`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/city-banners/city-banners.js
+// 移除组件时调用 Destroy 进行清理
+remove() {
+  this.Destroy();
+}
+```
 
 </API>
 
@@ -198,7 +231,19 @@ onDetach() {
 
 **返回值**: `ComponentRoot`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/mp-additional-content/mp-additional-content.js
+// 通过 this.Root 查询子元素、设置属性、注册事件
+onInitialize() {
+  this.titleText = MustGetElement(".font-title", this.Root);
+  this.Root.setAttribute("data-audio-group-ref", "audio-mp-additional-content");
+}
+onAttach() {
+  this.Root.addEventListener(InputEngineEventName, this.engineInputListener);
+}
+```
 
 </API>
 
@@ -210,7 +255,20 @@ onDetach() {
 
 **返回值**: `string | null`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/component-support.js
+// playSound 内部使用 this.audioGroup 查找音效配置
+playSound(id, idKeyAttr) {
+  const group = this.audioGroup;
+  id = idKeyAttr ? this.Root.getAttribute(idKeyAttr) ?? id : id;
+  const soundTag = group ? Component.audio[group]?.[id] : Component.audio["audio-base"][id];
+  if (soundTag) {
+    UI.sendAudioEvent(soundTag);
+  }
+}
+```
 
 </API>
 
@@ -233,8 +291,6 @@ onReceiveFocus() {
 }
 ```
 
-**来源**: `modules/core/ui/component-support.js`
-
 </API>
 
 <API id="Component.onLoseFocus"><h3>Component.onLoseFocus()</h3>
@@ -245,7 +301,16 @@ onReceiveFocus() {
 
 **返回值**: `void`
 
-**来源**: `modules/core/ui/component-support.js`
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
+// 丢失焦点时清空导航托盘，然后调用父类方法
+onLoseFocus() {
+  NavTray.clear();
+  super.onLoseFocus();
+}
+```
 
 </API>
 
@@ -271,8 +336,6 @@ setLastActivatedComponent(component) {
   }
 }
 ```
-
-**来源**: `modules/core/ui/component-support.js`
 
 </API>
 
@@ -307,8 +370,6 @@ onAttributeChanged(name, oldValue, newValue) {
 }
 ```
 
-**来源**: `modules/core/ui/component-support.js`
-
 </API>
 
 <API id="Component.playSound"><h3>Component.playSound(id, idKeyAttr)</h3>
@@ -333,7 +394,5 @@ playPressSound() {
 // 激活时播放
 this.playSound("data-audio-activate", "data-audio-activate-ref");
 ```
-
-**来源**: `modules/core/ui/component-support.js`
 
 </API>

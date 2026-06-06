@@ -1,5 +1,5 @@
 ---
-title: Reflection 调试反射
+title: ReflectionArchives 调试反射
 doc_type: other
 summary: ReflectionArchives 是文明7的调试反射系统，允许检查游戏对象的内部状态。
 primary_scope:
@@ -10,10 +10,13 @@ related_scope:
   - UI
 source:
   - TunerPanels/Reflection.ltp
-doc_update: 2026-06-05
+  - TunerPanels/Cities.ltp
+  - TunerPanels/Districts.ltp
+  - TunerPanels/Units.ltp
+doc_update: 2026-06-06
 ---
 
-# Reflection 调试反射
+# ReflectionArchives 调试反射
 
 ReflectionArchives 是文明7的调试反射系统，允许检查游戏对象的内部状态。由 Live Tuner 在运行时注入，不含 JS 模块源码——所有 API 均来自 `TunerPanels/Reflection.ltp` 面板定义。
 
@@ -40,7 +43,11 @@ for (const child of children) {
 }
 ```
 
-## 方法列表
+## 属性与方法
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `ReflectionArchives.showVerboseValues` | `bool` | 是否显示详细值 |
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
@@ -49,12 +56,6 @@ for (const child of children) {
 | <API>ReflectionArchives.getPlayers</API> | — | `Archive` | 获取玩家档案 |
 | <API>ReflectionArchives.getByComponentID</API> | componentId | `Archive` | 按组件 ID 获取档案 |
 | <API>ReflectionArchives.setVerboseValues</API> | enabled | `void` | 设置详细值显示 |
-
-## 属性
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `showVerboseValues` | `bool` | 是否显示详细值 |
 
 ## 档案实例的属性与方法
 
@@ -90,29 +91,26 @@ console.log(archive.typeStr, archive.id.owner, archive.id.id);
 | `archive.scrambleMemberValue(memberId)` | `int` | `void` | 扰乱成员值（调试用） |
 | `archive.setMemberToLogHash(memberId, enabled)` | `int`, `bool` | `void` | 设置成员记录哈希（调试用） |
 
-## Network 调试
+## 相关调试接口
 
 ```javascript
 // 来源 TunerPanels/Reflection.ltp
 // 测试哈希同步
-Network.testHashing(0);     // 测试哈希
-Network.testHashing(1);     // 测试哈希（模式1）
+Network.testHashing(0);
 ```
-
-## UI 调试
 
 ```javascript
 // 来源 TunerPanels/Reflection.ltp
 // 复制文本到剪贴板
-UI.setClipboardText(str);   // 复制文本到剪贴板
+UI.setClipboardText(str);
 ```
 
 ## 相关全局对象
 
 | 对象 | 说明 |
 |------|------|
-| [`Network`](network.md) | 网络系统，`testHashing()` 用于调试同步 |
-| [`UI`](ui-objects.md) | UI 系统，`setClipboardText()` 用于复制调试信息 |
+| `Network` | 网络系统，`testHashing()` 用于调试同步 |
+| `UI` | UI 系统，`setClipboardText()` 用于复制调试信息 |
 
 <API id="ReflectionArchives.getGame"><h3>ReflectionArchives.getGame()</h3>
 
@@ -170,18 +168,18 @@ const archive = ReflectionArchives.getPlayers();
 
 <API id="ReflectionArchives.getByComponentID"><h3>ReflectionArchives.getByComponentID(componentId)</h3>
 
-**说明**: 按组件 ID 获取对应的档案对象。
+**说明**: 按组件 ID 获取对应的档案对象。在 Cities、Districts、Units 等多个面板中被广泛使用。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
-| componentId | `int` | 组件 ID（如城市 ID） |
+| componentId | `int` | 组件 ID（如城市 ID、区域 ID、单位 ID 等） |
 
 **返回值**: `Archive`
 
 **使用示例**:
 
 ```javascript
-// 来源 TunerPanels/Reflection.ltp
+// 来源 TunerPanels/Cities.ltp
 // 按组件 ID 获取档案
 const archive = ReflectionArchives.getByComponentID(cityId);
 ```

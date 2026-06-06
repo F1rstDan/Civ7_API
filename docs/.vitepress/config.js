@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'Civ7 Mod API',
   description: '文明7 Mod 开发 API 参考文档',
   base: '/Civ7_API/',
+  srcExclude: ['**/_plan/**', '**/_prompt_log/**'],
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
@@ -34,6 +35,7 @@ export default defineConfig({
           { text: 'Culture 文化', link: '/api/culture' },
           { text: 'ProgressionTrees 科文树', link: '/api/progression-trees' },
           { text: 'Diplomacy 外交', link: '/api/diplomacy' },
+          { text: 'Combat 战斗系统', link: '/api/combat' },
           { text: 'Religion 宗教', link: '/api/religion' },
           { text: 'Trade 贸易系统', link: '/api/trade' },
           { text: 'DiplomacyDeals 外交交易', link: '/api/diplomacy-deals' },
@@ -61,7 +63,7 @@ export default defineConfig({
         items: [
           { text: 'Component 基类', link: '/api/component' },
           { text: 'UI Objects UI对象', link: '/api/ui-objects' },
-          { text: 'Audio & Debug 音频调试', link: '/api/audio-debug' },
+          { text: 'Audio 音频声音', link: '/api/audio' },
           { text: 'Camera 镜头', link: '/api/camera' },
           { text: 'Locale 本地化', link: '/api/locale' },
           { text: 'Notifications 通知', link: '/api/notifications' },
@@ -73,19 +75,21 @@ export default defineConfig({
         text: '数据|常量|事件',
         items: [
           { text: 'GameInfo 数据表', link: '/api/game-info' },
-          { text: 'constants 常量总览', link: '/api/constants' },
+          { text: 'Constants 常量总览', link: '/api/constants' },
           { text: 'Events 事件列表', link: '/api/events' },
         ]
       },
       {
         text: '调试与其他',
         items: [
+          { text: 'Debug 调试', link: '/api/debug' },
           { text: 'Configuration 配置', link: '/api/configuration' },
           { text: 'Unlocks 解锁系统', link: '/api/unlocks' },
           { text: 'Automation 自动化', link: '/api/automation' },
           { text: 'Autoplay 自动播放', link: '/api/autoplay' },
           { text: 'Reflection 调试反射', link: '/api/reflection' },
           { text: 'Modding 模组', link: '/api/modding' },
+          { text: 'Online 在线服务', link: '/api/online' },
           { text: 'Network 网络', link: '/api/network' },
           { text: 'Social 社交', link: '/api/social' },
           { text: 'Input 输入', link: '/api/input' },
@@ -98,3 +102,5 @@ export default defineConfig({
     outline: { level: [2, 3], label: '页面导航' },
   }
 })
+
+

@@ -11,30 +11,28 @@ related_scope:
   - unit.Combat
   - unit.Experience
   - unit.Religion
+  - player.Formations
+  - player.Armies
   - GameInfo.Units
   - GameInfo.UnitOperations
   - GameInfo.UnitPromotions
   - GameInfo.UnitPromotionDisciplines
   - GameInfo.UnitAbilities
   - GameInfo.UnitEmbarkationTypes
-  - player.Formations
-  - player.Armies
 source:
   - TunerPanels/Units.ltp
   - modules/base-standard/ui/interface-modes/support-unit-map-decoration.js
   - modules/base-standard/scripts/age-transition-post-load.js
   - modules/base-standard/ui/tutorial/tutorial-support.js
-doc_update: 2026-06-05
+doc_update: 2026-06-06
 ---
 
 # Units 单位
 
-单位管理全局对象，提供单位的获取、创建、属性修改及状态查询等功能。
-
-## 快速示例
+单位管理全局对象，提供单位的获取、创建、属性修改及状态查询等功能。引擎直接注入，无需手动 import 引入。
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 通过 ID 获取单位并读取其基本属性
 const unit = Units.get(unitId);
 unit.location;       // {x, y}
@@ -76,7 +74,7 @@ unit.isEmbarked;
 ### 基本属性
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 获取单位对象并读取常用属性
 let unit = Units.get(unitId);
 unit.id;
@@ -99,7 +97,7 @@ unit.id;
 ### Health 生命子系统
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 读取单位的生命值状态
 unit.Health.damage;     // 当前伤害值
 unit.Health.maxDamage;  // 最大伤害值
@@ -109,7 +107,7 @@ unit.Health.isDead;     // 是否死亡
 ### Combat 战斗子系统
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 读取单位的战斗属性
 unit.Combat.attackRange; // 攻击范围
 ```
@@ -117,7 +115,7 @@ unit.Combat.attackRange; // 攻击范围
 ### Experience 晋级子系统
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 读取单位的经验与晋升状态
 unit.Experience.canPromote;
 unit.Experience.getAllPromotions(); // [{disciplineType, promotionType}]
@@ -126,7 +124,7 @@ unit.Experience.getAllPromotions(); // [{disciplineType, promotionType}]
 ### Religion 宗教子系统
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 读取单位的宗教属性
 unit.Religion.religionType;
 ```
@@ -134,7 +132,7 @@ unit.Religion.religionType;
 ### 操作队列
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 遍历单位的操作队列
 for (let i = 0; i < unit.operationQueueSize; i++) {
   const opType = unit.getOperationType(i);
@@ -145,7 +143,7 @@ for (let i = 0; i < unit.operationQueueSize; i++) {
 ### 能力与视野
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 获取单位的能力列表与视野范围
 unit.getAbilities();   // 单位能力数组
 unit.getSightPlots();  // 视野地块索引数组
@@ -154,7 +152,7 @@ unit.getSightPlots();  // 视野地块索引数组
 ## Formations 与 Armies
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 遍历玩家的阵型与军队
 // Formations
 const pFormations = player.Formations;
@@ -253,7 +251,7 @@ const units = player.Units.getUnitTypesUnlockedWithTag("UNIT_CLASS_RANGED", fals
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 获取单位后读取基本属性和子系统
 let unit = Units.get(unitId);
 if (unit != null) {
@@ -278,7 +276,7 @@ if (unit != null) {
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 恢复单个单位或全体单位移动力
 Units.restoreMovement(unit.id);
 
@@ -306,7 +304,7 @@ for (const unitId of player.Units.getUnitIds()) {
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 扣血 25 点、治疗 25 点
 Units.changeDamage(unit.id, 25);
 Units.changeDamage(unit.id, -25);
@@ -328,7 +326,7 @@ Units.changeDamage(unit.id, -25);
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 完全治疗单位 / 杀死单位
 Units.setDamage(unit.id, 0);
 Units.setDamage(unit.id, unit.Health.maxDamage);
@@ -350,7 +348,7 @@ Units.setDamage(unit.id, unit.Health.maxDamage);
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 增加 500 点经验
 Units.changeExperience(unit.id, 500);
 ```
@@ -371,7 +369,7 @@ Units.changeExperience(unit.id, 500);
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 设置单位活动状态
 Units.setActivity(unit.id, UnitActivityTypes.SLEEP);
 Units.setActivity(unit.id, UnitActivityTypes.HEAL);
@@ -394,7 +392,7 @@ Units.setActivity(unit.id, UnitActivityTypes.SENTRY);
 **使用示例**:
 
 ```javascript
-// 来源 Units.ltp
+// 来源 TunerPanels/Units.ltp
 // 判断单位是否为攻城单位
 const isSiege = Units.hasTag(unitId, "UNIT_CLASS_SIEGE");
 ```

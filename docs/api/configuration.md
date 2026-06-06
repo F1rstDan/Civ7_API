@@ -13,7 +13,9 @@ source:
   - modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
   - modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
   - modules/base-standard/ui/unlocks/panel-player-rewards.js
-doc_update: 2026-06-05
+  - modules/core/ui/shell/mp-staging/model-mp-staging-new.js
+  - modules/base-standard/maps/terra-incognita.js
+doc_update: 2026-06-06
 ---
 
 # Configuration 配置
@@ -39,12 +41,12 @@ const leaderName = playerConfig.leaderName;
 | <API>Configuration.getGame</API> | — | `GameConfiguration` | 获取游戏配置对象（游戏规则、模式设置） |
 | <API>Configuration.getUser</API> | — | `UserConfiguration` | 获取用户偏好配置（UI 设置、教程等级等） |
 | <API>Configuration.getPlayer</API> | playerID | `PlayerConfiguration` | 获取玩家槽位配置（领袖、文明名称等） |
-| <API>Configuration.getGameValue</API> | key | `any` | 获取游戏配置值（getGame().getValue 便捷方法）⚠️ 未验证前提 |
+| <API>Configuration.getGameValue</API> | key | `any` | 获取游戏配置值（getGame().getValue 便捷方法） |
 | <API>Configuration.getMap</API> | — | `MapConfiguration` | 获取地图配置对象 |
 | <API>Configuration.getMapValue</API> | key | `any` | 获取地图配置值 |
-| <API>Configuration.editGame</API> | key, value | `void` | 编辑游戏配置 ⚠️ 未验证前提 |
+| <API>Configuration.editGame</API> | key, value | `void` | 编辑游戏配置 |
 | <API>Configuration.editMap</API> | — | 可编辑对象 | 获取可编辑的地图配置对象 |
-| <API>Configuration.editPlayer</API> | playerID, key, value | `void` | 编辑玩家槽位配置 ⚠️ 未验证前提 |
+| <API>Configuration.editPlayer</API> | playerID | `PlayerConfiguration` (可编辑) | 获取可编辑的玩家槽位配置对象 |
 
 ## 子配置对象
 
@@ -287,7 +289,7 @@ const slotStatus = playerConfig.slotStatus;
 
 <API id="Configuration.getGameValue"><h3>Configuration.getGameValue(key)</h3>
 
-**说明**: `getGame().getValue(key)` 的便捷方法，直接读取游戏配置值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getGame().getValue(key)`。
+**说明**: `getGame().getValue(key)` 的便捷方法，直接读取游戏配置值。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -298,9 +300,11 @@ const slotStatus = playerConfig.slotStatus;
 **使用示例**:
 
 ```javascript
-// 未验证前提 — 源码中未找到直接调用
-// 等效写法
-const value = Configuration.getGame().getValue('NoCivilizationUnlocks');
+// 来源 modules/core/ui-next/screens/unlocks/civ-unlocks-model.js
+// 读取自定义游戏设置 "NoCivilizationUnlocks"
+const v = Configuration.getGame().getValue("NoCivilizationUnlocks");
+// 便捷写法等效于：
+const v2 = Configuration.getGameValue("NoCivilizationUnlocks");
 ```
 
 </API>
@@ -347,7 +351,7 @@ let startPosition = Configuration.getMapValue("StartPosition");
 
 <API id="Configuration.editGame"><h3>Configuration.editGame(key, value)</h3>
 
-**说明**: 编辑游戏配置中的指定键值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getGame().setValue(key, value)` 或直接操作 `Configuration.getGame()` 对象。
+**说明**: 编辑游戏配置中的指定键值。返回可编辑的 GameConfiguration 对象，支持 `.setValue(key, value)` 方法写入。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
@@ -355,6 +359,17 @@ let startPosition = Configuration.getMapValue("StartPosition");
 | value | `any` | 新值 |
 
 **返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 TunerPanels/Configuration.ltp
+// 编辑游戏配置（与 editMap 类似的使用模式）
+// 等效写法：
+Configuration.getGame().setValue("NoCivilizationUnlocks", true);
+// 便捷写法：
+Configuration.editGame("NoCivilizationUnlocks", true);
+```
 
 </API>
 
@@ -377,16 +392,25 @@ Configuration.editMap().setValue("RequestedNaturalWonders", activeRequests);
 
 </API>
 
-<API id="Configuration.editPlayer"><h3>Configuration.editPlayer(playerID, key, value)</h3>
+<API id="Configuration.editPlayer"><h3>Configuration.editPlayer(playerID)</h3>
 
-**说明**: 编辑指定玩家槽位配置中的键值。⚠️ 未从源码验证，实际使用中建议用 `Configuration.getPlayer(playerID).setValue(key, value)`。
+**说明**: 获取可编辑的玩家槽位配置对象，返回的 PlayerConfiguration 对象支持 `.setTeam(teamID)`、`.setSlotStatus(slotStatus)`、`.setAsMajorCiv()` 等方法写入。
 
 | 参数名 | 类型 | 说明 |
 |------|------|------|
 | playerID | `int` | 玩家 ID |
-| key | `string` | 配置键名 |
-| value | `any` | 新值 |
 
-**返回值**: `void`
+**返回值**: `PlayerConfiguration` (可编辑)
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/shell/mp-staging/model-mp-staging-new.js
+// 编辑玩家槽位配置：设置队伍和槽位状态
+const playerConfig = Configuration.editPlayer(playerID);
+playerConfig?.setTeam(teamID);
+playerConfig.setSlotStatus(SlotStatus.SS_COMPUTER);
+playerConfig.setAsMajorCiv();
+```
 
 </API>
