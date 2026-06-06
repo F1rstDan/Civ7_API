@@ -1,14 +1,14 @@
 ---
 title: ProgressionTrees 科技文化树
-doc_type: system-topic
+doc_type: system
 summary: 科技树与文化树的运行时状态、静态定义、节点解锁和树结构遍历。
 primary_scope:
   - Game.ProgressionTrees
-  - GameInfo.ProgressionTrees
-related_scope:
-  - GameInfo.ProgressionTreeNodes
   - player.Techs
   - player.Culture
+related_scope:
+  - GameInfo.ProgressionTrees
+  - GameInfo.ProgressionTreeNodes
 source:
   - TunerPanels/Player.ltp
   - modules/base-standard/ui/tree-grid/tree-grid.js
@@ -22,6 +22,11 @@ source:
   - modules/base-standard/ui/sub-system-dock/panel-sub-system-dock.js
   - modules/base-standard/ui-next/screens/choosers/tech-chooser/tech-chooser.js
   - modules/base-standard/ui-next/screens/choosers/culture-chooser/culture-chooser.js
+  - modules/base-standard/ui/culture-tree/screen-culture-tree.js
+  - modules/core/ui/radial-menu/panel-radial-menu.js
+  - modules/base-standard/ui/tutorial/advisor-utilities.js
+  - modules/base-standard/ui/civilopedia/civilopedia-sidebar-panels.js
+doc_update: 2026-06-05
 ---
 
 # ProgressionTrees 科技文化树

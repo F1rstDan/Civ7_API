@@ -1,11 +1,9 @@
 ---
 title: Modding 模组
-doc_type: reference
+doc_type: other
 summary: Mod 管理 API，用于查询和管理已安装的 Mod，包括启用/禁用、依赖检查、模板应用和过渡状态查询。
 primary_scope:
   - Modding
-related_scope:
-  - GameInfo
 source:
   - TunerPanels/Modding.ltp
   - modules/core/ui/shell/mods-content/mods-content.js
@@ -14,6 +12,7 @@ source:
   - modules/core/ui/save-load/model-save-load.js
   - modules/core/ui/shell/mp-browser/mp-browser-new.js
   - modules/core/ui/shell/main-menu/main-menu.js
+doc_update: 2026-06-05
 ---
 
 # Modding 模组
@@ -30,6 +29,8 @@ for (const mod of Modding.getInstalledMods()) {
     str = str + ";" + ((activeMods.indexOf(mod.handle) != -1) ? "true" : "false");
 }
 ```
+
+## 方法列表（共 16 个）
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
@@ -70,8 +71,6 @@ for (const mod of Modding.getInstalledMods()) {
 }
 ```
 
-**来源**: TunerPanels/Modding.ltp
-
 </API>
 
 <API id="Modding.getInstalledModHandles"><h3>Modding.getInstalledModHandles()</h3>
@@ -94,8 +93,6 @@ if (!compareInstalledMods(this.installedModHandles, installedMods)) {
 }
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.getActiveMods"><h3>Modding.getActiveMods()</h3>
@@ -114,8 +111,6 @@ if (!compareInstalledMods(this.installedModHandles, installedMods)) {
 let activeMods = Modding.getActiveMods();
 let isActive = activeMods.indexOf(mod.handle) != -1;
 ```
-
-**来源**: TunerPanels/Modding.ltp
 
 </API>
 
@@ -137,8 +132,6 @@ let isActive = activeMods.indexOf(mod.handle) != -1;
 this.selectedMod = Modding.getModInfo(modHandle);
 this.selectedModHandle = modHandle;
 ```
-
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
 
 </API>
 
@@ -164,8 +157,6 @@ const author = Modding.getModProperty(this.selectedMod.handle, "Authors");
 const showInBrowser = Modding.getModProperty(m.handle, "ShowInBrowser");
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.getModHandle"><h3>Modding.getModHandle(url)</h3>
@@ -186,8 +177,6 @@ const showInBrowser = Modding.getModProperty(m.handle, "ShowInBrowser");
 const modHandle = Modding.getModHandle(mod.ID);
 ```
 
-**来源**: modules/core/ui/save-load/model-save-load.js
-
 </API>
 
 <API id="Modding.getModulesToExclude"><h3>Modding.getModulesToExclude()</h3>
@@ -207,8 +196,6 @@ let installedMods = Modding.getInstalledMods();
 const modIdsToIgnore = Modding.getModulesToExclude();
 installedMods = installedMods.filter((m) => !modIdsToIgnore.includes(m.id));
 ```
-
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
 
 </API>
 
@@ -233,8 +220,6 @@ for (const s of scripts) {
 }
 ```
 
-**来源**: modules/core/ui/component-support.js
-
 </API>
 
 <API id="Modding.getLastErrorString"><h3>Modding.getLastErrorString()</h3>
@@ -256,8 +241,6 @@ if (lastError) {
 }
 ```
 
-**来源**: modules/core/ui/utilities/utilities-network.js
-
 </API>
 
 <API id="Modding.getTransitionInProgress"><h3>Modding.getTransitionInProgress()</h3>
@@ -275,8 +258,6 @@ if (lastError) {
 // 检查当前过渡状态
 const transitionState = Modding.getTransitionInProgress();
 ```
-
-**来源**: modules/core/ui/shell/main-menu/main-menu.js
 
 </API>
 
@@ -297,8 +278,6 @@ if (Modding.userModSupportAvailable()) {
     this.modsDisableUser.classList.remove("hidden");
 }
 ```
-
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
 
 </API>
 
@@ -323,8 +302,6 @@ const canEnableModResult = Modding.canEnableMods(modHandles, true);
 const allowed = canEnableModResult.status == 0;
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.canDisableMods"><h3>Modding.canDisableMods(handles)</h3>
@@ -346,8 +323,6 @@ const modHandles = [this.selectedModHandle];
 const canDisableModResult = Modding.canDisableMods(modHandles);
 const allowed = canDisableModResult.status == 0;
 ```
-
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
 
 </API>
 
@@ -375,8 +350,6 @@ if (enabled) {
 }
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.disableMods"><h3>Modding.disableMods(handles)</h3>
@@ -402,8 +375,6 @@ if (enabled) {
 }
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.applyModsTemplate"><h3>Modding.applyModsTemplate(template)</h3>
@@ -427,8 +398,6 @@ Modding.applyModsTemplate("enable-all");
 Modding.applyModsTemplate("disable-user");
 ```
 
-**来源**: modules/core/ui/shell/mods-content/mods-content.js
-
 </API>
 
 <API id="Modding.isOfficialAge"><h3>Modding.isOfficialAge(age)</h3>
@@ -448,7 +417,5 @@ Modding.applyModsTemplate("disable-user");
 // 检查时代是否为官方时代
 return Modding.isOfficialAge(value);
 ```
-
-**来源**: modules/core/ui/shell/mp-browser/mp-browser-new.js
 
 </API>

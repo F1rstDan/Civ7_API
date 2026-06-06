@@ -16,22 +16,14 @@ export default defineConfig({
     ],
     sidebar: [
       {
-        text: '核心引擎',
+        text: '全局对象',
         items: [
           { text: 'Game 核心对象', link: '/api/game' },
-          { text: 'Engine 引擎', link: '/api/engine' },
           { text: 'Players 玩家管理', link: '/api/players' },
-          { text: 'Configuration 配置', link: '/api/configuration' },
-          { text: 'Modding 模组', link: '/api/modding' },
-        ]
-      },
-      {
-        text: '游戏对象',
-        items: [
           { text: 'Units 单位', link: '/api/units' },
           { text: 'Cities 城市', link: '/api/cities' },
           { text: 'Districts 区域', link: '/api/districts' },
-          { text: 'IndependentPowers 独立势力', link: '/api/independent-powers' },
+          { text: 'Engine 引擎', link: '/api/engine' },
           { text: 'GameEffects 效果系统', link: '/api/game-effects' },
           { text: 'Operations & Commands 操作命令', link: '/api/operations-commands' },
         ]
@@ -51,6 +43,7 @@ export default defineConfig({
           { text: 'Random Events 随机事件', link: '/api/random-events' },
           { text: 'Victories 胜利系统', link: '/api/victories' },
           { text: 'Advisors 建议系统', link: '/api/advisors' },
+          { text: 'IndependentPowers 独立势力', link: '/api/independent-powers' },
         ]
       },
       {
@@ -87,6 +80,8 @@ export default defineConfig({
       {
         text: '调试与其他',
         items: [
+          { text: 'Modding 模组', link: '/api/modding' },
+          { text: 'Configuration 配置', link: '/api/configuration' },
           { text: 'Automation 自动化', link: '/api/automation' },
           { text: 'Autoplay 自动播放', link: '/api/autoplay' },
           { text: 'Unlocks 解锁系统', link: '/api/unlocks' },

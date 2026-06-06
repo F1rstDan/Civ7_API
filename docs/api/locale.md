@@ -1,21 +1,23 @@
 ---
 title: Locale 本地化
-doc_type: object-api
+doc_type: other
 summary: 本地化/国际化工具对象，用于文本处理、多语言支持、数字格式化和语言切换。
 primary_scope:
   - Locale
-related_scope:
-  - Game
 source:
-  - 源码 Locale 对象分析
+  - TunerPanels/Players.ltp
+  - TunerPanels/Cities.ltp
+  - modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+  - modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+doc_update: 2026-06-05
 ---
 
 # Locale 本地化
 
-本地化/国际化工具对象，用于文本处理和多语言支持。
+本地化/国际化工具对象，用于文本处理和多语言支持。引擎直接注入，无需手动 import 引入。
 
 ```javascript
-// 来源 源码 Locale 对象
+// 来源 TunerPanels/Players.ltp
 // 组合本地化文本和样式化
 const text = Locale.compose("LOC_KEY_HELLO", playerName);
 const styled = Locale.stylize("LOC_KEY", "font-bold");
@@ -61,7 +63,7 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 **使用示例**:
 
 ```javascript
-// 来源 源码 Locale 对象
+// 来源 TunerPanels/Players.ltp
 // 组合带参数的本地化文本
 const text = Locale.compose("LOC_KEY_HELLO", playerName);
 ```
@@ -82,8 +84,8 @@ const text = Locale.compose("LOC_KEY_HELLO", playerName);
 **使用示例**:
 
 ```javascript
-// 来源 源码 Locale 对象
-// 对本地化文本应用粗体样式
+// 来源 modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+// 对本地化文本应用样式
 const styled = Locale.stylize("LOC_KEY", "font-bold");
 ```
 
@@ -100,6 +102,14 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `int` — 比较结果（负数表示 a < b，0 表示相等，正数表示 a > b）
 
+**使用示例**:
+
+```javascript
+// 按当前语言规则排序比较
+const result = Locale.compare("Apple", "Banana");
+// result < 0 表示 "Apple" 排在 "Banana" 前面
+```
+
 </API>
 
 <API id="Locale.toNumber"><h3>Locale.toNumber(num)</h3>
@@ -111,6 +121,14 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 | num | `number` | 要格式化的数字 |
 
 **返回值**: `string` — 本地化数字字符串
+
+**使用示例**:
+
+```javascript
+// 来源 modules/age-antiquity/ui/tutorial/tutorial-items-antiquity.js
+// 将剩余数量格式化为本地化数字
+const result = Locale.toNumber(REVEALED_PLOTS_COMPLETE_QUEST_NUM - iRevealedCount);
+```
 
 </API>
 
@@ -124,6 +142,15 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `bool` — 键是否存在
 
+**使用示例**:
+
+```javascript
+// 检查本地化键是否存在
+if (Locale.keyExists("LOC_KEY_HELLO")) {
+  const text = Locale.compose("LOC_KEY_HELLO");
+}
+```
+
 </API>
 
 <API id="Locale.plainText"><h3>Locale.plainText(key)</h3>
@@ -135,6 +162,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 | key | `string` | 本地化键 |
 
 **返回值**: `string` — 纯文本
+
+**使用示例**:
+
+```javascript
+// 获取去除样式标记的纯文本
+const plain = Locale.plainText("LOC_KEY");
+```
 
 </API>
 
@@ -148,6 +182,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `object` — 解包后的本地化数据
 
+**使用示例**:
+
+```javascript
+// 解包本地化数据
+const data = Locale.unpack("LOC_KEY");
+```
+
 </API>
 
 <API id="Locale.toUpper"><h3>Locale.toUpper(str)</h3>
@@ -159,6 +200,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 | str | `string` | 输入字符串 |
 
 **返回值**: `string` — 大写字符串
+
+**使用示例**:
+
+```javascript
+// 将字符串转为本地化大写
+const upper = Locale.toUpper("hello");
+```
 
 </API>
 
@@ -172,6 +220,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `string` — 小写字符串
 
+**使用示例**:
+
+```javascript
+// 将字符串转为本地化小写
+const lower = Locale.toLower("HELLO");
+```
+
 </API>
 
 <API id="Locale.toRomanNumeral"><h3>Locale.toRomanNumeral(num)</h3>
@@ -183,6 +238,14 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 | num | `number` | 要转换的数字 |
 
 **返回值**: `string` — 罗马数字字符串
+
+**使用示例**:
+
+```javascript
+// 将数字转换为罗马数字
+const roman = Locale.toRomanNumeral(5);
+// 返回 "V"
+```
 
 </API>
 
@@ -196,6 +259,14 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `string` — 百分比字符串
 
+**使用示例**:
+
+```javascript
+// 将数字转换为本地化百分比
+const pct = Locale.toPercent(0.75);
+// 返回 "75%"
+```
+
 </API>
 
 <API id="Locale.getCurrentDisplayLocale"><h3>Locale.getCurrentDisplayLocale()</h3>
@@ -205,6 +276,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 **参数**: 无
 
 **返回值**: `string` — 当前显示语言
+
+**使用示例**:
+
+```javascript
+// 获取当前显示语言
+const lang = Locale.getCurrentDisplayLocale();
+```
 
 </API>
 
@@ -218,6 +296,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `string` — 处理后的文本
 
+**使用示例**:
+
+```javascript
+// 处理用户生成内容的文本
+const safeText = Locale.fromUGC(userInputText);
+```
+
 </API>
 
 <API id="Locale.getCurrentAudioLanguageOption"><h3>Locale.getCurrentAudioLanguageOption()</h3>
@@ -228,6 +313,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `string` — 当前音频语言
 
+**使用示例**:
+
+```javascript
+// 获取当前音频语言
+const audioLang = Locale.getCurrentAudioLanguageOption();
+```
+
 </API>
 
 <API id="Locale.getCurrentDisplayLanguageOption"><h3>Locale.getCurrentDisplayLanguageOption()</h3>
@@ -237,6 +329,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 **参数**: 无
 
 **返回值**: `string` — 当前显示语言选项
+
+**使用示例**:
+
+```javascript
+// 获取当前显示语言选项
+const displayLang = Locale.getCurrentDisplayLanguageOption();
+```
 
 </API>
 
@@ -250,6 +349,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 切换音频语言为英文
+Locale.changeAudioLanguageOption("en_US");
+```
+
 </API>
 
 <API id="Locale.changeDisplayLanguageOption"><h3>Locale.changeDisplayLanguageOption(lang)</h3>
@@ -262,6 +368,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 切换显示语言为简体中文
+Locale.changeDisplayLanguageOption("zh_Hans_CN");
+```
+
 </API>
 
 <API id="Locale.getAudioLanguageOptionNames"><h3>Locale.getAudioLanguageOptionNames()</h3>
@@ -272,6 +385,13 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 
 **返回值**: `string[]` — 可用音频语言名称数组
 
+**使用示例**:
+
+```javascript
+// 获取所有可用音频语言
+const audioLangs = Locale.getAudioLanguageOptionNames();
+```
+
 </API>
 
 <API id="Locale.getDisplayLanguageOptionNames"><h3>Locale.getDisplayLanguageOptionNames()</h3>
@@ -281,5 +401,12 @@ const styled = Locale.stylize("LOC_KEY", "font-bold");
 **参数**: 无
 
 **返回值**: `string[]` — 可用显示语言名称数组
+
+**使用示例**:
+
+```javascript
+// 获取所有可用显示语言
+const displayLangs = Locale.getDisplayLanguageOptionNames();
+```
 
 </API>

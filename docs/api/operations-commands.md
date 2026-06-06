@@ -1,6 +1,6 @@
 ---
 title: OperationsCommands 操作命令
-doc_type: system-topic
+doc_type: system
 summary: 游戏操作和命令系统，用于查询和执行城市、单位、玩家的操作与命令。
 primary_scope:
   - Game.CityOperations

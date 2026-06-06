@@ -1,6 +1,6 @@
 ---
 title: Notifications 通知
-doc_type: object-api
+doc_type: other
 summary: 通知系统，负责通知的发送、查询、关闭和阻塞状态管理。
 primary_scope:
   - Game.Notifications
@@ -8,6 +8,10 @@ related_scope:
   - GameInfo.Notifications
 source:
   - TunerPanels/Notifications.ltp
+  - modules/base-standard/ui/action/panel-action.js
+  - modules/base-standard/ui/notification-train/panel-notification-train.js
+  - modules/base-standard/ui/notification-train/model-notification-train.js
+doc_update: 2026-06-05
 ---
 
 # Notifications 通知
@@ -15,8 +19,8 @@ source:
 通知系统 API，通过 `Game.Notifications` 访问。
 
 ```javascript
-// 快速示例：获取玩家通知
 // 来源 Notifications.ltp
+// 获取玩家通知并遍历输出消息
 let notificationIDs = Game.Notifications.getIdsForPlayer(playerId);
 for (const id of notificationIDs) {
   let notification = Game.Notifications.find(id);
@@ -43,13 +47,11 @@ for (const id of notificationIDs) {
 | <API>Game.Notifications.canUserDismissNotification</API> | id | `bool` | 用户是否可以关闭通知 |
 | <API>Game.Notifications.getSeverity</API> | id | `int` | 获取通知严重程度 |
 
-## TunerPanel 补充：Notifications 完整 API（来源 Notifications.ltp）
-
 ### Game.Notifications 发送通知
 
 ```javascript
 // 来源 Notifications.ltp
-// 发送通知
+// 构造并发送通知给指定玩家或本地玩家
 let args = {};
 args.Type = Game.getHash(notificationType);
 args.AlwaysAdd = true;
@@ -74,7 +76,7 @@ Game.Notifications.getEndTurnBlockingType(playerId);
 
 ```javascript
 // 来源 Notifications.ltp
-// 遍历通知定义
+// 遍历通知定义表获取名称和消息
 for (const item of GameInfo.Notifications) {
   let name = Locale.compose(item.NotificationType);
   let message = Locale.compose(item.Message);
@@ -93,6 +95,19 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `object` \| `undefined`
 
+**使用示例**:
+
+```javascript
+// 来源 Notifications.ltp
+// 根据 ID 查找通知并获取其属性
+let pNotification = Game.Notifications.find(id);
+if (pNotification != null) {
+  let notificationTypeName = Game.Notifications.getTypeName(pNotification.Type);
+  let addedOnTurn = pNotification.AddedOnTurn;
+  let targetId = pNotification.Target;
+}
+```
+
 </API>
 <API id="Game.Notifications.getTypeName"><h3>Game.Notifications.getTypeName(typeID)</h3>
 
@@ -103,6 +118,14 @@ for (const item of GameInfo.Notifications) {
 | typeID | `int` | 通知类型 ID |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 Notifications.ltp
+// 获取通知类型名称
+let notificationTypeName = Game.Notifications.getTypeName(pNotification.Type);
+```
 
 </API>
 <API id="Game.Notifications.getType"><h3>Game.Notifications.getType(typeID)</h3>
@@ -115,6 +138,14 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `object`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 获取通知类型用于判断
+const type = Game.Notifications.getType(notificationId);
+```
+
 </API>
 <API id="Game.Notifications.getIdsForPlayer"><h3>Game.Notifications.getIdsForPlayer(playerID)</h3>
 
@@ -125,6 +156,17 @@ for (const item of GameInfo.Notifications) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `int[]`
+
+**使用示例**:
+
+```javascript
+// 来源 Notifications.ltp
+// 获取玩家所有通知 ID
+let notificationIDs = Game.Notifications.getIdsForPlayer(g_TunerSelectedPlayer);
+for (const id of notificationIDs) {
+  let pNotification = Game.Notifications.find(id);
+}
+```
 
 </API>
 <API id="Game.Notifications.dismiss"><h3>Game.Notifications.dismiss(id)</h3>
@@ -137,6 +179,14 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-notification-train-mobile.js
+// 关闭通知
+Game.Notifications.dismiss(notificationId);
+```
+
 </API>
 <API id="Game.Notifications.getEndTurnBlockingType"><h3>Game.Notifications.getEndTurnBlockingType(id)</h3>
 
@@ -147,6 +197,14 @@ for (const item of GameInfo.Notifications) {
 | id | `int` | 通知 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 获取回合结束阻塞类型
+const endTurnBlockingType = Game.Notifications.getEndTurnBlockingType(playerId);
+```
 
 </API>
 <API id="Game.Notifications.activate"><h3>Game.Notifications.activate(id)</h3>
@@ -159,6 +217,14 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 激活通知
+Game.Notifications.activate(notificationId);
+```
+
 </API>
 <API id="Game.Notifications.findEndTurnBlocking"><h3>Game.Notifications.findEndTurnBlocking(playerID)</h3>
 
@@ -169,6 +235,15 @@ for (const item of GameInfo.Notifications) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `object` \| `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 查找回合结束阻塞通知
+const endTurnBlockingType = Game.Notifications.getEndTurnBlockingType(playerID);
+const endTurnBlockingNotificationId = Game.Notifications.findEndTurnBlocking(playerID, endTurnBlockingType);
+```
 
 </API>
 <API id="Game.Notifications.getSummary"><h3>Game.Notifications.getSummary(id)</h3>
@@ -181,6 +256,14 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `string`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-notification-train.js
+// 获取通知摘要
+const summary = Game.Notifications.getSummary(notificationID);
+```
+
 </API>
 <API id="Game.Notifications.getMessage"><h3>Game.Notifications.getMessage(id)</h3>
 
@@ -191,6 +274,14 @@ for (const item of GameInfo.Notifications) {
 | id | `int` | 通知 ID |
 
 **返回值**: `string`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 获取通知消息内容
+const message = Game.Notifications.getMessage(notificationId);
+```
 
 </API>
 <API id="Game.Notifications.getBlocksTurnAdvancement"><h3>Game.Notifications.getBlocksTurnAdvancement(id)</h3>
@@ -203,6 +294,16 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 model-notification-train.js
+// 检查通知是否阻止回合推进
+if (Game.Notifications.getBlocksTurnAdvancement(id)) {
+  // 该通知阻止回合推进
+}
+```
+
 </API>
 <API id="Game.Notifications.canUserDismissNotification"><h3>Game.Notifications.canUserDismissNotification(id)</h3>
 
@@ -214,6 +315,16 @@ for (const item of GameInfo.Notifications) {
 
 **返回值**: `bool`
 
+**使用示例**:
+
+```javascript
+// 来源 panel-notification-train-mobile.js
+// 检查用户是否可以关闭通知
+if (Game.Notifications.canUserDismissNotification(notification)) {
+  Game.Notifications.dismiss(notification);
+}
+```
+
 </API>
 <API id="Game.Notifications.getSeverity"><h3>Game.Notifications.getSeverity(id)</h3>
 
@@ -224,5 +335,13 @@ for (const item of GameInfo.Notifications) {
 | id | `int` | 通知 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 panel-action.js
+// 获取通知严重程度
+severity: Game.Notifications.getSeverity(notificationId) ?? 0
+```
 
 </API>
