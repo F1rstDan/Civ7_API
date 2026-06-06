@@ -80,6 +80,11 @@ doc_update: 2026-06-05
 
 游戏源码位于 `D:\Games Design\Civ7_mod\.官方变动`，详细目录结构见 `docs/_link-source-addr.md`。
 
+**⚠️ 符号链接陷阱**：`modules` 和 `TunerPanels` 在根目录下是**符号链接**（`l----` 模式），而非真实目录。`rg`（以及 IDE 内置的 Grep 工具）默认**不追踪符号链接**。因此：
+- **搜索根目录**时，必须加 `-L` / `--follow` 标志，否则会静默跳过 `modules` 和 `TunerPanels` 中的所有文件，返回空结果。
+- **搜索子目录**（如 `.\官方变动\modules`）时，由于直接指定了实际路径，无需 `-L` 也能正常工作。
+- Grep 工具（IDE 内置搜索）不支持 `-L` 标志，**必须搜索子目录路径**而非根目录。
+
 两类来源文件：
 - **`.js` 文件**（`modules/` 下）：游戏逻辑实现，包含 API 调用模式和用法
 - **`.ltp` 文件**（`TunerPanels/` 下）：Firaxis 调试面板定义，内嵌官方 JS 代码片段，是确认 API 用法的权威参考
@@ -113,6 +118,16 @@ rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerP
 
 **后缀误匹配警示**：名称短的 API 容易被更长标识符的后缀命中。例如搜索 `Camera` 时，`ForegroundCamera`、`BackgroundCamera` 等也会被匹配。始终在搜索 API 名称时使用单词边界 (`(?<![A-Za-z0-9_$])`)，并在写入方法列表前确认完整接收者链（`ForegroundCamera.reset` 不等于 `Camera.reset`）。
 
+### 搜索无结果排查（⚠️ 关键）
+
+搜索返回空结果不代表 API 不存在。按以下顺序排查：
+
+1. **符号链接**：`modules` 和 `TunerPanels` 是符号链接。搜索根目录时缺少 `-L` 是最常见原因。改用子目录路径（`.\官方变动\modules`）或加 `-L` 重试。
+2. **Grep 工具限制**：IDE 内置 Grep 工具不支持 `-L`，搜索根目录必然失败。**必须用 Grep 搜索子目录路径**（如 `D:\Games Design\Civ7_mod\.官方变动\modules`），或用 RunCommand 执行 `rg -L`。
+3. **验证搜索路径**：若仍无结果，用 `Read` 工具直接读取用户提供的已知文件路径（如 `root-game.js`），确认文件确实存在且包含目标字符串。这能快速排除搜索工具问题。
+4. **正则转义**：`.` 在正则中是通配符，搜索 `Database.query` 时若未用 `-F`（固定字符串），`.` 会匹配任意字符。建议搜索 API 调用时优先使用 `-F`。
+5. **不要轻信空结果**：在标注"未验证前提"之前，必须至少用 `Read` 工具抽查一个已知文件（如用户提供的路径），确认搜索工具正常工作。
+
 ### API 归属判定（必须）
 
 先根据 YAML 的 `doc_type`、`primary_scope`、`related_scope` 判断本页允许覆盖的 API 范围。问题不是禁止相关 API 出现，而是避免把相关 API 误放进主方法列表，导致读者误以为短写可调用。
@@ -126,16 +141,17 @@ rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerP
 - 如果源码只出现 `A.B.method(...)`，没有出现独立的 `B.method(...)`，不得把它记录为 `B.method`。
 - 如果不能从源码确认完整接收者链，标注为“未验证前提”，不要写入方法列表。
 
-**搜索顺序**：优先使用 `-F` 固定字符串搜索；仅在需要排除后缀误匹配时才加 `--pcre2`。
+**搜索顺序**：优先使用 `-F` 固定字符串搜索；仅在需要排除后缀误匹配时才加 `--pcre2`。**搜索根目录时必须加 `-L`**（追踪符号链接），或直接搜索子目录（`modules` / `TunerPanels`）。
 ```powershell
 # 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup / ForegroundCamera.method 等误命中的情况
-rg -n --pcre2 "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+#    ⚠️ 搜索根目录必须加 -L，否则 modules/ 和 TunerPanels/ 符号链接被跳过
+rg -n -L --pcre2 "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 2. 搜索同名方法的所有链条，确认是否只存在更长接收者
-rg -n "(\w+\.)+Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+rg -n -L "(\w+\.)+Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 3. 对实例/子系统 API，搜索实际变量链和属性链
-rg -n "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
+rg -n -L "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 ```
 
 **后缀误匹配防范**：如果 API 名称是其他标识符的后缀（如 `Camera` 被 `ForegroundCamera` 包含），必须用单词边界 `(?<![A-Za-z0-9_$])` 排除。从源码确认后只收录真正的直接调用者。
@@ -275,7 +291,7 @@ Camera.lookAtPlot(10, 20);
 3. 如果 `doc_type` 为 `generated`：确认是自动生成文件，跳过后续所有检查；用户指名时才进入手动审查
 4. 逐项对照检查清单
 5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
-6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例
+6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例。**搜索根目录须加 `-L`，或用子目录路径**。若搜索无结果，按"搜索无结果排查"步骤验证后再下结论。
 7. 如果 YAML `source` 字段缺失或不完整：搜索确认后补全
 8. 更新 `doc_update` 字段为当前日期（格式 `YYYY-MM-DD`）；若字段缺失则新增
 9. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
