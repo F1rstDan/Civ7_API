@@ -80,10 +80,14 @@ doc_update: 2026-06-05
 
 游戏源码位于 `D:\Games Design\Civ7_mod\.官方变动`，详细目录结构见 `docs/_link-source-addr.md`。
 
-**⚠️ 符号链接陷阱**：`modules` 和 `TunerPanels` 在根目录下是**符号链接**（`l----` 模式），而非真实目录。`rg`（以及 IDE 内置的 Grep 工具）默认**不追踪符号链接**。因此：
-- **搜索根目录**时，必须加 `-L` / `--follow` 标志，否则会静默跳过 `modules` 和 `TunerPanels` 中的所有文件，返回空结果。
-- **搜索子目录**（如 `.\官方变动\modules`）时，由于直接指定了实际路径，无需 `-L` 也能正常工作。
-- Grep 工具（IDE 内置搜索）不支持 `-L` 标志，**必须搜索子目录路径**而非根目录。
+**⚠️ 搜索注意事项（必读）**：
+
+1. **符号链接**：`modules` 和 `TunerPanels` 在根目录下是**符号链接**（`l----`），`rg` 和 IDE 内置 Grep 工具默认不追踪。搜索根目录时须加 `-L`（`--follow`），或直接搜索子目录路径（`.\官方变动\modules`）。Grep 工具不支持 `-L`，只能搜子目录。
+2. **空结果 ≠ 不存在**：标注"未验证前提"前，必须用 `Read` 工具抽查已知文件，确认搜索工具正常工作。
+3. **固定字符串优先**：用 `-F` 搜索，避免 `.` 在正则中误匹配任意字符（如 `Database.query` 中的 `.`）。
+4. **正则须加 `--pcre2`**：含 `(?<` / `(?=` / `(?<=` / `(?<!` 等环视断言时必须加 `--pcre2`，否则 `rg` 静默失败返回 exit code 1。
+5. **切勿追加 `2>$null`**：它会吞掉 `rg` 的正则解析错误，导致明明有匹配却误认为"未找到"。
+6. **后缀误匹配**：短 API 名（如 `Camera`）会被 `ForegroundCamera` 命中。用单词边界 `(?<![A-Za-z0-9_$])` 排除，并在写入前确认完整接收者链。
 
 两类来源文件：
 - **`.js` 文件**（`modules/` 下）：游戏逻辑实现，包含 API 调用模式和用法
@@ -94,39 +98,18 @@ doc_update: 2026-06-05
 当目标文档缺少代码示例时，主动搜索源码补全：
 
 ```powershell
-# === 首选：固定字符串搜索（-F 字面量匹配）===
-# 简单可靠，不涉及正则引擎，搜索范围用 modules\ 子目录避免 -g 通配符在 Windows 上的路径差异
-rg -n -F "engine.synchronizeModels" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
-rg -n -F "engine.registerBindingAttribute" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+# === 首选：固定字符串搜索（-F），搜索子目录 ===
+rg -n -F "API_NAME" "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+rg -n -F "API_NAME" "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 
-# === 备选：正则 + --pcre2（需排除后缀误匹配时使用）===
-# ⚠️ 任何含 (?<  / (?= / (?<= / (?<! 等环视断言的正则必须加 --pcre2，否则 rg 静默失败并返回 exit code 1
-# ⚠️ 切勿在 PowerShell rg 命令中追加 2>$null —— 它会把 rg 的正则解析错误（regex parse error）静默吞掉
-#    导致明明有匹配结果却误认为「未找到」，排查时极难发觉
-# 例如搜 "Camera" 会误匹配 "ForegroundCamera"、"BackgroundCamera"
-# 用 (?<![A-Za-z0-9_$]) 确保 API_NAME 前面不是标识符字符
-
-# 在 .ltp 面板中搜索目标 API（优先，权威性最高）
-rg -n --pcre2 "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
-
-# 在 .js 源码中搜索目标 API
-rg -n --pcre2 "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动\modules" -g "*.js"
+# === 备选：正则 + --pcre2 + -L（搜索根目录，需排除后缀误匹配时）===
+rg -n -L --pcre2 "(?<![A-Za-z0-9_$])API_NAME\." "D:\Games Design\Civ7_mod\.官方变动" -g "*.js" -g "*.ltp"
 
 # 搜索子系统用法（如 player.Treasury）
 rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerPanels" -g "*.ltp"
 ```
 
-**后缀误匹配警示**：名称短的 API 容易被更长标识符的后缀命中。例如搜索 `Camera` 时，`ForegroundCamera`、`BackgroundCamera` 等也会被匹配。始终在搜索 API 名称时使用单词边界 (`(?<![A-Za-z0-9_$])`)，并在写入方法列表前确认完整接收者链（`ForegroundCamera.reset` 不等于 `Camera.reset`）。
-
-### 搜索无结果排查（⚠️ 关键）
-
-搜索返回空结果不代表 API 不存在。按以下顺序排查：
-
-1. **符号链接**：`modules` 和 `TunerPanels` 是符号链接。搜索根目录时缺少 `-L` 是最常见原因。改用子目录路径（`.\官方变动\modules`）或加 `-L` 重试。
-2. **Grep 工具限制**：IDE 内置 Grep 工具不支持 `-L`，搜索根目录必然失败。**必须用 Grep 搜索子目录路径**（如 `D:\Games Design\Civ7_mod\.官方变动\modules`），或用 RunCommand 执行 `rg -L`。
-3. **验证搜索路径**：若仍无结果，用 `Read` 工具直接读取用户提供的已知文件路径（如 `root-game.js`），确认文件确实存在且包含目标字符串。这能快速排除搜索工具问题。
-4. **正则转义**：`.` 在正则中是通配符，搜索 `Database.query` 时若未用 `-F`（固定字符串），`.` 会匹配任意字符。建议搜索 API 调用时优先使用 `-F`。
-5. **不要轻信空结果**：在标注"未验证前提"之前，必须至少用 `Read` 工具抽查一个已知文件（如用户提供的路径），确认搜索工具正常工作。
+> 搜索注意事项（如 `-L`、`--pcre2`、后缀误匹配等）见上方"来源目录"。
 
 ### API 归属判定（必须）
 
@@ -141,10 +124,9 @@ rg -n --pcre2 "(?<=\.)Treasury\." "D:\Games Design\Civ7_mod\.官方变动\TunerP
 - 如果源码只出现 `A.B.method(...)`，没有出现独立的 `B.method(...)`，不得把它记录为 `B.method`。
 - 如果不能从源码确认完整接收者链，标注为“未验证前提”，不要写入方法列表。
 
-**搜索顺序**：优先使用 `-F` 固定字符串搜索；仅在需要排除后缀误匹配时才加 `--pcre2`。**搜索根目录时必须加 `-L`**（追踪符号链接），或直接搜索子目录（`modules` / `TunerPanels`）。
+**搜索顺序**：优先 `-F` 固定字符串搜索子目录；需排除后缀误匹配时用 `--pcre2`（搜索根目录须加 `-L`，见上方注意事项）：
 ```powershell
-# 1. 搜索精确直接接收者，避免匹配 GameInfo.Units.lookup / ForegroundCamera.method 等误命中的情况
-#    ⚠️ 搜索根目录必须加 -L，否则 modules/ 和 TunerPanels/ 符号链接被跳过
+# 1. 搜索精确直接接收者（避免匹配 GameInfo.Units.lookup / ForegroundCamera.method）
 rg -n -L --pcre2 "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 
 # 2. 搜索同名方法的所有链条，确认是否只存在更长接收者
@@ -153,8 +135,6 @@ rg -n -L "(\w+\.)+Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -
 # 3. 对实例/子系统 API，搜索实际变量链和属性链
 rg -n -L "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动" -g "*.ltp" -g "*.js"
 ```
-
-**后缀误匹配防范**：如果 API 名称是其他标识符的后缀（如 `Camera` 被 `ForegroundCamera` 包含），必须用单词边界 `(?<![A-Za-z0-9_$])` 排除。从源码确认后只收录真正的直接调用者。
 
 **写入前检查**：
 - 主方法列表中的 `<API>` 必须落在 `primary_scope`，并能对应源码中的同一完整接收者链。
@@ -291,7 +271,7 @@ Camera.lookAtPlot(10, 20);
 3. 如果 `doc_type` 为 `generated`：确认是自动生成文件，跳过后续所有检查；用户指名时才进入手动审查
 4. 逐项对照检查清单
 5. 校验主方法列表是否只包含 `primary_scope`；发现 `related_scope` 混入时，移到 GameInfo、相关对象或子系统章节
-6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例。**搜索根目录须加 `-L`，或用子目录路径**。若搜索无结果，按"搜索无结果排查"步骤验证后再下结论。
+6. 如果缺少代码示例：用 `rg` 搜索源码（优先 .ltp，其次 .js），补充精简示例。搜索注意事项见上方"来源目录"。
 7. 如果 YAML `source` 字段缺失或不完整：搜索确认后补全
 8. 更新 `doc_update` 字段为当前日期（格式 `YYYY-MM-DD`）；若字段缺失则新增
 9. 运行脚本检查短写风险：`python .agents/skills/doc-format/scripts/check_api_doc_ids.py docs/api/目标.md`
