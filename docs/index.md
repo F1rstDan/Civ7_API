@@ -36,5 +36,5 @@ features:
 ---
 
 <div style="text-align: center; padding: 12px 0 24px; color: var(--vp-c-text-2); font-size: 14px;">
-文档更新：2026-06-03 &nbsp;|&nbsp; 游戏版本：v1.4.0
+文档更新：2026-06-06 &nbsp;|&nbsp; 游戏版本：v1.4.0
 </div>
