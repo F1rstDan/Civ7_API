@@ -16,6 +16,7 @@ related_scope:
 source:
   - modules/core/ui/panel-support.js
   - modules/core/ui/component-support.js
+  - modules/core/ui/interface-modes/interface-modes.js
   - modules/core/ui/options/options.js
   - modules/core/ui/audio-base/audio-support.js
   - modules/core/ui/utilities/utilities-image.js
@@ -115,27 +116,60 @@ Databind.classToggle(button, "hidden", "g_NavTray.isTrayRequired");
 | <API>Databind.tooltip</API> | key | `void` | 绑定工具提示 |
 | <API>Databind.value</API> | getter, setter | `void` | 绑定值 |
 
-## NavTray — 导航托盘
+## InterfaceMode — 界面模式
 
-`NavTray` 是手柄导航托盘全局对象，管理底部导航栏的按钮显示和操作。
+`InterfaceMode` 是全局对象，管理游戏的界面模式切换。每个界面模式（如默认模式、城市生产、外交对话等）都有对应的处理器，负责该模式下的输入处理、视图切换等。
 
 ```javascript
-// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
-// 简要描述功能
-NavTray.clear();
-NavTray.addOrUpdateGenericBack();
-NavTray.addOrUpdateAccept("LOC_UI_QUEUE_MOVE_UP");
-NavTray.addOrUpdateShellAction1("LOC_UI_QUEUE_DELETE_ITEM");
-NavTray.addOrUpdateCancel("LOC_GENERIC_CANCEL");
+// 来源 modules/core/ui/interface-modes/interface-modes.js
+// 注册自定义界面模式处理器
+InterfaceMode.addHandler("INTERFACEMODE_RADIAL_SELECTION", new RadialSelectionInterfaceMode());
+
+// 来源 modules/base-standard/ui/production-chooser/production-chooser-helpers.js
+// 切换到指定界面模式，传递参数
+InterfaceMode.switchTo(item.interfaceMode, {
+  cityID: currentCity,
+  constructibleID: item.id
+});
+
+// 来源 modules/core/ui/input/hotkey-manager.js
+// 检查当前模式是否允许热键
+if (InterfaceMode.allowsHotKeys()) {
+  // 处理热键输入
+}
 ```
 
-| 方法(5) | 参数 | 返回值 | 说明 |
+| 方法(8) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| <API>NavTray.clear</API> | — | `void` | 清除导航栏 |
-| <API>NavTray.addOrUpdateGenericBack</API> | callback | `void` | 添加/更新返回按钮 |
-| <API>NavTray.addOrUpdateShellAction1</API> | label, callback | `void` | 添加/更新操作按钮 1 |
-| <API>NavTray.addOrUpdateAccept</API> | label, callback | `void` | 添加/更新接受按钮 |
-| <API>NavTray.addOrUpdateCancel</API> | label, callback | `void` | 添加/更新取消按钮 |
+| <API>InterfaceMode.getCurrent</API> | — | `string` | 获取当前界面模式名称 |
+| <API>InterfaceMode.switchTo</API> | mode, parameters | `bool` | 切换到指定界面模式 |
+| <API>InterfaceMode.switchToDefault</API> | — | `void` | 切换到默认界面模式 |
+| <API>InterfaceMode.isInInterfaceMode</API> | mode | `bool` | 检查是否处于指定模式 |
+| <API>InterfaceMode.isInDefaultMode</API> | — | `bool` | 检查是否处于默认模式 |
+| <API>InterfaceMode.addHandler</API> | mode, handler | `void` | 注册界面模式处理器 |
+| <API>InterfaceMode.getParameters</API> | — | `object` | 获取当前模式的参数 |
+| <API>InterfaceMode.allowsHotKeys</API> | — | `bool` | 当前模式是否允许热键 |
+
+## Layout — 布局与 CSS
+
+`Layout` 是布局辅助全局对象，提供像素转换和紧凑布局检测。
+
+```javascript
+// 来源 modules/core/ui/components/fxs-flipbook.js
+// 简要描述功能
+this.Root.style.width = Layout.pixels(sprite.width);
+this.Root.style.height = Layout.pixels(sprite.height);
+
+// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
+// 简要描述功能
+const isCompact = Layout.isCompact();
+```
+
+| 方法(3) | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| <API>Layout.pixelsToScreenPixels</API> | px | `float` | 像素转屏幕像素 |
+| <API>Layout.pixels</API> | px | `float` | 像素值转换 |
+| <API>Layout.isCompact</API> | — | `bool` | 是否为紧凑布局 |
 
 ## DialogBoxManager — 对话框管理器
 
@@ -188,26 +222,27 @@ const yieldIcon = Icon.getYieldIcon(yieldType);
 | <API>Icon.getYieldIcon</API> | yieldType | `string` | 获取产出图标 |
 | <API>Icon.getVictoryIcon</API> | victoryType | `string` | 获取胜利图标 |
 
-## Layout — 布局与 CSS
+## NavTray — 导航托盘
 
-`Layout` 是布局辅助全局对象，提供像素转换和紧凑布局检测。
+`NavTray` 是手柄导航托盘全局对象，管理底部导航栏的按钮显示和操作。
 
 ```javascript
-// 来源 modules/core/ui/components/fxs-flipbook.js
+// 来源 modules/base-standard/ui/advanced-start/screen-advanced-start.js
 // 简要描述功能
-this.Root.style.width = Layout.pixels(sprite.width);
-this.Root.style.height = Layout.pixels(sprite.height);
-
-// 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
-// 简要描述功能
-const isCompact = Layout.isCompact();
+NavTray.clear();
+NavTray.addOrUpdateGenericBack();
+NavTray.addOrUpdateAccept("LOC_UI_QUEUE_MOVE_UP");
+NavTray.addOrUpdateShellAction1("LOC_UI_QUEUE_DELETE_ITEM");
+NavTray.addOrUpdateCancel("LOC_GENERIC_CANCEL");
 ```
 
-| 方法(3) | 参数 | 返回值 | 说明 |
+| 方法(5) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| <API>Layout.pixelsToScreenPixels</API> | px | `float` | 像素转屏幕像素 |
-| <API>Layout.pixels</API> | px | `float` | 像素值转换 |
-| <API>Layout.isCompact</API> | — | `bool` | 是否为紧凑布局 |
+| <API>NavTray.clear</API> | — | `void` | 清除导航栏 |
+| <API>NavTray.addOrUpdateGenericBack</API> | callback | `void` | 添加/更新返回按钮 |
+| <API>NavTray.addOrUpdateShellAction1</API> | label, callback | `void` | 添加/更新操作按钮 1 |
+| <API>NavTray.addOrUpdateAccept</API> | label, callback | `void` | 添加/更新接受按钮 |
+| <API>NavTray.addOrUpdateCancel</API> | label, callback | `void` | 添加/更新取消按钮 |
 
 ## 相关全局对象
 
@@ -1234,6 +1269,179 @@ this.Root.style.height = Layout.pixels(sprite.height);
 // 来源 modules/core/ui/shell/create-panels/advanced-options-base.js
 // 简要描述功能
 const isCompact = Layout.isCompact();
+```
+
+</API>
+
+<API id="InterfaceMode.getCurrent"><h3>InterfaceMode.getCurrent()</h3>
+
+**说明**: 获取当前界面模式名称，如 `"INTERFACEMODE_DEFAULT"`、`"INTERFACEMODE_CITY_PRODUCTION"` 等。
+
+**参数**: 无
+
+**返回值**: `string` — 当前界面模式名称
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/input/hotkey-manager.js
+// 根据当前模式执行不同热键逻辑
+if (InterfaceMode.getCurrent() == "INTERFACEMODE_CITY_PRODUCTION") {
+  // 城市生产模式下的特殊处理
+}
+```
+
+</API>
+
+<API id="InterfaceMode.switchTo"><h3>InterfaceMode.switchTo(mode, parameters)</h3>
+
+**说明**: 切换到指定界面模式。会先检查当前模式是否允许离开，再检查目标模式是否允许进入，最后切换视图。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| mode | `string` | 目标界面模式名称 |
+| parameters | `object` | 可选，传递给目标模式处理器的参数 |
+
+**返回值**: `bool` — 切换成功返回 `true`，失败返回 `false`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/production-chooser/production-chooser-helpers.js
+// 切换到生产选择界面模式
+InterfaceMode.switchTo(item.interfaceMode, {
+  cityID: currentCity,
+  constructibleID: item.id
+});
+```
+
+</API>
+
+<API id="InterfaceMode.switchToDefault"><h3>InterfaceMode.switchToDefault()</h3>
+
+**说明**: 切换到默认界面模式（`INTERFACEMODE_DEFAULT`）。
+
+**参数**: 无
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/production-chooser/production-chooser-helpers.js
+// 退出建筑放置模式，返回默认模式
+if (InterfaceMode.isInInterfaceMode("INTERFACEMODE_PLACE_BUILDING")) {
+  InterfaceMode.switchToDefault();
+}
+```
+
+</API>
+
+<API id="InterfaceMode.isInInterfaceMode"><h3>InterfaceMode.isInInterfaceMode(mode)</h3>
+
+**说明**: 检查当前是否处于指定的界面模式。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| mode | `string` | 要检查的界面模式名称 |
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js
+// 检查是否处于外交对话模式
+if (InterfaceMode.isInInterfaceMode("INTERFACEMODE_DIPLOMACY_DIALOG") && !DiplomacyManager.currentDiplomacyDialogData) {
+  // 外交对话模式下的处理
+}
+```
+
+</API>
+
+<API id="InterfaceMode.isInDefaultMode"><h3>InterfaceMode.isInDefaultMode()</h3>
+
+**说明**: 检查当前是否处于默认界面模式。
+
+**参数**: 无
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/interface-modes/interface-modes.js
+// 检查是否处于默认模式
+if (InterfaceMode.isInDefaultMode()) {
+  // 默认模式下的处理
+}
+```
+
+</API>
+
+<API id="InterfaceMode.addHandler"><h3>InterfaceMode.addHandler(mode, handler)</h3>
+
+**说明**: 为指定界面模式注册处理器。处理器需实现 `canEnterMode`、`transitionTo`、`transitionFrom` 等生命周期方法。
+
+| 参数名 | 类型 | 说明 |
+|------|------|------|
+| mode | `string` | 界面模式名称 |
+| handler | `object` | 模式处理器对象 |
+
+**返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/interface-modes/interface-mode-radial-selection.js
+// 注册径向选择界面模式处理器
+class RadialSelectionInterfaceMode {
+  canEnterMode(parameters) { /* ... */ }
+  transitionTo(prevMode, mode, parameters) { /* ... */ }
+  transitionFrom(prevMode, mode) { /* ... */ }
+}
+InterfaceMode.addHandler("INTERFACEMODE_RADIAL_SELECTION", new RadialSelectionInterfaceMode());
+```
+
+</API>
+
+<API id="InterfaceMode.getParameters"><h3>InterfaceMode.getParameters()</h3>
+
+**说明**: 获取当前界面模式切换时传入的参数对象。
+
+**参数**: 无
+
+**返回值**: `object` | `undefined` — 当前模式的参数对象
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/interface-modes/interface-modes.js
+// 获取当前模式的参数
+const params = InterfaceMode.getParameters();
+if (params?.cityID) {
+  // 使用传入的城市 ID
+}
+```
+
+</API>
+
+<API id="InterfaceMode.allowsHotKeys"><h3>InterfaceMode.allowsHotKeys()</h3>
+
+**说明**: 检查当前界面模式是否允许热键输入。委托给当前模式处理器的 `allowsHotKeys()` 方法。
+
+**参数**: 无
+
+**返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/core/ui/input/hotkey-manager.js
+// 检查当前模式是否允许热键
+if (InterfaceMode.allowsHotKeys()) {
+  // 处理热键输入
+}
 ```
 
 </API>
