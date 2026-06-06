@@ -1,15 +1,20 @@
 ---
 title: Resources 资源
-doc_type: object-api
+doc_type: system
 summary: 资源管理全局对象，负责资源定义查询、地块资源获取、资源分配与交换。
 primary_scope:
   - Resources
-related_scope:
   - player.Resources
   - city.Resources
+related_scope:
   - GameInfo.Resources
 source:
   - TunerPanels/Resources.ltp
+  - modules/base-standard/ui-next/screens/commerce/commerce-screen-model.js
+  - modules/base-standard/ui/resource-allocation/model-resource-allocation.js
+  - modules/base-standard/ui/city-details/model-city-details.js
+  - modules/base-standard/ui/city-trade/model-city-trade.js
+doc_update: 2026-06-05
 ---
 
 # Resources 资源
@@ -17,8 +22,8 @@ source:
 资源管理全局对象，用于查询资源定义、获取地块资源、管理资源分配。引擎直接注入，无需手动 import 引入。
 
 ```javascript
-// 快速示例：获取地块上的资源
 // 来源 Resources.ltp
+// 获取地块上的资源
 const resource = Resources.getResourceOnPlot({ x: 10, y: 20 });
 if (resource) {
   console.log(resource.type, resource.amount);
@@ -37,7 +42,6 @@ if (resource) {
 | <API>Resources.getLocalResources</API> | playerID | `array` | 获取本地资源 |
 | <API>Resources.canStartTreasureFleet</API> | playerID | `bool` | 是否可以开始宝藏舰队 |
 
-## TunerPanel 补充：Resources 完整 API（来源 Resources.ltp）
 
 ### player.Resources
 
@@ -139,6 +143,15 @@ if (resource) {
 
 **返回值**: `array`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/commerce/commerce-screen-model.js
+// 获取玩家已分配资源并计算可用槽位
+const assignedResources = player.Resources.getAssignedResources();
+const numAvailableSlots = player.Resources.getAssignedResourcesCap() - assignedResources.length;
+```
+
 </API>
 <API id="Resources.getOriginCity"><h3>Resources.getOriginCity(resourceID)</h3>
 
@@ -149,6 +162,15 @@ if (resource) {
 | resourceID | `int` | 资源 ID |
 
 **返回值**: `City` \| `undefined`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/resource-allocation/model-resource-allocation.js
+// 获取资源的来源城市
+const originCityID = Game.Resources.getOriginCity(resourceValue);
+const originCity = Cities.get(originCityID);
+```
 
 </API>
 <API id="Resources.getAssignedResourcesCap"><h3>Resources.getAssignedResourcesCap(playerID)</h3>
@@ -161,6 +183,16 @@ if (resource) {
 
 **返回值**: `int`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/commerce/commerce-screen-model.js
+// 计算城市资源分配剩余槽位
+const cap = player.Resources.getAssignedResourcesCap();
+const assigned = player.Resources.getAssignedResources().length;
+const availableSlots = cap - assigned;
+```
+
 </API>
 <API id="Resources.forEach"><h3>Resources.forEach(callback)</h3>
 
@@ -171,6 +203,16 @@ if (resource) {
 | callback | `function` | 回调函数 |
 
 **返回值**: `void`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/commerce/commerce-screen-model.js
+// 遍历所有资源定义
+GameInfo.Resources.forEach((resource) => {
+  console.log(resource.ResourceType);
+});
+```
 
 </API>
 <API id="Resources.getLocalResources"><h3>Resources.getLocalResources(playerID)</h3>
@@ -183,6 +225,14 @@ if (resource) {
 
 **返回值**: `array`
 
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/city-trade/model-city-trade.js
+// 获取城市本地资源数量
+const numLocalResources = city.Resources.getLocalResources().length;
+```
+
 </API>
 <API id="Resources.canStartTreasureFleet"><h3>Resources.canStartTreasureFleet(playerID)</h3>
 
@@ -193,5 +243,16 @@ if (resource) {
 | playerID | `int` | 玩家 ID |
 
 **返回值**: `bool`
+
+**使用示例**:
+
+```javascript
+// 来源 modules/base-standard/ui/city-details/model-city-details.js
+// 检查城市是否可以开始宝藏舰队
+const canStart = cityResources.canStartTreasureFleet();
+if (canStart) {
+  const turnsRemaining = cityResources.getTurnsUntilTreasureGenerated();
+}
+```
 
 </API>

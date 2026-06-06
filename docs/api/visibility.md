@@ -1,6 +1,6 @@
 ---
 title: Visibility 可见性
-doc_type: object-api
+doc_type: object
 summary: Visibility 全局对象管理地图的可见性和迷雾系统，支持可见性计数变更、地块可见性检查和全图揭示。
 primary_scope:
   - Visibility
@@ -10,23 +10,16 @@ related_scope:
   - Camera
 source:
   - TunerPanels/Districts.ltp
+  - TunerPanels/Features.ltp
   - TunerPanels/Map.ltp
   - TunerPanels/Player.ltp
+doc_update: 2026-06-05
 ---
 
 # Visibility 可见性
 
 Visibility 全局对象管理地图的可见性和迷雾系统。
 
-## 方法列表（共 3 个）
-
-| 方法 | 参数 | 返回值 | 说明 |
-|------|------|--------|------|
-| <API>Visibility.changeVisibilityCountForPlots</API> | playerId, count, plotIndexArray | `void` | 为指定玩家改变一组地块的可见性计数（+1 可见，-1 隐藏） |
-| <API>Visibility.areAnyPlotsVisible</API> | playerId, plotIndexArray | `bool` | 检查一组地块中是否有任何可见 |
-| <API>Visibility.revealAllPlots</API> | playerId | `void` | 揭示所有地块（永久可见） |
-
-## 使用示例
 
 ```javascript
 // 来源 TunerPanels/Districts.ltp
@@ -52,6 +45,14 @@ let loc = GameplayMap.getLocationFromIndex(plotIndex);
 let aPlots = GameplayMap.getPlotIndicesInRadius(loc.x, loc.y, 2);
 Visibility.changeVisibilityCountForPlots(playerId, 1, aPlots);
 ```
+
+## 方法列表（共 3 个）
+
+| 方法 | 参数 | 返回值 | 说明 |
+|------|------|--------|------|
+| <API>Visibility.changeVisibilityCountForPlots</API> | playerId, count, plotIndexArray | `void` | 为指定玩家改变一组地块的可见性计数（+1 可见，-1 隐藏） |
+| <API>Visibility.areAnyPlotsVisible</API> | playerId, plotIndexArray | `bool` | 检查一组地块中是否有任何可见 |
+| <API>Visibility.revealAllPlots</API> | playerId | `void` | 揭示所有地块（永久可见） |
 
 ## 相关 API
 

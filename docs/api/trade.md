@@ -1,16 +1,15 @@
 ---
 title: Trade 贸易系统
-doc_type: system-topic
+doc_type: system
 summary: 贸易系统 API，涵盖全局贸易管理、玩家贸易操作和城市贸易路线。
 primary_scope:
   - Game.Trade
   - player.Trade
   - city.Trade
 related_scope:
-  - GameInfo.Trade
 source:
   - TunerPanels/Trade.ltp
-  - TunerPanels/Resources.ltp
+doc_update: 2026-06-05
 ---
 
 # Trade 贸易系统
@@ -27,7 +26,7 @@ if (status === TradeRouteStatus.SUCCESS) {
 }
 ```
 
-## 方法列表（共 8 个）
+## 方法列表（共 7 个）
 
 ### Game.Trade 全局对象
 
@@ -125,7 +124,7 @@ for (const playerId of Players.getWasEverAliveIds()) {
 
 ## 常用枚举
 
-### TradeRouteStatus
+### TradeRouteStatus 贸易路线状态
 
 | 枚举值 | 说明 |
 |--------|------|
@@ -139,21 +138,20 @@ for (const playerId of Players.getWasEverAliveIds()) {
 | `TradeRouteStatus.NEED_MORE_FRIENDSHIP` | 需要更多友谊 |
 | `TradeRouteStatus.ALREADY_EXISTS` | 已存在 |
 
-### TradeRouteSearchOptions
+### TradeRouteSearchOptions 贸易路线搜索选项
 
 | 枚举值 | 说明 |
 |--------|------|
 | `TradeRouteSearchOptions.INCLUDE_FAILED` | 包含失败的路线 |
 | `TradeRouteSearchOptions.EXTENDED_STATUS` | 扩展状态信息 |
 
-### DomainTypes
+### DomainTypes 领域类型
 
 | 枚举值 | 说明 |
 |--------|------|
 | `DomainTypes.DOMAIN_SEA` | 海路 |
 | `DomainTypes.DOMAIN_LAND` | 陆路 |
 
----
 
 <API id="Game.Trade.calculateTradeRouteExportYield"><h3>Game.Trade.calculateTradeRouteExportYield(routeId, yieldType)</h3>
 
@@ -249,6 +247,17 @@ if (status === TradeRouteStatus.SUCCESS) {
 | cityId | `int` | 城市 ID |
 
 **返回值**: `int`
+
+**使用示例**:
+
+```javascript
+// 来源 Trade.ltp
+// 统计城市已有贸易路线
+const count = player.Trade.countPlayerCityRoutes(cityId);
+if (count > 0) {
+  console.log("该城市已有 " + count + " 条贸易路线");
+}
+```
 
 </API>
 <API id="player.Trade.projectPossibleTradeRoutes"><h3>player.Trade.projectPossibleTradeRoutes(options)</h3>

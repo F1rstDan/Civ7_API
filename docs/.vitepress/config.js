@@ -40,10 +40,20 @@ export default defineConfig({
           { text: 'Legacies 传承系统', link: '/api/legacies' },
           { text: 'Stories 故事系统', link: '/api/stories' },
           { text: 'AdvancedStart 高级开局', link: '/api/advanced-start' },
-          { text: 'Random Events 随机事件', link: '/api/random-events' },
           { text: 'Victories 胜利系统', link: '/api/victories' },
           { text: 'Advisors 建议系统', link: '/api/advisors' },
           { text: 'IndependentPowers 独立势力', link: '/api/independent-powers' },
+        ]
+      },
+      {
+        text: '地图系统',
+        items: [
+          { text: 'Resources 资源', link: '/api/resources' },
+          { text: 'GameplayMap 地图操作', link: '/api/gameplay-map' },
+          { text: 'Map Builders 地图构建', link: '/api/map-builders' },
+          { text: 'MapFeatures 自然特征', link: '/api/map-features' },
+          { text: 'Random Events 随机事件', link: '/api/random-events' },
+          { text: 'Visibility 可见性', link: '/api/visibility' },
         ]
       },
       {
@@ -55,18 +65,8 @@ export default defineConfig({
           { text: 'Camera 镜头', link: '/api/camera' },
           { text: 'Locale 本地化', link: '/api/locale' },
           { text: 'Notifications 通知', link: '/api/notifications' },
-          { text: 'WorldUnits 单位视觉表现', link: '/api/world-units' },
           { text: 'WorldUI 世界UI', link: '/api/world-ui' },
-        ]
-      },
-      {
-        text: '地图系统',
-        items: [
-          { text: 'GameplayMap 地图操作', link: '/api/gameplay-map' },
-          { text: 'Map Builders 地图构建', link: '/api/map-builders' },
-          { text: 'MapFeatures 自然特征', link: '/api/map-features' },
-          { text: 'Resources 资源', link: '/api/resources' },
-          { text: 'Visibility 可见性', link: '/api/visibility' },
+          { text: 'WorldUnits 单位视觉表现', link: '/api/world-units' },
         ]
       },
       {
@@ -80,12 +80,12 @@ export default defineConfig({
       {
         text: '调试与其他',
         items: [
-          { text: 'Modding 模组', link: '/api/modding' },
           { text: 'Configuration 配置', link: '/api/configuration' },
+          { text: 'Unlocks 解锁系统', link: '/api/unlocks' },
           { text: 'Automation 自动化', link: '/api/automation' },
           { text: 'Autoplay 自动播放', link: '/api/autoplay' },
-          { text: 'Unlocks 解锁系统', link: '/api/unlocks' },
           { text: 'Reflection 调试反射', link: '/api/reflection' },
+          { text: 'Modding 模组', link: '/api/modding' },
           { text: 'Network 网络', link: '/api/network' },
           { text: 'Social 社交', link: '/api/social' },
           { text: 'Input 输入', link: '/api/input' },

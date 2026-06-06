@@ -1,6 +1,6 @@
 ---
 title: WorldUnits 单位视觉表现
-doc_type: object-api
+doc_type: object
 summary: 单位在世界地图上的视觉表现控制，包括活动动画、空闲样式、战斗动画、生命值显示。
 primary_scope:
   - WorldUnits
@@ -8,6 +8,7 @@ related_scope:
   - Units
 source:
   - TunerPanels/WorldUnits.ltp
+doc_update: 2026-06-05
 ---
 
 # WorldUnits 单位视觉表现
@@ -15,8 +16,8 @@ source:
 `WorldUnits` 全局对象用于控制单位在世界地图上的视觉表现：活动动画、空闲样式、战斗动画、生命值显示等。这是**视觉层 API**，不影响游戏逻辑状态。
 
 ```javascript
-// 快速示例：设置单位活动动画和生命值
 // 来源 WorldUnits.ltp
+// 快速示例：设置单位活动动画和生命值
 WorldUnits.setActivity(unitId, "TYPE_SLEEP");
 WorldUnits.setHealth(unitId, 50);
 ```
@@ -30,68 +31,6 @@ WorldUnits.setHealth(unitId, 50);
 | <API>WorldUnits.setHealth</API> | unitId, healthPercent | `void` | 设置单位生命值百分比（0-100） |
 | <API>WorldUnits.setAgeStyle</API> | unitId, ageStyle | `void` | 设置单位时代风格 |
 | <API>WorldUnits.doCombat</API> | params | `void` | 触发战斗动画 |
-
-## 方法详细
-
-### setActivity
-
-```javascript
-// 来源 WorldUnits.ltp
-// 设置单位活动动画
-WorldUnits.setActivity(unitId, "TYPE_SLEEP");
-// unitId: {owner: number, id: number}
-// activityType: "TYPE_" + 活动名称（见 UnitActivityTypes 枚举）
-```
-
-### setIdleStyle
-
-```javascript
-// 来源 WorldUnits.ltp
-// 设置单位空闲样式
-WorldUnits.setIdleStyle(unitId, "IDLE_SELECTED");
-// idleType: "IDLE_" + 样式名称（见 UnitIdleStyles 枚举）
-```
-
-### setHealth
-
-```javascript
-// 来源 WorldUnits.ltp
-// 设置单位生命值显示百分比
-WorldUnits.setHealth(unitId, 50);  // 设置为 50% 生命值
-// healthPercent: 0-100
-```
-
-### setAgeStyle
-
-```javascript
-// 来源 WorldUnits.ltp
-// 设置单位时代风格
-WorldUnits.setAgeStyle(unitId, 1);  // 设置时代风格（1=STYLE_1, 2=STYLE_2, 3=STYLE_3）
-```
-
-### doCombat
-
-```javascript
-// 来源 WorldUnits.ltp — "Do Combat" Action
-// 触发战斗动画
-let params = {};
-params.Attacker = {};
-params.Attacker.ID = attackerUnitId;           // {owner, id}
-params.Attacker.MaxHitPoints = Units.get(attackerUnitId).Health?.maxDamage;
-params.Attacker.DamageTo = 30;                 // 本次造成伤害
-params.Attacker.FinalDamageTo = 30;            // 累计伤害
-
-params.Defender = {};
-params.Defender.ID = defenderUnitId;
-params.Defender.MaxHitPoints = Units.get(defenderUnitId).Health?.maxDamage;
-params.Defender.DamageTo = 25;
-params.Defender.FinalDamageTo = 25;
-
-params.Visualize = true;                       // 是否播放动画
-params.CombatType = Database.makeHash("COMBAT_MELEE");  // 战斗类型
-
-WorldUnits.doCombat(params);
-```
 
 ## UnitActivityTypes 枚举
 
@@ -204,6 +143,14 @@ WorldUnits.setHealth(unitId, 50);
 
 **返回值**: `void`
 
+**使用示例**:
+
+```javascript
+// 来源 WorldUnits.ltp
+// 设置单位时代风格
+WorldUnits.setAgeStyle(unitId, 1);  // 1=STYLE_1, 2=STYLE_2, 3=STYLE_3
+```
+
 </API>
 <API id="WorldUnits.doCombat"><h3>WorldUnits.doCombat(params)</h3>
 
@@ -218,13 +165,24 @@ WorldUnits.setHealth(unitId, 50);
 **使用示例**:
 
 ```javascript
-// 来源 WorldUnits.ltp
+// 来源 WorldUnits.ltp — "Do Combat" Action
 // 触发战斗动画
 let params = {};
-params.Attacker = { ID: attackerUnitId, MaxHitPoints: 100, DamageTo: 30, FinalDamageTo: 30 };
-params.Defender = { ID: defenderUnitId, MaxHitPoints: 100, DamageTo: 25, FinalDamageTo: 25 };
-params.Visualize = true;
-params.CombatType = Database.makeHash("COMBAT_MELEE");
+params.Attacker = {};
+params.Attacker.ID = attackerUnitId;           // {owner, id}
+params.Attacker.MaxHitPoints = Units.get(attackerUnitId).Health?.maxDamage;
+params.Attacker.DamageTo = 30;                 // 本次造成伤害
+params.Attacker.FinalDamageTo = 30;            // 累计伤害
+
+params.Defender = {};
+params.Defender.ID = defenderUnitId;
+params.Defender.MaxHitPoints = Units.get(defenderUnitId).Health?.maxDamage;
+params.Defender.DamageTo = 25;
+params.Defender.FinalDamageTo = 25;
+
+params.Visualize = true;                       // 是否播放动画
+params.CombatType = Database.makeHash("COMBAT_MELEE");  // 战斗类型
+
 WorldUnits.doCombat(params);
 ```
 
