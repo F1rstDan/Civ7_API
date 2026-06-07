@@ -1,4 +1,4 @@
-﻿import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Civ7 Mod API',
@@ -32,6 +32,7 @@ export default defineConfig({
       {
         text: '游戏系统',
         items: [
+          { text: 'Technology 科技', link: '/api/technology' },
           { text: 'Culture 文化', link: '/api/culture' },
           { text: 'ProgressionTrees 科文树', link: '/api/progression-trees' },
           { text: 'Diplomacy 外交', link: '/api/diplomacy' },

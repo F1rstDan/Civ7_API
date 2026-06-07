@@ -26,7 +26,7 @@ source:
   - modules/core/ui/radial-menu/panel-radial-menu.js
   - modules/base-standard/ui/tutorial/advisor-utilities.js
   - modules/base-standard/ui/civilopedia/civilopedia-sidebar-panels.js
-doc_update: 2026-06-05
+doc_update: 2026-06-07
 ---
 
 # ProgressionTrees 科技文化树
@@ -138,8 +138,6 @@ if (currentAge?.AgeType == "AGE_ANTIQUITY") {
 }
 ```
 
-**来源**: modules/base-standard/ui/tech-civic-complete/screen-tech-civic-complete.js、tutorial-items-all-ages.js
-
 </API>
 
 <API id="Game.ProgressionTrees.getTree"><h3>Game.ProgressionTrees.getTree(playerID, treeType)</h3>
@@ -180,8 +178,6 @@ if (treeObject && treeObject.activeNodeIndex >= 0) {
 }
 ```
 
-**来源**: modules/base-standard/ui/tutorial/tutorial-support.js、panel-sub-system-dock.js
-
 </API>
 
 <API id="Game.ProgressionTrees.getTreeStructure"><h3>Game.ProgressionTrees.getTreeStructure(treeType)</h3>
@@ -205,8 +201,6 @@ const contentTreeStructureNodes = treeStructureNodes.filter((structureNodeData) 
     return !contentVal.isLocked;
 });
 ```
-
-**来源**: modules/base-standard/ui/tree-grid/tree-grid.js
 
 </API>
 
@@ -243,8 +237,6 @@ const card = {
 };
 ```
 
-**来源**: modules/base-standard/ui/production-chooser/production-chooser-helpers.js、tree-grid.js
-
 </API>
 
 <API id="Game.ProgressionTrees.canEverUnlock"><h3>Game.ProgressionTrees.canEverUnlock(playerID, nodeType)</h3>
@@ -268,8 +260,6 @@ if (contentVal.isLocked) {
     lockedNodes.push(structureNodeData.nodeType);
 }
 ```
-
-**来源**: modules/base-standard/ui/tree-grid/tree-grid.js
 
 </API>
 
@@ -296,8 +286,6 @@ if (Game.ProgressionTrees.hasLegendUnlocked(this._player, structureNodeData.node
 }
 ```
 
-**来源**: modules/base-standard/ui/tree-grid/tree-grid.js
-
 </API>
 
 <API id="Game.ProgressionTrees.getLegendAttributeNodeLockedString"><h3>Game.ProgressionTrees.getLegendAttributeNodeLockedString(playerID, nodeType)</h3>
@@ -320,8 +308,6 @@ const lockedReason = Locale.compose(
     Game.ProgressionTrees.getLegendAttributeNodeLockedString(this._player, structureNodeData.nodeType)
 ) || "";
 ```
-
-**来源**: modules/base-standard/ui/tree-grid/tree-grid.js
 
 </API>
 
@@ -348,8 +334,6 @@ for (let eTree of GameInfo.ProgressionTrees) {
     }
 }
 ```
-
-**来源**: TunerPanels/Player.ltp
 
 </API>
 
@@ -384,8 +368,6 @@ if (treeInfo) {
 const progressionTree = GameInfo.ProgressionTrees.lookup(nodeInfo.ProgressionTree);
 ```
 
-**来源**: TunerPanels/Player.ltp、modules/base-standard/ui/civilopedia/civilopedia-sidebar-panels.js
-
 </API>
 
 <API id="GameInfo.ProgressionTrees.find"><h3>GameInfo.ProgressionTrees.find(predicate)</h3>
@@ -410,7 +392,4 @@ if (!definition) {
     console.warn("No definition for attribute: " + attributeDef.Name);
 }
 ```
-
-**来源**: modules/base-standard/ui/attribute-trees/model-attribute-trees.js
-
 </API>
