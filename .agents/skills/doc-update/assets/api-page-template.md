@@ -17,7 +17,7 @@ doc_update: 2026-06-05
 一句话说明该对象的定位和用途。用于 xxx 操作。引擎直接注入，无需手动 import 引入。
 
 ```javascript
-// 快速示例：展示最常用的 1-3 个操作
+// 实用示例：展示最常用的 1-3 个操作
 // 来源 xxx.ltp
 // 简要描述功能
 import { SomeAPI } from 'modules/base-standard/ui/example/example.js';
@@ -57,7 +57,7 @@ const Object = SomeAPI.get(GameContext.localPlayerID);
 |------|------|--------|------|
 | <API>Object.getHash</API> | — | `int` | 获取对象哈希值 |
 
-## 子系统
+## 子系统/子对象
 
 对象内部包含以下子系统：
 
