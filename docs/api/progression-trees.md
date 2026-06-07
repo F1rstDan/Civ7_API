@@ -6,9 +6,11 @@ primary_scope:
   - Game.ProgressionTrees
   - player.Techs
   - player.Culture
-related_scope:
   - GameInfo.ProgressionTrees
+related_scope:
   - GameInfo.ProgressionTreeNodes
+  - GameInfo.ProgressionTreeNodeUnlocks
+  - GameInfo.ProgressionTreeNodeTraits
 source:
   - TunerPanels/Player.ltp
   - modules/base-standard/ui/tree-grid/tree-grid.js
@@ -90,8 +92,25 @@ if (treeObject) {
 
 | 表名 | 说明 |
 |------|------|
-| `GameInfo.ProgressionTrees` | 树定义表 |
-| `GameInfo.ProgressionTreeNodes` | 树节点定义表 |
+| `GameInfo.ProgressionTrees` | 树定义表（含 `ProgressionTreeType`、`Name`、`AgeType`、`SystemType`） |
+| `GameInfo.ProgressionTreeNodes` | 树节点定义表（含 `Name`、`Description`、`ProgressionTree`） |
+| `GameInfo.ProgressionTreeNodeUnlocks` | 节点解锁内容表（含 `TargetKind`、`TargetType`、`UnlockDepth`、`Hidden`） |
+| `GameInfo.ProgressionTreeNodeTraits` | 节点属性解锁表（按 `ProgressionTreeNodeType` 索引，列出节点解锁的属性/特质） |
+
+### ProgressionTreeNodeUnlocks 使用模式
+
+```javascript
+// 来源 modules/base-standard/ui-next/screens/choosers/tech-chooser/tech-chooser.js
+// 通过节点数据中的 unlockIndices 索引解锁内容
+const nodeData = Game.ProgressionTrees.getNode(player.id, nodeType);
+for (const idx of nodeData.unlockIndices) {
+    const unlockInfo = GameInfo.ProgressionTreeNodeUnlocks[idx];
+    if (!unlockInfo || unlockInfo.Hidden) continue;
+    // unlockInfo.TargetKind: 解锁目标类型（如 "KIND_UNIT"、"KIND_BUILDING"）
+    // unlockInfo.TargetType: 解锁目标标识
+    // unlockInfo.UnlockDepth: 解锁所在深度层级（1-based）
+}
+```
 
 ## 相关全局对象
 

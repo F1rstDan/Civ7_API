@@ -136,7 +136,8 @@ for (const e of events) {
 |------|------|
 | `GameInfo.ProgressionTrees` | 树定义表（含 `ProgressionTreeType`、`Name`、`AgeType`、`SystemType`） |
 | `GameInfo.ProgressionTreeNodes` | 树节点定义表（含 `Name`、`Description`、`ProgressionTree`） |
-| `GameInfo.ProgressionTreeNodeUnlocks` | 节点解锁内容表（含 `TargetKind`、`TargetType`、`UnlockDepth`） |
+| `GameInfo.ProgressionTreeNodeUnlocks` | 节点解锁内容表（含 `TargetKind`、`TargetType`、`UnlockDepth`、`Hidden`） |
+| `GameInfo.ProgressionTreeNodeTraits` | 节点属性解锁表（按 `ProgressionTreeNodeType` 索引，列出节点解锁的属性/特质） |
 
 ## 相关全局对象
 

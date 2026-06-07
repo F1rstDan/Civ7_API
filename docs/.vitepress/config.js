@@ -32,8 +32,8 @@ export default defineConfig({
       {
         text: '游戏系统',
         items: [
-          { text: 'Technology 科技', link: '/api/technology' },
           { text: 'Culture 文化', link: '/api/culture' },
+          { text: 'Technology 科技', link: '/api/technology' },
           { text: 'ProgressionTrees 科文树', link: '/api/progression-trees' },
           { text: 'Diplomacy 外交', link: '/api/diplomacy' },
           { text: 'Combat 战斗系统', link: '/api/combat' },
