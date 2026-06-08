@@ -4,6 +4,7 @@ doc_type: object
 summary: 一句话说明该文档覆盖的 API 范围。
 primary_scope:
   - SomeAPI
+  - unit : 'Units.get(unitId)'
 related_scope:
   - GameInfo.SomeTable
 source:

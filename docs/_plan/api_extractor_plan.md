@@ -1,122 +1,145 @@
-# Civ7 API & Constants 自动提取脚本设计方案
+# Civ7 API & Constants 三步混合智能提取方案
 
-经过与用户的共识，我们确立了基于 **Node.js + TypeScript Compiler AST 解析** 的 Civ7 API 提取脚本制作方案。该脚本将摆脱落后的“正则特征匹配”机制，直接对符号表反解出的原始 TS 定义进行高精度的语义提取。
+为了在保证提取的高覆盖率的同时，彻底过滤掉前端 UI 组件及第三方依赖库的庞大噪音，并完美解决常量枚举被误判为全局对象的问题，我们设计了 **“脚本粗筛 -> AI 极简研判分类 -> 脚本编译精筛”** 的三步混合智能提取架构。
 
----
-
-## 运行与技术架构
-
-* **文件位置**：`scripts/extract_civ7_api.js` (或 `.ts`，通过 `ts-node` 执行)
-* **技术栈**：Node.js + `typescript` (AST 语法分析包)
-* **数据源**：`D:\Games Design\Civ7_mod\.官方变动` 目录下的 `.js.map` 映射文件
-* **输出路径**：`docs/data/completions.json` (提供给 Linter 与文档补全流程读取)
+为了真实且清晰地表达 Civ7 API 中**“全局管理器 -> 实例 -> 子系统组件”**的层层展开关系，我们将数据模型进行了深度升级。
 
 ---
 
-## 核心实现步骤
+## 一、 核心概念与层级数据模型
+
+Civ7 的 API 并不是扁平的全局和子系统，而是具有清晰的面向对象和组件化的层级结构：
+
+1. **全局对象 (Globals)**：直接从全局环境注入的管理器或单例，如 `GameplayMap`、`Players`、`Units`、`Cities`、`Game`、`Input`、`InterfaceMode` 等。
+2. **实例对象 (Instances)**：由全局对象的方法（如 `Players.get(id)` 或 `Units.get(id)`）返回的实体实例。主要包含：
+   - **`Player` 实例**：拥有实例属性（如 `id`），实例方法（如 `isHuman()`），以及下属**玩家子系统 (Player Sub-systems)**（如 `Treasury`、`Culture`、`Diplomacy`）。
+   - **`Unit` 实例**：拥有实例属性（如 `id`、`type`、`location`），以及下属**单位子系统 (Unit Sub-systems)**（如 `Health`、`Combat`、`Experience`、`Religion`）。
+   - **`City` 实例**：拥有下属**城市子系统 (City Sub-systems)**（如 `BuildQueue`、`Growth`、`Production`）。
+   - **`Plot` 实例**：地块实例，拥有地块方法与属性。
+3. **常量与枚举 (Enums)**：各系统通用的常量定义（如 `YieldTypes`、`AgeType`）。
+
+### 整体架构与运行流程
 
 ```mermaid
 graph TD
-    A[扫描游戏源码 .js.map] --> B[解包 sourcesContent 还原 TS 代码]
-    B --> C[构建 ts.SourceFile AST 语法树]
-    C --> D[第一步：提取并合并 Enum 声明]
-    C --> E[第二步：解析 Player 接口，自动抓取子系统列表]
-    E --> F[第三步：遍历全局与子系统接口，结构化提取 JSDoc 与签名]
-    D --> G[整合为 completions.json]
-    F --> G
+    A[第一步：粗筛脚本 --draft] --> B1[raw_completions.json 粗筛全量层级数据]
+    A --> B2[raw_names.json 粗筛对象名称列表]
+    B2 --> C[第二步：AI / 人类分类决策]
+    C --> D[生成/增量更新 api_filter.json 静态配置]
+    B1 --> E[第三步：精筛脚本 --compile]
+    D --> E
+    E --> F[生成最终 civ7_api.json 层级关系字典]
 ```
-
-### 1. 源码反解与 AST 构建
-1. 遍历游戏目录中 `modules/` 和 `TunerPanels/` 下的所有 `.js.map` 文件；
-2. 读取 map 文件的 `sourcesContent` 字段，将其在内存中反解为虚拟的 TypeScript 源码文本；
-3. 调用 `typescript` 编译器的接口构建 AST：
-   ```javascript
-   const sourceFile = ts.createSourceFile(
-       filePath,
-       sourceText,
-       ts.ScriptTarget.Latest,
-       true
-   );
-   ```
-
-### 2. Enums (常量与枚举) 自动提取
-* 遍历 AST 节点，匹配 `ts.SyntaxKind.EnumDeclaration`；
-* 提取枚举名称、各成员的键值对定义（如 `ANTIQUITY = 0`）；
-* 提取枚举成员上方的 `ts.getJSDocComments`，获得字段的释义说明。
-
-### 3. 全局对象与子系统 (Sub-Objects) 自动发现
-* **路径过滤**：排除非游戏自身的第三方噪声代码；
-* **全局对象定位**：直接锁定 `KNOWN_GLOBALS`（如 `GameplayMap`）对应的 `interface` 或 `class` 定义；
-* **子系统自动抓取 (依赖链匹配)**：
-  - 寻找 `interface Player` (或 `IPlayer`) 声明节点；
-  - 遍历其下所有的属性成员（如 `Treasury: ITreasury;`，`Culture: ICulture;`）；
-  - **自动收集** 属性对应的接口类型（如 `ITreasury`、`ICulture`），将其动态加入待提取的子系统白名单中。
-
-### 4. 成员属性与 JSDoc 结构化提取
-对于所有定位到的全局/子系统接口，遍历其方法与属性成员：
-* **形参名与类型**：通过 `node.parameters` 提取形参名（绝对准确的变量名而非实参变量）与类型注解；
-* **返回值类型**：读取 `node.type` 获取返回值类型（包含泛型支持）；
-* **结构化 JSDoc 提取**：
-  - 调用 `ts.getJSDocTags(node)` 遍历注释标签；
-  - 提取 `@param` 对应的参数说明，归入对应的参数对象；
-  - 提取 `@returns` 对应的返回值说明，存入 `return_description`；
-  - 提取主注释段落存入 `description`。
 
 ---
 
-## 输出数据格式设计 (JSON)
+## 二、 配置文件结构定义
 
-提取出的数据将以 JSON 结构化存储，便于校验脚本和自动补全工作流进行毫秒级的数据匹配与读取：
-
+### 1. 分类配置文件 `api_filter.json`
+`api_filter.json` 主要用来决定哪些名称是全局对象，哪些是实例的下属子系统，哪些是常量枚举，哪些是 UI 噪声。
 ```json
 {
-  "version": 2,
+  "globals": [
+    "GameplayMap",
+    "Players",
+    "Units",
+    "Cities",
+    "Game",
+    "Input",
+    "InterfaceMode"
+  ],
+  "sub_objects": [
+    "Treasury",
+    "Culture",
+    "Diplomacy",
+    "Health",
+    "Combat",
+    "Experience",
+    "Religion",
+    "BuildQueue",
+    "Growth",
+    "Production"
+  ],
+  "enums": [
+    "AgeType",
+    "YieldTypes",
+    "AdvisorTypes"
+  ],
+  "ui_components": [
+    "AppHeader",
+    "LeaderImage",
+    "TutorialItem"
+  ],
+  "ignored": [
+    "SolidJS",
+    "Vite"
+  ]
+}
+```
+
+### 2. 完美的层级化 `civ7_api.json` 输出样例
+为了展现层层展开的级联关系，最终的 `civ7_api.json` 采用如下结构：
+```json
+{
+  "version": 3,
   "globals": {
     "GameplayMap": {
       "methods": {
-        "getGridWidth": {
-          "params": [],
-          "return_type": "number",
-          "description": "获取游戏地图的总格子宽度。"
-        },
-        "getContinentType": {
-          "params": [
-            {
-              "name": "x",
-              "type": "number",
-              "description": "地块的 X 坐标。"
-            },
-            {
-              "name": "y",
-              "type": "number",
-              "description": "地块的 Y 坐标。"
-            }
-          ],
-          "return_type": "number",
-          "description": "获取指定坐标的地块的大陆类型。"
-        }
+        "getGridWidth": { "params": [] }
       },
       "properties": {}
+    },
+    "Units": {
+      "methods": {
+        "get": {
+          "params": ["unitId"],
+          "return_type": "Unit"
+        }
+      }
     }
   },
-  "sub_objects": {
-    "Treasury": {
+  "instances": {
+    "Player": {
       "methods": {
-        "getBalance": {
-          "params": [],
-          "return_type": "number",
-          "description": "获取玩家的国库当前金币余额。"
+        "isHuman": { "params": [] }
+      },
+      "properties": {
+        "id": {}
+      },
+      "sub_objects": {
+        "Treasury": {
+          "methods": {
+            "getBalance": { "params": [], "return_type": "number" }
+          }
+        }
+      }
+    },
+    "Unit": {
+      "methods": {},
+      "properties": {
+        "id": {},
+        "type": {},
+        "location": { "type": "PlotCoord" }
+      },
+      "sub_objects": {
+        "Health": {
+          "methods": {
+            "getDamage": { "params": [], "return_type": "number" }
+          }
+        },
+        "Combat": {
+          "methods": {
+            "getStrength": { "params": [] }
+          }
         }
       }
     }
   },
   "enums": {
     "AgeType": {
-      "description": "游戏时代枚举",
       "members": {
         "ANTIQUITY": 0,
-        "EXPLORATION": 1,
-        "MODERN": 2
+        "EXPLORATION": 1
       }
     }
   }
@@ -125,7 +148,29 @@ graph TD
 
 ---
 
-## 验证与发布
+## 三、 三步走详细提取规范
 
-1. **测试脚本运行**：在 `scripts/` 下执行 `node extract_civ7_api.js`，确认其能在 5 秒内提取并生成 JSON；
-2. **校验比对**：将生成后的 `completions.json` 与已有文档进行对照，验证方法和参数名称是否精确对应。
+### 1. 第一步：粗筛 (`--draft`)
+* **变量接收器实例识别**：
+  * 若调用形如 `variable.method()`，通过启发式分析 `variable` 确定其所属实例：
+    - `player`, `p`, `pPlayer`, `localPlayer` $\rightarrow$ 归为 `Player` 实例方法。
+    - `unit`, `u`, `pUnit`, `selectedUnit` $\rightarrow$ 归为 `Unit` 实例方法.
+    - `city`, `c`, `pCity` $\rightarrow$ 归为 `City` 实例方法。
+    - `plot`, `pPlot` $\rightarrow$ 归为 `Plot` 实例方法。
+    - 首字母大写 (如 `GameplayMap`) $\rightarrow$ 归为全局对象。
+  * 若调用形如 `variable.SubObject.method()`：
+    - 分析 `variable` 的实例类型，并将 `SubObject`（如 `Health`）作为该实例的 `sub_objects` 成员进行注册与方法提取。
+* **输出**：
+  - `docs/data/raw_completions.json`：全量层级提取的粗筛文件。
+  - `docs/data/raw_names.json`：全部提取到的对象名（包含全局对象、子系统、常量枚举）。
+
+### 2. 第二步：AI / 人工分类与过滤器 (`api_filter.json`)
+* 将 `raw_names.json` 中的各对象名归入五大分类。
+* 特别注意：**`Units`**、**`Cities`**、**`Players`** 必须归入 `globals`，而其下属组件如 **`Health`**、**`Treasury`**、**`BuildQueue`** 归入 `sub_objects`。
+
+### 3. 第三步：精筛编译 (`--compile`)
+* 从 `raw_completions.json` 中读取层级数据，并根据 `api_filter.json` 的分类进行精筛整合。
+* 只有归在 `globals` 的对象输出到顶层 `globals` 下。
+* 只有归在 `sub_objects` 且在粗筛中被归于相应实例下的组件，才会输出到 `instances[InstanceName].sub_objects[SubObjectName]` 下。
+* 常量与大写伪全局对象（如 `YieldTypes`）全部剪切归入 `enums` 下。
+* 剔除所有空白描述，参数全量扁平化。
