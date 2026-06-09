@@ -317,14 +317,9 @@
         "turn": {
           "type": "number"
         },
-        "AgeProgressManager": {},
         "age": {
           "type": "AgeType"
         },
-        "VictoryManager": {
-          "type": "VictoryManagerLibrary"
-        },
-        "CrisisManager": {},
         "maxTurns": {},
         "Summary": {},
         "Modifiers": {}
@@ -581,6 +576,48 @@
             }
           },
           "properties": {}
+        },
+        "AgeProgressManager": {
+          "methods": {
+            "getMaxAgeProgressionPoints": {
+              "params": [],
+              "return_type": "number"
+            },
+            "getCurrentAgeProgressionPoints": {
+              "params": [],
+              "return_type": "number"
+            },
+            "isMilestoneComplete": {
+              "params": [
+                "AgeProgressionMilestoneType"
+              ],
+              "return_type": "boolean"
+            },
+            "getMilestoneProgressionPoints": {
+              "params": [
+                "AgeProgressionMilestoneType"
+              ]
+            },
+            "canTransitionToNextAge": {
+              "params": [
+                "localPlayerID"
+              ]
+            },
+            "updateAgeProgressionPoints": {
+              "params": [
+                "arg0"
+              ]
+            }
+          },
+          "properties": {
+            "isFinalAge": {},
+            "isAgeOver": {},
+            "isExtendedGame": {},
+            "ageCountdownStarted": {
+              "type": "boolean"
+            },
+            "getAgeCountdownLength": {}
+          }
         },
         "Diplomacy": {
           "methods": {
@@ -866,6 +903,44 @@
           },
           "properties": {}
         },
+        "VictoryManager": {
+          "methods": {
+            "getLatestPlayerDefeat": {
+              "params": [
+                "localPlayerID"
+              ],
+              "return_type": "DefeatType"
+            },
+            "getVictories": {
+              "params": [],
+              "return_type": "VictoryManagerLibrary_VictoryInfo[]"
+            },
+            "getCountdownVictoryDominanceScore": {
+              "params": [
+                "$hash"
+              ]
+            },
+            "grantTeamVictory": {
+              "params": [
+                "team",
+                "CULTURE_VICTORY"
+              ]
+            },
+            "surrenderPlayer": {
+              "params": [
+                "id",
+                "selectedDefeat"
+              ]
+            },
+            "getDefeatEnabledPlayers": {
+              "params": []
+            },
+            "getConfiguration": {
+              "params": []
+            }
+          },
+          "properties": {}
+        },
         "UnitCommands": {
           "methods": {
             "canStart": {
@@ -1006,6 +1081,39 @@
               "params": [
                 "unlock",
                 "player"
+              ]
+            }
+          },
+          "properties": {}
+        },
+        "CrisisManager": {
+          "methods": {
+            "getCrisisStageTriggerPercent": {
+              "params": [
+                "arg0",
+                "arg1"
+              ]
+            },
+            "getCurrentCrisisStage": {
+              "params": [
+                "arg0"
+              ]
+            },
+            "isCrisisEnabled": {
+              "params": [
+                "arg0"
+              ]
+            },
+            "getMinimumTurnsRemainingInCurrentCrisis": {
+              "params": [
+                "arg0",
+                "crisisStage"
+              ]
+            },
+            "getMaximumTurnsRemainingInCurrentCrisis": {
+              "params": [
+                "arg0",
+                "crisisStage"
               ]
             }
           },
@@ -3908,6 +4016,29 @@
       "instances": {
         "unit": "Units.get(unitId)"
       }
+    },
+    "VictoryManager": {
+      "methods": {
+        "getHighestAmountOfLegacyEarned": {
+          "params": []
+        }
+      },
+      "properties": {
+        "victoryManagerUpdateEvent": {},
+        "processedVictoryData": {},
+        "enabledLegacyPathDefinitions": {},
+        "processedScoreData": {},
+        "victoryEnabledPlayers": {
+          "type": "PlayerId[]"
+        },
+        "claimedVictories": {
+          "type": "VictoryManagerLibrary_VictoryInfo[]"
+        },
+        "victoryProgress": {
+          "type": "VictoryManagerLibrary_VictoryProgress[]"
+        }
+      },
+      "sub_objects": {}
     },
     "Visibility": {
       "methods": {
