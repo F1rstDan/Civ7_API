@@ -42,12 +42,15 @@ if (obj) {
 | <API>SomeAPI.forEach</API> | callback | `void` | 遍历所有对象 |
 | <API>SomeAPI.getHash</API> | — | `int` | 获取对象哈希值 |
 
-## [Object] 实例的属性与方法
+## unit 单位实例
+
+单位实例通过 `Units.get(unitId)` 获取。
 
 ```javascript
-// 快速示例：展示如何获取实例，读取属性，调用方法
+// 实用示例：展示如何获取实例，读取属性，调用方法
 const Object = SomeAPI.get(GameContext.localPlayerID);
 ```
+### unit 属性与方法
 
 | 属性(N) | 类型 | 说明 |
 |------|------|------|
