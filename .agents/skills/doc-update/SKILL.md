@@ -13,6 +13,7 @@ description: >
 Civ7 API 文档更新、校验、补全及网站维护的统一工作流指南。
 
 * **游戏源码绝对路径**：`D:\Games Design\Civ7_mod\.官方变动`（各模块详见 `docs/_link-source-addr.md`）
+* **数据字典**：`docs/data/civ7_api.json`（说明详见 `docs/data/civ7_api.json.md`）
 * 模板文件：`assets/api-page-template.md`
 * 校验脚本：`scripts/check_api_doc_ids.py`
 * 网站配置文件：`docs/.vitepress/config.js`
@@ -61,18 +62,20 @@ Civ7 API 文档更新、校验、补全及网站维护的统一工作流指南�
 ### 3. API 补全 (api-complete)
 * **步骤**：
   1. 读取目标文档，识别 YAML 中的 `primary_scope`。
-  2. 利用 `rg` 在源码中对该 Scope 进行全面检索，对比方法表，提取出文档遗漏的 API 方法。
-  3. 检索源码，提取一个精简（3-8行）、具有代表性的真实用法代码段作为使用示例（首行注明出处）。
-  4. **写入文档**：将新方法以 `<API>` 触发器的格式增补进 H2 方法列表中，并在文档最底部追加对应的 `<API id="xxx"><h3>xxx()</h3>` 内容块，包含说明、参数、返回值和示例。
-  5. 将 YAML 字段 `doc_update` 更新为当前日期。
-  6. 运行 `check_api_doc_ids.py` 脚本确保无语法错误。
+  2. **查询数据字典**：首先读取项目数据字典 [civ7_api.json](../../../docs/data/civ7_api.json)，在 `globals` 或 `instances` 下定位当前 Scope，对比文档中已有的方法，提取出数据字典中记录但文档遗漏的候选 API 方法列表。
+  3. **源码核对与检索**：以**游戏源码为准**，利用 `rg` 在源码中对这些候选方法以及该 Scope 进行全面检索，对比方法表，提取出文档遗漏的 API 方法。如果某个方法在 `civ7_api.json` 中存在但在源码中未找到任何真实调用或定义，则**不予添加**，并需在任务完成的最后报告中向用户做出说明。
+  4. **提取示例**：在源码中提取一个精简（3-8行）、具有代表性的真实用法代码段作为使用示例（首行注明出处）。
+  5. **写入文档**：将确认无误的新方法以 `<API>` 触发器的格式增补进 H2 方法列表中，并在文档最底部追加对应的 `<API id="xxx"><h3>xxx()</h3>` 内容块，包含说明、参数、返回值和示例。
+  6. 将 YAML 字段 `doc_update` 更新为当前日期。
+  7. 运行 `check_api_doc_ids.py` 脚本确保无语法错误。
 
 ### 4. 新建文档 (doc-create)
 * **步骤**：
   1. 读取模版文件 `assets/api-page-template.md`。
-  2. 确定 YAML 元数据信息，在源码中获取主 Scope 对应的方法。
-  3. 创建新文件并填充占位符，添加快速示例、方法表及弹窗内容块。
-  4. YAML 字段 `doc_update` 填入当前日期，并运行 `check_api_doc_ids.py` 脚本校验。
+  2. **查询数据字典**：在创建新 API 文档前，首先在 [civ7_api.json](../../../docs/data/civ7_api.json) 中检索对应的 Scope，将该 Scope 下的所有可用方法、属性及级联挂载关系导出，以此作为新页面编写的骨架和基准。
+  3. 确定 YAML 元数据信息，去源码中进一步检索并核对这些方法与属性，获取其实际调用情况以补充详细说明和使用示例。
+  4. 创建新文件并填充占位符，添加快速示例、方法表及弹窗内容块。
+  5. YAML 字段 `doc_update` 填入当前日期，并运行 `check_api_doc_ids.py` 脚本校验。
 
 ### 5. 维护网站 (web-maintain)
 * **步骤**：
