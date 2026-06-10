@@ -25,13 +25,13 @@ graph TD
   * **AST 代码分析**：扫描指定源码目录下的 Source Maps (`.js.map`) 以及 Tuner 调试面板文件 (`.ltp`)，提取 AST 语法树中的方法调用与属性访问符号。
   * **宿主实例动态匹配**：根据分类配置文件声明的合法实例类型（如 `player`），动态匹配源码中如 `pPlayer`、`unitId` 等对应变量上的方法与属性调用。
   * **导出数据**：
-    * [raw_completions.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/raw_completions.json)：包含全量粗筛接口（方法名、形参、返回值）的层级化临时文件。
-    * [raw_names.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/raw_names.json)；所有被识别到的顶层大写符号（类名、全局变量名、枚举等）的去重列表。
+    * [raw_completions.json](../data/raw_completions.json)：包含全量粗筛接口（方法名、形参、返回值）的层级化临时文件。
+    * [raw_names.json](../data/raw_names.json)：所有被识别到的顶层大写符号（类名、全局变量名、枚举等）的去重列表。
 
 ### 2. 第二步：过滤器更新与分类决策 (Filter Update & Decision)
 * **执行命令**：`node scripts/init_filter.js`
 * **工作机制**：
-  * 读取最新的 `raw_names.json`，并将其与现有的分类配置文件 [api_filter.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/api_filter.json) 进行增量合并。
+  * 读取最新的 `raw_names.json`，并将其与现有的分类配置文件 [api_filter.json](../data/api_filter.json) 进行增量合并。
   * 脚本内置关键字规则，自动对新发现的顶层对象进行分类预处理（如将含 `Context`、`Model` 的符号预分至 UI 组件，大写单词或 `Types` 结尾的分至枚举）。
   * 凡无法自动归类的新符号均放入 `unknown` 悬挂隔离区，交由人工或 AI 进行审查并剪切归入各分类，直至清空 `unknown` 列表以达成闭合状态。
 
@@ -41,13 +41,13 @@ graph TD
   * **熔断拦截**：检查 `api_filter.json` 中的 `unknown` 是否已清空，以及是否有未分类的新对象。若存在未分类对象，立即终止编译。
   * **黑名单硬过滤**：自动剔除精筛字典中归在 `ui_components` 与 `ignored` 下的顶层对象。同时，对全局或实例下的二级子系统组件（如 `player.Culture`），只要其名字落入这两个黑名单，也会被直接拦截丢弃。
   * **双向级联注入**：根据 `instances` 声明的获取路径，反向解析全局管理器名称，在编译时将实例接口自动挂载至其对应的全局对象下。
-  * **导出数据**：生成最终的层级化 API 字典 [civ7_api.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/civ7_api.json)。
+  * **导出数据**：生成最终的层级化 API 字典 [civ7_api.json](../data/civ7_api.json)。
 
 ---
 
 ## 二、 过滤器配置文件规范
 
-[api_filter.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/api_filter.json) 是控制精筛编译行为的核心文件。其键值对严格按照以下顺序进行分类与定义：
+[api_filter.json](../data/api_filter.json) 是控制精筛编译行为的核心文件。其键值对严格按照以下顺序进行分类与定义：
 
 ### 1. `globals`
 * **说明**：大写顶层全局管理器、单例或引擎层核心全局对象名称的白名单。
@@ -96,7 +96,7 @@ graph TD
 
 ## 三、 API 输出数据结构 (civ7_api.json)
 
-最终生成的层级化字典文件 [civ7_api.json](file:///d:/Games Design/Civ7_mod/Civ7_API/docs/data/civ7_api.json) 包含以下节点结构：
+最终生成的层级化字典文件 [civ7_api.json](../data/civ7_api.json) 包含以下节点结构：
 
 ```json
 {

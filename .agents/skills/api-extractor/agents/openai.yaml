@@ -1,0 +1,4 @@
+interface:
+  display_name: "Civ7 API 提取与精筛编译器"
+  short_description: "一键对 Civ7 源码执行 AST 粗筛、分类增量过滤与精炼层级 API 编译。"
+  default_prompt: "请帮我执行一次全量的 Civ7 API 提取与精筛编译，生成最新的 civ7_api.json 字典。"
