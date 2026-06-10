@@ -22,10 +22,6 @@ function main() {
     // 读取已有的配置，进行增量融合
     let filterConfig = {
         globals: [],
-        enums: [],
-        ui_components: [],
-        ignored: [],
-        unknown: [],
         instances: {
             "player": "Players.get(playerId)",
             "unit": "Units.get(unitId)",
@@ -34,7 +30,11 @@ function main() {
             "constructible": "Constructibles.get(constructibleId)",
             "army": "Armies.get(unit.armyId)",
             "plot": "GameplayMap.getPlot(x, y)"
-        }
+        },
+        enums: [],
+        ui_components: [],
+        ignored: [],
+        unknown: []
     };
 
     if (fs.existsSync(FILTER_FILE)) {
