@@ -6,10 +6,10 @@ primary_scope:
   - Districts
   - district
 related_scope:
-  - GameInfo.Districts
   - Players.Districts
   - player.Districts
   - city.Districts
+  - GameInfo.Districts
 source:
   - TunerPanels/Districts.ltp
   - modules/base-standard/ui-next/tooltips/plot-tooltip/plot-tooltip.js
@@ -41,41 +41,40 @@ console.log(district.isQuarter, district.isUniqueQuarter);
 | <API>Districts.getLocations</API> | districtIDs | `array<PlotCoord>` | 获取城区占据的所有地块位置 |
 | <API>Districts.getIdAtLocation</API> | location | `ComponentID` | 获取指定位置的城区 ID |
 
-## District 实例属性
+## district 实例
 
-District 实例对象（通过 `Districts.get()` 获取）包含以下属性：
+District 实例通过 `Districts.get(districtId)` 获取。
 
 ```javascript
 // 来源 TunerPanels/Districts.ltp
 // District 实例基本属性与状态
 const district = Districts.get(districtId);
-
-// 基本属性
-district.id;               // 区域组件 ID (ComponentID)
-district.location;         // 坐标 {x, y}
-district.type;             // 类型哈希
-district.cityId;           // 所属城市 ComponentID
-district.originalOwner;    // 原始所有者玩家 ID
-district.controllingPlayer; // 当前控制者玩家 ID
-
-// 状态属性
-district.isQuarter;        // 是否为街区
-district.isUniqueQuarter;  // 是否为独特街区
-district.isUrbanCore;      // 是否为城市核心
-district.isDefensible;     // 是否可防御
 ```
 
-## District 实例方法
+### district 实例属性
 
-District 实例提供以下方法用于查询建造物和管理生命值：
+| 属性(10) | 类型 | 说明 |
+|------|------|------|
+| `district.id` | `ComponentID` | 区域组件 ID |
+| `district.location` | `PlotCoord` | 坐标 `{x, y}` |
+| `district.type` | `number` | 类型哈希 |
+| `district.cityId` | `ComponentID` | 所属城市 ComponentID |
+| `district.originalOwner` | `int` | 原始所有者玩家 ID |
+| `district.controllingPlayer` | `int` | 当前控制者玩家 ID |
+| `district.isQuarter` | `boolean` | 是否为街区 |
+| `district.isUniqueQuarter` | `boolean` | 是否为独特街区 |
+| `district.isUrbanCore` | `boolean` | 是否为城市核心 |
+| `district.isDefensible` | `boolean` | 是否可防御 |
 
-| 方法 | 参数 | 返回值 | 说明 |
+### district 实例方法
+
+| 方法(7) | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| <API>district.getConstructibleIds</API> |  | `array<ComponentID>` | 获取所有建造物 ID |
+| <API>district.getConstructibleIds</API> | — | `array<ComponentID>` | 获取所有建造物 ID |
 | <API>district.getConstructibleIdsOfClass</API> | className | `array<ComponentID>` | 按类别获取建造物 ID |
 | <API>district.getConstructibleIdsOfType</API> | typeHash | `array<ComponentID>` | 按类型哈希获取建造物 ID |
-| <API>district.getMaxDamage</API> |  | `int` | 获取最大生命值 |
-| <API>district.getDamage</API> |  | `int` | 获取当前伤害值（扣血量） |
+| <API>district.getMaxDamage</API> | — | `int` | 获取最大生命值 |
+| <API>district.getDamage</API> | — | `int` | 获取当前伤害值（扣血量） |
 | <API>district.changeDamage</API> | delta | `void` | 改变伤害值（正数扣血，负数治疗） |
 | <API>district.setContested</API> | isContested, controllingPlayer | `void` | 设置争夺状态 |
 
