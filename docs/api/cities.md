@@ -301,6 +301,7 @@ const fleetPoints = city.Resources.getProducedTreasureFleetPoints();
 | `player.Cities.getCityIds` | — | `ComponentID[]` | 获取玩家城市 ID 列表 |
 | `player.Cities.getCities` | — | `City[]` | 获取玩家城市对象数组 |
 | `player.Cities.getCapital` | — | `City` | 获取玩家首都 |
+| `player.Cities.findClosest` | location | `City \| null` | 获取距指定位置最近的城市 |
 
 ```javascript
 // 来源 modules/age-exploration/ui/tutorial/tutorial-items-exploration.js
@@ -322,6 +323,12 @@ const foundCity = this.playerObject.Cities.getCities().find((city) => {
 // 来源 modules/age-antiquity/ui/advice/advice-items-antiquity-science.js
 // 获取玩家首都
 const capital = player.Cities.getCapital();
+```
+
+```javascript
+// 来源 modules/base-standard/scripts/age-transition-post-load.js
+// 查找距单位最近的玩家城市
+const city = player.Cities?.findClosest(unit.location);
 ```
 
 ## Constructibles 全局对象

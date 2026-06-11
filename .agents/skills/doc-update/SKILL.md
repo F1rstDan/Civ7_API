@@ -106,6 +106,7 @@ Civ7 API 文档更新、校验、补全及网站维护的统一工作流指南�
 - **符号链接**：源码目录 `modules` 和 `TunerPanels` 是符号链接，搜索根目录时**必须在 `rg` 中添加 `-L`（`--follow`）参数**，或者直接搜索其子目录（推荐）。
 - **避坑提示**：PowerShell 执行时**不要追加 `2>$null`**；遇到空匹配时，应使用 `Read` 工具抽查已知文件，确保搜索工具工作正常。
 - **正则技巧**：使用 `rg -n -L --pcre2` 进行正则匹配，使用单词边界 `(?<![A-Za-z0-9_$])` 避免后缀误匹配。
+- **可选链 `?.` 陷阱**：JS 源码中大量使用可选链操作符 `?.`（如 `player.Cities?.findClosest(...)`）。搜索方法调用时，`.method(` 的 `.` 前面必须加 `\??` 来同时匹配普通调用和可选链调用，否则会导致漏检。正确写法：`\.\??method\s*\(` 而非 `\.method\s*\(`。
 
 * **典型搜索命令示例**：
   ```powershell
@@ -113,7 +114,8 @@ Civ7 API 文档更新、校验、补全及网站维护的统一工作流指南�
   rg -n -L --pcre2 "(?<![\w$.\])(?<![A-Za-z0-9_$])Units\.lookup\s*\(" "D:\Games Design\Civ7_mod\.官方变动"
   
   # 2. 检索实例或子系统的实际调用链 (如 player.Units.getUnitIds)
-  rg -n -L "(player|pPlayer)\.Units\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动"
+  # 注意 \?? 匹配可选链 ?. 和普通 . 两种调用方式
+  rg -n -L "(player|pPlayer)\.Units\??\.getUnitIds\s*\(" "D:\Games Design\Civ7_mod\.官方变动"
   ```
 
 ---
